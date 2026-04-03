@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  client:
+    build: ./client
+    container_name: client
+    networks:
+      dnsnet:
+        ipv4_address: 10.10.0.10
+
+  resolver:
+    build: ./resolver
+    container_name: resolver
+    cap_add:
+      - NET_ADMIN
+    networks:
+      dnsnet:
+        ipv4_address: 10.10.0.53
+
+  auth:
+    build: ./auth
+    container_name: auth
+    networks:
+      dnsnet:
+        ipv4_address: 10.10.0.100
+
+  attacker:
+    build: ./attacker
+    container_name: attacker
+    cap_add:
+      - NET_ADMIN
+    networks:
+      dnsnet:
+        ipv4_address: 10.10.0.200
+
+networks:
+  dnsnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
