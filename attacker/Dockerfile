@@ -5,5 +5,6 @@ RUN apt update && apt install -y \
 
 WORKDIR /app
 COPY scripts/ /app/
+RUN chmod +x /app/*.py
 
 CMD ["sleep", "infinity"]
