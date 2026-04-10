@@ -1,0 +1,62 @@
+services:
+  client:
+    build: ./client
+    environment:
+      - RESOLVER_IP=10.40.0.53
+      - ROUNDS=${ROUNDS:-50}
+    networks:
+      dnsnet:
+        ipv4_address: 10.40.0.10
+
+  resolver:
+    build: ./resolver
+    environment:
+      - PYTHONUNBUFFERED=1
+      - RESOLVER_BIND_IP=10.40.0.53
+      - UPSTREAM_DNS_IP=10.40.0.100
+      - UPSTREAM_FIXED_SRC_PORT=33333
+      - TXID_SPACE=${TXID_SPACE:-1024}
+      - IPID_SPACE=${IPID_SPACE:-2048}
+      - DEFENSE_MODE=${DEFENSE_MODE:-off}
+      - ATTACK_RATE=${ATTACK_RATE:-0.02}
+      - POISON_IP=${POISON_IP:-6.6.6.6}
+    networks:
+      dnsnet:
+        ipv4_address: 10.40.0.53
+
+  auth:
+    build: ./auth
+    environment:
+      - PYTHONUNBUFFERED=1
+      - AUTH_DELAY_SECONDS=${AUTH_DELAY:-0.25}
+      - FRAG_MODE=bfrag
+      - IPID_SPACE=${IPID_SPACE:-2048}
+      - BULLSEYE_IPID=${BULLSEYE_IPID:-777}
+    networks:
+      dnsnet:
+        ipv4_address: 10.40.0.100
+
+  attacker:
+    build: ./attacker
+    environment:
+      - PYTHONUNBUFFERED=1
+      - RESOLVER_IP=10.40.0.53
+      - AUTH_IP=10.40.0.100
+      - RESOLVER_UPSTREAM_PORT=33333
+      - IPID_SPACE=${IPID_SPACE:-2048}
+      - ATTACK_RATE=${ATTACK_RATE:-0.02}
+      - POISON_IP=${POISON_IP:-6.6.6.6}
+      - BULLSEYE_IPID=${BULLSEYE_IPID:-777}
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      dnsnet:
+        ipv4_address: 10.40.0.200
+
+networks:
+  dnsnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.40.0.0/24

@@ -97,6 +97,7 @@ cd scripts
 ## 7) File chinh
 
 Mo hinh co chu y de tai hien de dang:
+
 - Resolver forward query bang source-port co dinh `33333`.
 - TXID chi nam trong khong gian nho (`0..1023`).
 - Attacker flood response gia mao cho TXID range de thang race.
