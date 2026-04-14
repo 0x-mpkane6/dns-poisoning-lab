@@ -1,16 +1,16 @@
-# SFrag Lab (Fragment Guessing / R2)
+# Lab SFrag (Fragment Guessing / R2)
 
-This lab models the `SFrag` family where the attacker guesses IPID for forged second-fragment data.
+Lab này mô phỏng họ `SFrag`, nơi attacker đoán IPID để đưa dữ liệu second-fragment giả mạo.
 
-## What it covers
+## Nội dung bao phủ
 
-- Attack family: `SFrag`.
-- Defense switch: `R2`-style fragmentation handling via `toggle_defense.sh on|off`.
-- Metrics:
-  - ASR from `/app/result.txt`
-  - latency from `/app/latency_ms.txt` (RTT of the target query only)
+- Họ tấn công: `SFrag`.
+- Công tắc phòng thủ: xử lý fragmentation kiểu `R2` qua `toggle_defense.sh on|off`.
+- Chỉ số đo:
+  - ASR từ `/app/result.txt`
+  - độ trễ từ `/app/latency_ms.txt` (chỉ RTT của target query)
 
-## Quick start
+## Chạy nhanh
 
 ```bash
 docker info
@@ -19,15 +19,15 @@ bash ./scripts/run_case.sh attack-off 50
 bash ./scripts/run_case.sh attack-on 50
 ```
 
-## Standard interface
+## Giao diện chuẩn
 
 - Runner: `./scripts/run_case.sh <baseline|attack-off|attack-on> [rounds]`
-- Common variables: `DEFENSE_MODE`, `TXID_SPACE`, `IPID_SPACE`, `ATTACK_RATE`, `ROUNDS`, `POISON_IP`
+- Biến dùng chung: `DEFENSE_MODE`, `TXID_SPACE`, `IPID_SPACE`, `ATTACK_RATE`, `ROUNDS`, `POISON_IP`
 
-## Notes
+## Ghi chú
 
-- Fragment marker (`FRAG1`) is attached only for attack-profile query names (prefix `frag*`).
-- Baseline profile uses non-trigger names, so normal benign behavior is separated from attack-trigger flow.
-- `attack-off`: resolver merges forged frag2 payload when IPID matches.
-- `attack-on`: resolver detects frag flow and returns truncated response (`TC=1`) instead of caching forged data.
-- If poisoning is too low, increase `ROUNDS` and reduce `ATTACK_RATE`.
+- Fragment marker (`FRAG1`) chỉ được gắn cho query name thuộc attack-profile (tiền tố `frag*`).
+- Baseline profile dùng tên không kích hoạt, nên hành vi lành tính thông thường được tách khỏi luồng trigger tấn công.
+- `attack-off`: resolver merge payload frag2 giả mạo khi IPID khớp.
+- `attack-on`: resolver phát hiện luồng frag và trả response truncated (`TC=1`) thay vì cache dữ liệu giả mạo.
+- Nếu tỉ lệ poisoning quá thấp, hãy tăng `ROUNDS` và giảm `ATTACK_RATE`.

@@ -1,17 +1,17 @@
-# DNS Poisoning Labs (Nguoi 2 scope)
+# DNS Poisoning Labs (phạm vi Người 2)
 
-This directory adds isolated labs for the "Nguoi 2" scope while leaving the original root lab untouched.
+Thư mục này bổ sung các lab cô lập cho phạm vi "Người 2", đồng thời giữ nguyên lab gốc ở thư mục root.
 
-## Lab folders
+## Thư mục lab
 
-- `oob/`: SOoB (Out-of-Bailiwick) + R3 toggle.
-- `sfrag/`: SFrag (IPID guessing) + R2 toggle.
-- `bfrag/`: BFrag (bullseye IPID) + R2 toggle.
-- `base/`: shared scripts and conventions.
+- `oob/`: SOoB (Out-of-Bailiwick) + bật/tắt R3.
+- `sfrag/`: SFrag (IPID guessing) + bật/tắt R2.
+- `bfrag/`: BFrag (bullseye IPID) + bật/tắt R2.
+- `base/`: script dùng chung và quy ước chung.
 
-## Unified runner interface
+## Giao diện runner thống nhất
 
-Each lab supports:
+Mỗi lab đều hỗ trợ:
 
 ```bash
 docker info
@@ -22,10 +22,10 @@ bash ./scripts/run_case.sh attack-on 50
 
 Output metrics:
 
-- ASR from `/app/result.txt`
-- Latency avg/p95 from `/app/latency_ms.txt` (RTT of target query only)
+- ASR từ `/app/result.txt`
+- Độ trễ avg/p95 từ `/app/latency_ms.txt` (chỉ tính RTT của target query)
 
-## Recommended workflow per lab
+## Quy trình khuyến nghị cho từng lab
 
 ```bash
 cd <lab-folder>
@@ -35,17 +35,17 @@ bash ./scripts/run_case.sh attack-off 50
 bash ./scripts/run_case.sh attack-on 50
 ```
 
-Repeat and average:
+Lặp lại và lấy trung bình:
 
 ```bash
 bash ../base/scripts/benchmark_case.sh ./scripts/run_case.sh attack-off 50 3
 ```
 
-## Notes
+## Ghi chú
 
-- The original root lab files are not modified by this structure.
-- Each lab has its own subnet to avoid docker network overlap:
+- Các file lab gốc ở thư mục root không bị thay đổi bởi cấu trúc này.
+- Mỗi lab có subnet riêng để tránh chồng lấn docker network:
   - `oob`: `10.20.0.0/24`
   - `sfrag`: `10.30.0.0/24`
   - `bfrag`: `10.40.0.0/24`
-- If Docker daemon is down, `run_case.sh` exits early with a preflight error message.
+- Nếu Docker daemon đang tắt, `run_case.sh` sẽ thoát sớm với thông báo lỗi preflight.

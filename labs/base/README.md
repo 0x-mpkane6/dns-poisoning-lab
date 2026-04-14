@@ -1,28 +1,28 @@
-# labs/base conventions
+# Quy ước labs/base
 
-`labs/base` contains shared scripts and interface conventions used by all lab variants.
+`labs/base` chứa các script dùng chung và các quy ước giao diện cho mọi biến thể lab.
 
-## Shared scripts
+## Script dùng chung
 
-- `scripts/run_case_common.sh`: helper functions used by each lab runner.
-- `scripts/measure_asr.sh`: computes poisoning ASR from `/app/result.txt`.
-- `scripts/measure_latency.sh`: computes latency avg/p95 from `/app/latency_ms.txt` (RTT of the target query only).
-- `scripts/benchmark_case.sh`: runs a case multiple times and prints averaged metrics.
+- `scripts/run_case_common.sh`: các hàm helper dùng bởi runner của từng lab.
+- `scripts/measure_asr.sh`: tính ASR poisoning từ `/app/result.txt`.
+- `scripts/measure_latency.sh`: tính độ trễ avg/p95 từ `/app/latency_ms.txt` (chỉ RTT của target query).
+- `scripts/benchmark_case.sh`: chạy một case nhiều lần và in ra chỉ số trung bình.
 
-## Standard lab contract
+## Chuẩn giao diện lab
 
-Each lab folder should provide:
+Mỗi thư mục lab cần cung cấp:
 
 - `./scripts/run_case.sh <baseline|attack-off|attack-on> [rounds]`
 - `./scripts/reset.sh`
-- client output files:
-  - `/app/result.txt` for ASR
-  - `/app/latency_ms.txt` for latency samples
+- file output từ client:
+  - `/app/result.txt` cho ASR
+  - `/app/latency_ms.txt` cho mẫu độ trễ
 
-`run_case.sh` performs Docker preflight and uses `docker compose up -d` (no forced rebuild).
-Use `./scripts/reset.sh` when you need a clean rebuild.
+`run_case.sh` thực hiện Docker preflight và dùng `docker compose up -d` (không ép rebuild).
+Dùng `./scripts/reset.sh` khi cần clean rebuild.
 
-## Common environment knobs
+## Biến môi trường dùng chung
 
 - `DEFENSE_MODE` (`on|off`)
 - `TXID_SPACE`

@@ -1,24 +1,24 @@
-# OoB Lab (SOoB / R3)
+# Lab OoB (SOoB / R3)
 
-This folder is an isolated copy of the original OoB lab, with the same attack logic and a standardized runner/output format used by all labs under `labs/`.
+Thư mục này là bản sao cô lập của lab OoB gốc, giữ nguyên logic tấn công và dùng chuẩn runner/output thống nhất cho toàn bộ các lab trong `labs/`.
 
-## What it covers
+## Nội dung bao phủ
 
-- Attack family: `SOoB` (Out-of-Bailiwick poisoning).
-- Defense switch: `R3`-style bailiwick filter via `toggle_defense.sh on|off`.
-- Metrics:
-  - ASR from `result.txt`
-  - latency samples from `latency_ms.txt` (RTT of the target query only)
+- Họ tấn công: `SOoB` (Out-of-Bailiwick poisoning).
+- Công tắc phòng thủ: bộ lọc bailiwick kiểu `R3` qua `toggle_defense.sh on|off`.
+- Chỉ số đo:
+  - ASR từ `result.txt`
+  - mẫu độ trễ từ `latency_ms.txt` (chỉ RTT của target query)
 
-## Quick start
+## Chạy nhanh
 
-From this folder:
+Trong thư mục này:
 
 ```bash
 docker info
 ```
 
-Run scenarios:
+Chạy các kịch bản:
 
 ```bash
 bash ./scripts/run_case.sh baseline 50
@@ -26,27 +26,27 @@ bash ./scripts/run_case.sh attack-off 50
 bash ./scripts/run_case.sh attack-on 50
 ```
 
-Optional benchmark (3 repeated runs):
+Benchmark tùy chọn (lặp 3 lần):
 
 ```bash
 bash ../base/scripts/benchmark_case.sh ./scripts/run_case.sh attack-off 50 3
 ```
 
-## Standard interface
+## Giao diện chuẩn
 
 - Runner: `./scripts/run_case.sh <baseline|attack-off|attack-on> [rounds]`
-- Result file in client container: `/app/result.txt`
-- Latency file in client container: `/app/latency_ms.txt`
+- File kết quả trong client container: `/app/result.txt`
+- File độ trễ trong client container: `/app/latency_ms.txt`
 
-## Environment knobs
+## Biến môi trường
 
-- `DEFENSE_MODE` (`on|off`) initial mode for resolver.
-- `TXID_SPACE` size of TXID guess space.
-- `ATTACK_RATE` attack loop sleep interval.
-- `ROUNDS` default rounds for client probes.
-- `POISON_IP` poisoned address tracked in ASR metrics.
+- `DEFENSE_MODE` (`on|off`) chế độ khởi tạo cho resolver.
+- `TXID_SPACE` kích thước không gian đoán TXID.
+- `ATTACK_RATE` khoảng nghỉ giữa các vòng lặp tấn công.
+- `ROUNDS` số vòng mặc định cho client probes.
+- `POISON_IP` địa chỉ bị đầu độc được theo dõi trong chỉ số ASR.
 
-## Troubleshooting
+## Xử lý sự cố
 
-- If ASR is unexpectedly low in `attack-off`, run with more rounds and ensure attacker is alive (`docker compose logs attacker`).
-- If you need a clean rebuild, run `bash ./scripts/reset.sh`.
+- Nếu ASR thấp bất thường ở `attack-off`, hãy tăng số rounds và đảm bảo attacker đang chạy (`docker compose logs attacker`).
+- Nếu cần clean rebuild, chạy `bash ./scripts/reset.sh`.

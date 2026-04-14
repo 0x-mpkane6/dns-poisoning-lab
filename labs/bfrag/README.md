@@ -1,16 +1,16 @@
-# BFrag Lab (Bullseye Fragment / R2)
+# Lab BFrag (Bullseye Fragment / R2)
 
-This lab models `BFrag`, where attacker already knows the target IPID (bullseye mode) and injects one forged frag2 pattern repeatedly.
+Lab này mô phỏng `BFrag`, trong đó attacker đã biết trước IPID mục tiêu (bullseye mode) và lặp lại việc inject một mẫu frag2 giả mạo.
 
-## What it covers
+## Nội dung bao phủ
 
-- Attack family: `BFrag`.
-- Defense switch: `R2` via `toggle_defense.sh on|off`.
-- Metrics:
-  - ASR from `/app/result.txt`
-  - latency from `/app/latency_ms.txt` (RTT of the target query only)
+- Họ tấn công: `BFrag`.
+- Công tắc phòng thủ: `R2` qua `toggle_defense.sh on|off`.
+- Chỉ số đo:
+  - ASR từ `/app/result.txt`
+  - độ trễ từ `/app/latency_ms.txt` (chỉ RTT của target query)
 
-## Quick start
+## Chạy nhanh
 
 ```bash
 docker info
@@ -19,15 +19,15 @@ bash ./scripts/run_case.sh attack-off 50
 bash ./scripts/run_case.sh attack-on 50
 ```
 
-## Standard interface
+## Giao diện chuẩn
 
 - Runner: `./scripts/run_case.sh <baseline|attack-off|attack-on> [rounds]`
-- Common variables: `DEFENSE_MODE`, `TXID_SPACE`, `IPID_SPACE`, `ATTACK_RATE`, `ROUNDS`, `POISON_IP`
+- Biến dùng chung: `DEFENSE_MODE`, `TXID_SPACE`, `IPID_SPACE`, `ATTACK_RATE`, `ROUNDS`, `POISON_IP`
 
-## Notes
+## Ghi chú
 
-- Fragment marker (`FRAG1`) is attached only for attack-profile query names (prefix `frag*`).
-- Baseline profile uses non-trigger names, so benign behavior is isolated from attack-trigger flow.
-- Auth server runs in `FRAG_MODE=bfrag` and emits `BULLSEYE_IPID`.
-- Attacker sends forged frag2 with that exact `BULLSEYE_IPID`.
-- Defense `on` should keep poisoning near zero by truncating suspicious fragmented flow.
+- Fragment marker (`FRAG1`) chỉ được gắn cho query name thuộc attack-profile (tiền tố `frag*`).
+- Baseline profile dùng tên không kích hoạt, nên hành vi lành tính được tách khỏi luồng trigger tấn công.
+- Auth server chạy ở `FRAG_MODE=bfrag` và phát `BULLSEYE_IPID`.
+- Attacker gửi frag2 giả mạo với đúng `BULLSEYE_IPID` đó.
+- Khi defense `on`, poisoning nên được giữ gần 0 bằng cách truncate luồng fragment đáng ngờ.
