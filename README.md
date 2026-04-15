@@ -11,42 +11,48 @@ Lab này tái hiện tấn công DNS cache poisoning theo hướng Out-of-Bailiw
 
 Network chung: `dnsnet` (`10.10.0.0/24`).
 
-## 2) Chuẩn bị
+## 2) Hướng dẫn chạy lab
+
+Chạy toàn bộ lệnh tại thư mục gốc project:
+
+```bash
+cd d:/ATM/Project/Code
+```
+
+### Chạy tự động full pipeline
+
+```bash
+bash scripts/run_pipeline.sh
+```
+
+Tuỳ chọn:
+
+```bash
+# zone, baseline_rounds, attack_rounds
+bash scripts/run_pipeline.sh example.net 10 50
+
+# build lại image trước khi chạy
+bash scripts/run_pipeline.sh --build example.net 10 50
+```
+
+### Bước 1: Khởi động môi trường
 
 ```bash
 docker compose up -d --build
-```
-
-Kiểm tra container:
-
-```bash
 docker compose ps
 ```
 
-## 3) Test baseline (không có attacker)
-
-Tắt defense:
+### Bước 2: Baseline (không attacker, defense OFF)
 
 ```bash
 docker exec -it resolver bash /app/toggle_defense.sh off
-```
-
-Trigger query:
-
-```bash
 docker exec -it client bash /app/test.sh example.net 10
-```
-
-Đo kết quả:
-
-```bash
-cd scripts
-./measure.sh
+bash scripts/measure.sh
 ```
 
 Kỳ vọng baseline: `bank.com` ra IP thật (`203.0.113.80`), không bị `6.6.6.6`.
 
-## 4) Chạy tấn công OoB (Defense OFF)
+### Bước 3: Tấn công OoB (defense OFF)
 
 Terminal 1 (attacker):
 
@@ -54,47 +60,40 @@ Terminal 1 (attacker):
 docker exec -it attacker python3 /app/spoof.py
 ```
 
-Terminal 2 (client trigger):
+Terminal 2 (client trigger + đo):
 
 ```bash
 docker exec -it client bash /app/test.sh example.net 50
-```
-
-Đo kết quả:
-
-```bash
-cd scripts
-./measure.sh
+bash scripts/measure.sh
 ```
 
 Kỳ vọng: tỉ lệ `6.6.6.6` cao khi defense OFF.
 
-## 5) Bật Rl3 và test lại
-
-Bật defense:
+### Bước 4: Bật Rl3 và test lại
 
 ```bash
 docker exec -it resolver bash /app/toggle_defense.sh on
-```
-
-Chạy lại attacker + trigger:
-
-```bash
 docker exec -it client bash /app/test.sh example.net 50
-cd scripts
-./measure.sh
+bash scripts/measure.sh
 ```
 
 Kỳ vọng: OoB records bị chặn, tỉ lệ poison giảm mạnh (về gần 0).
 
-## 6) Reset lab
+### Bước 5: Reset lab (nếu cần chạy lại)
 
 ```bash
-cd scripts
-./reset.sh
+bash scripts/reset.sh
 ```
 
-## 7) File chính
+## 3) Cách đọc kết quả
+
+Script đo nằm ở `scripts/measure.sh`, in ra:
+
+- `Total`: số lần đo.
+- `Poisoned`: số lần `bank.com` bị trúng `6.6.6.6`.
+- `Success rate`: tỉ lệ poison theo phần trăm.
+
+## 4) File chính
 
 Mô hình được cố ý thiết kế để tái hiện dễ dàng:
 
@@ -108,3 +107,4 @@ Mô hình được cố ý thiết kế để tái hiện dễ dàng:
 - `attacker/scripts/spoof.py`: inject additional OoB (`bank.com -> 6.6.6.6`).
 - `client/test.sh`: trigger query và ghi kết quả `bank.com`.
 - `scripts/measure.sh`: tính tổng số mẫu và success rate poison.
+- `scripts/reset.sh`: reset toàn bộ môi trường lab.
