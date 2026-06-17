@@ -5,11 +5,21 @@ set -euo pipefail
 CLIENT_SERVICE="${1:-client}"
 POISON_IP="${2:-6.6.6.6}"
 RESULT_PATH="${3:-/app/result.txt}"
+COMPOSE_CMD=(docker compose)
+
+if ! docker compose version >/dev/null 2>&1; then
+    if command -v docker-compose >/dev/null 2>&1; then
+        COMPOSE_CMD=(docker-compose)
+    else
+        echo "[!] docker compose plugin or docker-compose command is unavailable."
+        exit 1
+    fi
+fi
 
 TMP_FILE="$(mktemp)"
 trap 'rm -f "$TMP_FILE"' EXIT
 
-CLIENT_CID="$(docker compose ps -q "$CLIENT_SERVICE" 2>/dev/null || true)"
+CLIENT_CID="$("${COMPOSE_CMD[@]}" ps -q "$CLIENT_SERVICE" 2>/dev/null || true)"
 
 if [ -z "${CLIENT_CID}" ]; then
     echo "Total: 0"

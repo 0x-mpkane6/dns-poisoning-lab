@@ -1,0 +1,2 @@
+Attaching to r2entropy_resolver_1
+[36mresolver_1  |[0m [resolver] listening on 0.0.0.0:53 | upstream=10.60.0.100:53 | r2_entropy_threshold=4.0

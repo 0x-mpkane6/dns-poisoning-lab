@@ -1,0 +1,24 @@
+{
+  "last_decision": {
+    "action": "tc_block",
+    "avoids_legacy_false_positive": false,
+    "blocks_entropy_flood": true,
+    "defense_on": true,
+    "dst_ip": "10.60.0.53",
+    "entropy": 10.7515,
+    "entropy_threshold": 4.0,
+    "frag1_ipid": 1606,
+    "legacy_r2_action": "tc_block_on_any_frag1",
+    "min_samples": 24,
+    "new_r2_action": "tc_block",
+    "qname": "frag150.1781687423077794086.example.net",
+    "samples": 1724,
+    "src_ip": "10.60.0.100",
+    "ts": 1781687423.3359594,
+    "unique_ipids": 1724,
+    "unique_ratio": 1.0,
+    "unique_ratio_threshold": 0.7
+  },
+  "total_blocks": 148,
+  "total_frag2_observed": 53331
+}
