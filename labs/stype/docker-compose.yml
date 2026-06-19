@@ -1,0 +1,66 @@
+services:
+  client:
+    build: ./client
+    environment:
+      - RESOLVER_IP=10.50.0.53
+      - ROUNDS=${ROUNDS:-150}
+      - ATTACK_VARIANT=${ATTACK_VARIANT:-txid}
+    networks:
+      dnsnet:
+        ipv4_address: 10.50.0.10
+
+  resolver:
+    build: ./resolver
+    environment:
+      - PYTHONUNBUFFERED=1
+      - RESOLVER_BIND_IP=10.50.0.53
+      - UPSTREAM_DNS_IP=10.50.0.100
+      - UPSTREAM_FIXED_SRC_PORT=33333
+      - PORT_BRUTE_BASE=${PORT_BRUTE_BASE:-33300}
+      - PORT_BRUTE_SPACE=${PORT_BRUTE_SPACE:-20}
+      - PORT_TXID_SPACE=${PORT_TXID_SPACE:-10}
+      - TXID_SPACE=${TXID_SPACE:-200}
+      - DEFENSE_MODE=${DEFENSE_MODE:-off}
+      - POISON_IP=${POISON_IP:-6.6.6.6}
+      - ATTACK_VARIANT=${ATTACK_VARIANT:-txid}
+    networks:
+      dnsnet:
+        ipv4_address: 10.50.0.53
+
+  auth:
+    build: ./auth
+    environment:
+      - PYTHONUNBUFFERED=1
+      - AUTH_DELAY_SECONDS=${AUTH_DELAY:-0.25}
+    networks:
+      dnsnet:
+        ipv4_address: 10.50.0.100
+
+  attacker:
+    build: ./attacker
+    environment:
+      - PYTHONUNBUFFERED=1
+      - RESOLVER_IP=10.50.0.53
+      - AUTH_IP=10.50.0.100
+      - RESOLVER_UPSTREAM_PORT=33333
+      - PORT_BRUTE_BASE=${PORT_BRUTE_BASE:-33300}
+      - PORT_BRUTE_SPACE=${PORT_BRUTE_SPACE:-20}
+      - PORT_TXID_SPACE=${PORT_TXID_SPACE:-10}
+      - TXID_SPACE=${TXID_SPACE:-200}
+      - RESPONSE_BUDGET=${RESPONSE_BUDGET:-200}
+      - ATTACK_RATE=${ATTACK_RATE:-0.25}
+      - ATTACK_VARIANT=${ATTACK_VARIANT:-txid}
+      - POISON_IP=${POISON_IP:-6.6.6.6}
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      dnsnet:
+        ipv4_address: 10.50.0.200
+
+networks:
+  dnsnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.50.0.0/24

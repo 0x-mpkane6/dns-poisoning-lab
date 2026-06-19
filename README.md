@@ -1,113 +1,196 @@
-# DNS OoB Poisoning Lab (Controlled Resolver + Rl3 Defense)
-
-Lab này tái hiện tấn công DNS cache poisoning theo hướng Out-of-Bailiwick (OoB), sau đó bật/tắt rule phòng thủ Rl3 để so sánh kết quả.
-
-## 1) Topology
-
-- `client` (`10.10.0.10`): gửi DNS query để kích hoạt resolver.
-- `resolver` (`10.10.0.53`): resolver mô phỏng có cache và chế độ phòng thủ `Rl3` có thể bật/tắt.
-- `auth` (`10.10.0.100`): authoritative DNS cho zone `example.net`.
-- `attacker` (`10.10.0.200`): blind flood spoofed DNS response kèm additional OoB.
-
-Network chung: `dnsnet` (`10.10.0.0/24`).
-
-## 2) Hướng dẫn chạy lab
-
-Chạy toàn bộ lệnh tại thư mục gốc project:
-
-```bash
-cd d:/ATM/Project/Code
+```text
+ ____  __ _  ____     ___   __    ___  _  _  ____    ____   __  __  ____   __   __ _  __  __ _   ___    __     __   ____ 
+(    \(  ( \/ ___)   / __) / _\  / __)/ )( \(  __)  (  _ \ /  \(  )/ ___) /  \ (  ( \(  )(  ( \ / __)  (  )   / _\ (  _ \
+ ) D (/    /\___ \  ( (__ /    \( (__ ) __ ( ) _)    ) __/(  O ))( \___ \(  O )/    / )( /    /( (_ \  / (_/\/    \ ) _ (
+(____/\_)__)(____/   \___)\_/\_/ \___)\_)(_/(____)  (__)   \__/(__)(____/ \__/ \_)__)(__)\_)__) \___/  \____/\_/\_/(____/
 ```
 
-### Chạy tự động full pipeline
+# DNS CACHE POISONING LAB 
 
-```bash
-bash scripts/run_pipeline.sh
+## 1. Tổng quan 
+Repository này xây dựng một môi trường lab có kiểm soát nhằm mô phỏng lại các cuộc tấn công **DNS Cache Poisoning** kinh điển, đồng thời đánh giá khả năng phát hiện và phòng thủ của hệ thống **POPS (POisoning Prevention System)**.
+
+POPS là một cơ chế phòng thủ được đề xuất trong bài báo [**“POPS: From History to Mitigation of DNS Cache Poisoning Attacks”**](https://www.usenix.org/conference/usenixsecurity25/presentation/afek) tại USENIX Security 2025. Hệ thống này tiếp cận bài toán DNS Cache Poisoning theo hướng nhận diện các dấu hiệu hành vi đặc trưng của từng nhóm tấn công, thay vì chỉ phụ thuộc vào chữ ký cố định của từng lỗ hổng riêng lẻ.
+
+Trong phạm vi repository này, lab tập trung mô phỏng [**các nhóm tấn công DNS Cache Poisoning**](./docs/pops-attack.md) được đề cập trong bài báo:
+* **S-type attacks**: nhóm tấn công thống kê dựa trên việc brute-force **TXID** hoặc **source port**, bao gồm TXID brute-force, source port brute-force và Kaminsky-style attack.
+* **Fragmentation-based attacks**: nhóm tấn công lợi dụng cơ chế phân mảnh IP để chèn fragment độc hại vào DNS response.
+* **Out-of-Bailiwick attacks**: nhóm tấn công chèn các bản ghi DNS nằm ngoài phạm vi thẩm quyền của name server được truy vấn.
+
+Tương ứng với các nhóm tấn công trên, lab triển khai và đánh giá [**3 quy tắc phát hiện (Rℓ)**](./docs/pops-rules.md) trong Detection Module của POPS:
+
+* **Rule 1 (R1)**: phát hiện hành vi đoán quá mức TXID hoặc source port thông qua số lượng DNS response bất thường trong một cửa sổ thời gian ngắn.
+* **Rule 2 (Rℓ2)**: phát hiện và xử lý các DNS response bị phân mảnh nhằm ngăn tấn công dựa trên IP fragmentation.
+* **Rule 3 (Rℓ3)**: phát hiện các DNS response chứa bản ghi vi phạm nguyên tắc bailiwick.
+
+
+Ngoài việc mô phỏng các cơ chế trong bài báo, respontory cũng đề xuất một cải tiến cho **Rule 2 (Rℓ2)** đối với nhóm tấn công fragmentation. Thay vì chặn ngay mọi luồng DNS fragment, cơ chế cải tiến theo dõi các fragment có `offset > 0`, ghi nhận các đặc trưng như `địa chỉ nguồn, địa chỉ đích, IPID và offset`, sau đó tính entropy phân bố IPID trong một cửa sổ thời gian. 
+
+Hướng tiếp cận này nhằm giảm false positive với các luồng fragment hợp lệ, đồng thời vẫn phát hiện được dấu hiệu flood IPID bất thường trong tấn công **SFrag**.
+
+
+> Repository này chỉ phục vụ mục đích học thuật, nghiên cứu và mô phỏng trong môi trường local/isolated lab. Không sử dụng các script hoặc kỹ thuật trong repository để tấn công hệ thống thật.
+
+## 2. Cấu trúc dự án
+
+Repository được tổ chức thành ba nhóm chính: tài liệu tham khảo, mã nguồn lab mô phỏng và kết quả thực nghiệm.
+
+```text
+dns-poisoning-lab/
+├── docs/        # Paper gốc, ghi chú POPS rules và mapping attack/rule
+├── labs/        # Các lab mô phỏng DNS Cache Poisoning bằng Docker
+├── artifacts/   # Kết quả thực nghiệm: metrics, log, latency, output
+├── README.md    
 ```
 
-Tuỳ chọn:
+Trong đó, thư mục `labs/` chứa các môi trường mô phỏng độc lập cho từng nhóm tấn công:
 
-```bash
-# zone, baseline_rounds, attack_rounds
-bash scripts/run_pipeline.sh example.net 10 50
-
-# build lại image trước khi chạy
-bash scripts/run_pipeline.sh --build example.net 10 50
+```text
+labs/
+├── base/        # Script dùng chung cho các lab
+├── stype/       # TXID brute-force, source port brute-force, Kaminsky-style
+├── sfrag/       # Fragmentation attack dạng SFrag
+├── bfrag/       # Fragmentation attack dạng BFrag
+├── oob/         # Out-of-bailiwick poisoning 
+└── r2entropy/   # Cải tiến Rl2 dựa trên entropy IPID
 ```
 
-### Bước 1: Khởi động môi trường
+Mỗi lab thường bao gồm các thành phần cơ bản như `client`, `resolver`, `auth`, `attacker` và `scripts`. Kết quả sau khi chạy được lưu trong `artifacts/`, bao gồm các file metrics, log, latency và kết quả truy vấn để phục vụ phân tích lại.
 
-```bash
-docker compose up -d --build
-docker compose ps
+### 2.1. Topology chung của mỗi lab
+
+Mỗi lab được triển khai trong một Docker bridge network riêng, nhưng đều dùng cùng mô hình 4 thành phần:
+
+```text
+                           DNS query
+                    +-------------------+
+                    |                   v
++----------+     +----------+     +------------+
+|  client  | --> | resolver | --> |    auth    |
+| .0.10    |     | .0.53    |     |   .0.100   |
++----------+     +----------+     +------------+
+                      ^
+                      |
+                      | spoofed DNS response /
+                      | forged frag2 / OoB record
+                +------------+
+                |  attacker  |
+                |   .0.200   |
+                +------------+
 ```
 
-### Bước 2: Baseline (không attacker, defense OFF)
+Vai trò của từng thành phần:
 
-```bash
-docker exec -it resolver bash /app/toggle_defense.sh off
-docker exec -it client bash /app/test.sh example.net 10
-bash scripts/measure.sh
+| Thành phần | Vai trò |
+| --- | --- |
+| `client` | Gửi DNS query để kích hoạt cache miss và ghi kết quả đo. |
+| `resolver` | Resolver mô phỏng, có cache và logic bật/tắt rule phòng thủ. |
+| `auth` | Authoritative DNS server hợp lệ, trả lời bản ghi DNS thật. |
+| `attacker` | Gửi DNS response giả mạo hoặc fragment giả để thử poisoning. |
+
+Các lab dùng subnet riêng để tránh xung đột khi chạy độc lập:
+
+| Lab | Subnet | Client | Resolver | Auth | Attacker | Rule chính |
+| --- | --- | --- | --- | --- | --- | --- |
+| `oob` | `10.20.0.0/24` | `10.20.0.10` | `10.20.0.53` | `10.20.0.100` | `10.20.0.200` | `Rl3` |
+| `sfrag` | `10.30.0.0/24` | `10.30.0.10` | `10.30.0.53` | `10.30.0.100` | `10.30.0.200` | `Rl2` |
+| `bfrag` | `10.40.0.0/24` | `10.40.0.10` | `10.40.0.53` | `10.40.0.100` | `10.40.0.200` | `Rl2` |
+| `stype` | `10.50.0.0/24` | `10.50.0.10` | `10.50.0.53` | `10.50.0.100` | `10.50.0.200` | `Rl1` |
+| `r2entropy` | `10.60.0.0/24` | `10.60.0.10` | `10.60.0.53` | `10.60.0.100` | `10.60.0.200` | `Rl2` cải tiến |
+
+Luồng đo cơ bản:
+
+```text
+1. client gửi truy vấn DNS đến resolver.
+2. resolver tạo cache miss và hỏi auth.
+3. attacker cố gửi response giả mạo để thắng race hoặc chèn dữ liệu độc.
+4. resolver xử lý response theo trạng thái defense on/off.
+5. client truy vấn lại bank.com và ghi nhận kết quả:
+   - 203.0.113.80: kết quả hợp lệ
+   - 6.6.6.6: kết quả bị poisoning
 ```
 
-Kỳ vọng baseline: `bank.com` ra IP thật (`203.0.113.80`), không bị `6.6.6.6`.
+## 3. Quick Start
 
-### Bước 3: Tấn công OoB (defense OFF)
+Yêu cầu môi trường:
 
-Terminal 1 (attacker):
-
-```bash
-docker exec -it attacker python3 /app/spoof.py
+```text
+Docker / Docker Desktop
+Docker Compose
+Bash shell hoặc WSL/Linux
 ```
 
-Terminal 2 (client trigger + đo):
+Chọn một lab cần chạy:
 
 ```bash
-docker exec -it client bash /app/test.sh example.net 50
-bash scripts/measure.sh
+cd labs/<lab-name>
 ```
 
-Kỳ vọng: tỉ lệ `6.6.6.6` cao khi defense OFF.
-
-### Bước 4: Bật Rl3 và test lại
+Ví dụ:
 
 ```bash
-docker exec -it resolver bash /app/toggle_defense.sh on
-docker exec -it client bash /app/test.sh example.net 50
-bash scripts/measure.sh
+cd labs/stype
 ```
 
-Kỳ vọng: OoB records bị chặn, tỉ lệ poison giảm mạnh (về gần 0).
-
-### Bước 5: Reset lab (nếu cần chạy lại)
+Nếu chạy trên WSL/Linux sau khi chỉnh file từ Windows, nên chuẩn hóa line ending:
 
 ```bash
-bash scripts/reset.sh
+dos2unix ../base/scripts/*.sh scripts/*.sh client/test.sh resolver/toggle_defense.sh
 ```
 
-## 3) Cách đọc kết quả
+Build lại image:
 
-Script đo nằm ở `scripts/measure.sh`, in ra:
+```bash
+docker-compose down -v --remove-orphans
+docker-compose build
+```
 
-- `Total`: số lần đo.
-- `Poisoned`: số lần `bank.com` bị trúng `6.6.6.6`.
-- `Success rate`: tỉ lệ poison theo phần trăm.
+Chạy toàn bộ case của lab:
 
-## 4) File chính
+```bash
+bash ./scripts/run_all_cases.sh
+```
 
-Mô hình được cố ý thiết kế để tái hiện dễ dàng:
+Hoặc chạy từng case riêng:
 
-- Mặc định resolver dùng source-port upstream random (`UPSTREAM_FIXED_SRC_PORT=0`)
-  và TXID 16-bit (`TXID_SPACE=65536`).
-- Muốn chạy demo yếu entropy cũ để thấy attack thắng race, đặt
-  `ENTROPY_MODE=weak` hoặc `UPSTREAM_FIXED_SRC_PORT=33333 TXID_SPACE=1024`.
-- Attacker flood response giả mạo cho TXID range cấu hình bằng
-  `TXID_SCAN_LIMIT`.
+```bash
+bash ./scripts/run_case.sh baseline
+bash ./scripts/run_case.sh attack-off
+bash ./scripts/run_case.sh attack-on
+```
 
-- `resolver/resolver.py`: resolver có cache và logic Rl3.
-- `resolver/toggle_defense.sh`: bật/tắt Rl3 (`on` / `off`).
-- `auth/auth_server.py`: authoritative DNS server cho `example.net`.
-- `attacker/scripts/spoof.py`: inject additional OoB (`bank.com -> 6.6.6.6`).
-- `client/test.sh`: trigger query và ghi kết quả `bank.com`.
-- `scripts/measure.sh`: tính tổng số mẫu và success rate poison.
-- `scripts/reset.sh`: reset toàn bộ môi trường lab.
+Với `r2entropy`, các case chính là:
+
+```bash
+bash ./scripts/run_case.sh baseline
+bash ./scripts/run_case.sh benign-on
+bash ./scripts/run_case.sh attack-on
+```
+
+Kết quả sau khi chạy được lưu trong:
+
+```text
+artifacts/
+```
+
+## 4. Kết quả OOB/SFrag 150 query
+
+Đợt đo mới cho hai lab `oob` và `sfrag` được lưu trong `Report/data/`:
+
+- `Report/data/docker_weak_150/`: cấu hình entropy yếu để tái hiện demo cũ.
+- `Report/data/docker_bruteforce_150/`: cấu hình brute-force sát paper hơn,
+  quét source-port candidate cùng TXID/IPID.
+- `Report/data/p2_150_comparison.md`: bảng so sánh ngắn.
+
+Tóm tắt Docker batch 150 query:
+
+| Mode | OOB attack-off | SFrag attack-off | Defense on |
+| --- | ---: | ---: | ---: |
+| `weak` | 146/150 = 97.33% | 135/150 = 90.00% | 0% |
+| `bruteforce` | 0/150 = 0.00% | 0/150 = 0.00% | 0% |
+
+---
+
+## TÀI LIỆU THAM KHẢO
+
+[1] Y. Afek, H. Berger, and A. Bremler-Barr, “[POPS: From History to Mitigation of DNS Cache Poisoning Attacks](https://www.usenix.org/conference/usenixsecurity25/presentation/afek),” in *Proceedings of the 34th USENIX Security Symposium (USENIX Security 25)*, Seattle, WA, USA: USENIX Association, Aug. 2025, pp. 3537–3556.

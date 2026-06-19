@@ -1,108 +1,153 @@
-# DNS Poisoning Labs (phạm vi Người 2)
+# Ghi chú thư mục labs
 
-Thư mục này chứa các lab cô lập cho phần việc của Người 2 trong đồ án POPS,
-gồm 2 trong 3 họ tấn công chính của paper: **Fragmentation (SFrag/BFrag)** và
-**Out-of-Bailiwick (SOoB)**. Lab gốc ở thư mục root vẫn được giữ nguyên cho
-phần việc của Người 1 (S-type / TXID + source-port guessing).
+Thư mục `labs/` chứa các môi trường Docker lab dùng để mô phỏng DNS cache poisoning và các rule phòng thủ theo hướng POPS/DNS-CPM.
 
-## Cấu trúc thư mục
+Mỗi lab chính thường có cùng cấu trúc:
 
-| Thư mục | Họ tấn công | Defense | Subnet |
-|---------|--------------|---------|--------|
-| `oob/`   | SOoB (Out-of-Bailiwick poisoning, multi-vector) | R3 (bailiwick filter) | `10.20.0.0/24` |
-| `sfrag/` | SFrag (IPID guessing, second-fragment injection) | R2 (frag-aware truncate) | `10.30.0.0/24` |
-| `bfrag/` | BFrag (bullseye IPID, known target) | R2 (frag-aware truncate) | `10.40.0.0/24` |
-| `base/`  | Script dùng chung (metrics, pipeline, capture) và unit tests | — | — |
-
-Các lab dùng cùng một cấu trúc 4 service: `client`, `resolver`, `auth`,
-`attacker`. Tất cả tham số (TXID space, IPID space, attack rate, defense mode,
-poison IP) đều có thể tinh chỉnh qua biến môi trường.
-
-Mặc định các runner dùng **full entropy**: TXID `65536`, source port upstream
-random (`UPSTREAM_FIXED_SRC_PORT=0`) và IPID space `65535`, nhưng attacker vẫn
-có budget hữu hạn để chạy nhanh trong lab. Nếu cần tái hiện số demo cũ, thêm
-suffix `-weak` vào case hoặc đặt `ENTROPY_MODE=weak`. Nếu cần biến thể sát bài
-báo hơn, dùng suffix `-bruteforce`/`ENTROPY_MODE=bruteforce` để attacker quét
-source-port candidate cùng TXID/IPID.
-
-## Giao diện runner thống nhất
-
-Mỗi lab hỗ trợ 3 case chuẩn:
-
-```bash
-docker info
-bash ./scripts/run_case.sh baseline   50    # không attack, defense off
-bash ./scripts/run_case.sh attack-off 50    # attack đang chạy, defense off
-bash ./scripts/run_case.sh attack-on  50    # attack đang chạy, defense on
+```text
+<lab>/
++-- client/      # Gửi DNS query, ghi result.txt và latency_ms.txt
++-- resolver/    # Resolver mô phỏng cache và rule phòng thủ
++-- auth/        # Authoritative DNS server hợp lệ
++-- attacker/    # Script tấn công hoặc spoof packet
++-- scripts/     # Script chạy case, reset, đo metrics
++-- docker-compose.yml
 ```
 
-Ví dụ demo yếu entropy:
+## Danh sách thư mục
 
-```bash
-bash ./scripts/run_case.sh attack-off-weak 50
+| Thư mục | Mục đích |
+| --- | --- |
+| `base/` | Chứa script dùng chung cho các lab: preflight Docker, start stack, toggle defense, đo ASR, đo latency. Đây không phải lab độc lập. |
+| `stype/` | Mô phỏng S-type attacks gồm TXID brute-force, source-port brute-force và Kaminsky-style. Defense tương ứng là `Rl1`. |
+| `oob/` | Mô phỏng out-of-bailiwick poisoning, attacker chèn record `bank.com -> 6.6.6.6` vào additional section. Defense tương ứng là `Rl3`. |
+| `sfrag/` | Mô phỏng SFrag, attacker đoán IPID và chèn frag2 giả. Defense tương ứng là `Rl2` cơ bản. |
+| `bfrag/` | Mô phỏng BFrag, attacker dùng IPID mục tiêu cố định để chèn frag2 giả. Defense tương ứng là `Rl2` cơ bản. |
+| `r2entropy/` | Mô phỏng cải tiến `Rl2`: ghi nhận frag2 có offset > 0, tính entropy IPID và chỉ block khi thấy dấu hiệu flood bất thường. |
+
+## Topology chung
+
+Mỗi lab chạy trong Docker bridge network riêng, nhưng đều gồm 4 thành phần:
+
+```text
+client  --->  resolver  --->  auth
+                ^
+                |
+             attacker
 ```
 
-Ví dụ brute-force đầy đủ hơn cho 150 query:
+Vai trò:
+
+| Thành phần | Vai trò |
+| --- | --- |
+| `client` | Gửi query đến resolver và ghi kết quả đo. |
+| `resolver` | Xử lý query, cache bản ghi DNS và áp dụng rule phòng thủ. |
+| `auth` | Trả lời DNS hợp lệ với độ trễ có chủ đích để tạo cửa sổ race. |
+| `attacker` | Gửi response giả mạo hoặc frag2 giả về resolver. |
+
+## Subnet từng lab
+
+| Lab | Subnet | Client | Resolver | Auth | Attacker |
+| --- | --- | --- | --- | --- | --- |
+| `oob` | `10.20.0.0/24` | `10.20.0.10` | `10.20.0.53` | `10.20.0.100` | `10.20.0.200` |
+| `sfrag` | `10.30.0.0/24` | `10.30.0.10` | `10.30.0.53` | `10.30.0.100` | `10.30.0.200` |
+| `bfrag` | `10.40.0.0/24` | `10.40.0.10` | `10.40.0.53` | `10.40.0.100` | `10.40.0.200` |
+| `stype` | `10.50.0.0/24` | `10.50.0.10` | `10.50.0.53` | `10.50.0.100` | `10.50.0.200` |
+| `r2entropy` | `10.60.0.0/24` | `10.60.0.10` | `10.60.0.53` | `10.60.0.100` | `10.60.0.200` |
+
+## Cách chạy chung
+
+Vào thư mục lab cần chạy:
 
 ```bash
-bash ./scripts/run_case.sh attack-off-bruteforce 150
+cd labs/<ten-lab>
 ```
 
-Sau mỗi run, `scripts/run_case.sh` in:
-
-- `Total / Poisoned / Success rate` đọc từ `/app/result.txt` của client.
-- `Latency samples / avg / p95` đọc từ `/app/latency_ms.txt`.
-
-Để lặp nhiều lần lấy mean (recommended cho thống kê có ý nghĩa):
+Nếu chạy trên WSL/Linux và file vừa được sửa từ Windows:
 
 ```bash
-bash ../base/scripts/benchmark_case.sh ./scripts/run_case.sh attack-off 50 3
+dos2unix ../base/scripts/*.sh scripts/*.sh client/test.sh resolver/toggle_defense.sh
 ```
 
-## Pipeline 3-lab cho Người 2
-
-`base/scripts/run_p2_pipeline.sh` chạy toàn bộ 3 lab cho Người 2 và xuất CSV +
-bảng tóm tắt Markdown:
+Build và reset stack:
 
 ```bash
-bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag --entropy full
-ENTROPY_MODE=bruteforce bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag
-ENTROPY_MODE=weak bash labs/base/scripts/run_p2_pipeline.sh --rounds 50 --runs 3
-python3 labs/base/scripts/analyze_metrics.py ./p2_metrics.csv --md ./p2_summary.md
+docker-compose down -v --remove-orphans
+docker-compose build
 ```
 
-CSV cột: `lab, case, run, rounds, total, poisoned, asr_pct, latency_avg_ms,
-latency_p95_ms`.
-
-## Capture pcap để làm bằng chứng
-
-Mỗi lab có thể gọi script chung:
+Chạy tất cả case của lab:
 
 ```bash
-cd labs/oob
-bash ../base/scripts/pcap_capture.sh 10 ./oob.pcap
+bash ./scripts/run_all_cases.sh
 ```
 
-Trong lúc capture đang chạy, mở 1 terminal khác chạy `attack-off`/`attack-on`
-case để có gói thật.
-
-## Unit tests (không cần Docker)
+Hoặc chạy từng case:
 
 ```bash
-cd labs/base/tests
-python3 -m unittest test_oob_resolver_logic.py test_frag_resolver_logic.py -v
+bash ./scripts/run_case.sh baseline
+bash ./scripts/run_case.sh attack-off
+bash ./scripts/run_case.sh attack-on
 ```
 
-Test cover:
+Riêng `r2entropy/` không tập trung đo `attack-off`; các case chính là:
 
-- Bailiwick logic: `zone_from_qname`, `is_within_bailiwick` (5 test).
-- Fragmentation logic: `parse_ipid`, `is_frag1/2_marker`, `Frag2Store`
-  put/get/expiry, `handle_frag2_packet` (5 test).
+```bash
+bash ./scripts/run_case.sh baseline
+bash ./scripts/run_case.sh benign-on
+bash ./scripts/run_case.sh attack-on
+```
 
-## Ghi chú
+## Pipeline OOB/SFrag 150 query
 
-- Mỗi lab có subnet riêng để tránh chồng lấn docker network.
-- Nếu Docker daemon đang tắt, `run_case.sh` sẽ thoát sớm với thông báo lỗi
-  preflight.
-- Resolver được khởi tạo với defense ở chế độ `DEFENSE_MODE` (env), nhưng có
-  thể đổi runtime qua `toggle_defense.sh on|off` mà không cần restart container.
+Các runner của `oob` và `sfrag` hỗ trợ ba cấu hình entropy:
+
+| Mode | Ý nghĩa |
+| --- | --- |
+| `weak` | Demo dễ tái hiện: source port cố định, TXID/IPID space nhỏ. |
+| `full` | Entropy rộng nhưng attacker chỉ dùng packet budget hữu hạn để chạy nhanh. |
+| `bruteforce` / `paper` | Quét source-port candidate cùng toàn bộ TXID/IPID space, sát giả định blind brute-force hơn. |
+
+Chạy lại hai lab chính với 150 query:
+
+```bash
+bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag --entropy weak --no-multi --no-sweep
+bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag --entropy bruteforce --no-multi --no-sweep
+```
+
+Kết quả batch mới nằm trong:
+
+```text
+Report/data/docker_weak_150/
+Report/data/docker_bruteforce_150/
+Report/data/p2_150_comparison.md
+```
+
+## Kết quả đầu ra
+
+Kết quả sau khi chạy được lưu trong thư mục `artifacts/` ở root repository.
+
+File thường gặp:
+
+| File | Ý nghĩa |
+| --- | --- |
+| `metrics.txt` | Tổng số mẫu, số lần bị poison, success rate, latency avg và p95. |
+| `result.txt` | Kết quả truy vấn `bank.com` từng round. |
+| `latency_ms.txt` | Độ trễ từng round. |
+| `resolver.log` | Log xử lý của resolver nếu lab có lưu. |
+| `attack.log` | Log của attacker nếu lab có lưu. |
+
+Trong kết quả:
+
+```text
+203.0.113.80 = IP hợp lệ của bank.com
+6.6.6.6      = IP giả/poison của attacker
+```
+
+Riêng `r2entropy/` có thêm:
+
+| File | Ý nghĩa |
+| --- | --- |
+| `frag2_events.jsonl` | Các frag2 quan sát được: src, dst, src_port, dst_port, ipid, offset. |
+| `r2_entropy_decisions.jsonl` | Quyết định allow/block dựa trên entropy IPID. |
+| `r2_entropy_summary.json` | Tổng hợp số frag2, số block và decision cuối cùng. |
