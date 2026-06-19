@@ -173,33 +173,36 @@ Kết quả sau khi chạy được lưu trong:
 artifacts/
 ```
 
-## 4. Kết quả OOB/SFrag 150 query
+## 4. Kết quả OOB/SFrag/BFrag 150 query
 
-Đợt đo mới cho hai lab `oob` và `sfrag` được lưu trong `Report/data/`:
+Đợt đo mới cho ba lab `oob`, `sfrag` và `bfrag` được lưu trong `Report/data/`:
 
 - `Report/data/docker_weak_150/`: cấu hình entropy yếu để tái hiện demo cũ.
 - `Report/data/docker_bruteforce_150/`: cấu hình brute-force sát paper hơn,
-  quét source-port candidate cùng TXID/IPID.
+  quét source-port candidate cùng TXID/IPID; riêng BFrag dùng bullseye IPID nên
+  phần brute-force chính là source port.
 - `Report/data/p2_150_comparison.md`: bảng so sánh ngắn.
 
-Ngoài CSV/chart, phần OOB/SFrag cũng đã được export sang format artifact giống
+Ngoài CSV/chart, phần OOB/SFrag/BFrag cũng đã được export sang format artifact giống
 các phần còn lại trong repo:
 
 ```text
 artifacts/oob-weak/<case>/
 artifacts/sfrag-weak/<case>/
+artifacts/bfrag-weak/<case>/
 artifacts/oob-bruteforce/<case>/
 artifacts/sfrag-bruteforce/<case>/
+artifacts/bfrag-bruteforce/<case>/
 ```
 
 Mỗi thư mục case có `metrics.txt`, `result.txt` và `latency_ms.txt`.
 
 Tóm tắt Docker batch 150 query:
 
-| Mode | OOB attack-off | SFrag attack-off | Defense on |
-| --- | ---: | ---: | ---: |
-| `weak` | 148/150 = 98.67% | 147/150 = 98.00% | 0% |
-| `bruteforce` | 0/150 = 0.00% | 0/150 = 0.00% | 0% |
+| Mode | OOB attack-off | SFrag attack-off | BFrag attack-off | Defense on |
+| --- | ---: | ---: | ---: | ---: |
+| `weak` | 148/150 = 98.67% | 147/150 = 98.00% | 150/150 = 100.00% | 0% |
+| `bruteforce` | 0/150 = 0.00% | 0/150 = 0.00% | 0/150 = 0.00% | 0% |
 
 ---
 

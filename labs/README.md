@@ -98,21 +98,21 @@ bash ./scripts/run_case.sh benign-on
 bash ./scripts/run_case.sh attack-on
 ```
 
-## Pipeline OOB/SFrag 150 query
+## Pipeline OOB/SFrag/BFrag 150 query
 
-Các runner của `oob` và `sfrag` hỗ trợ ba cấu hình entropy:
+Các runner của `oob`, `sfrag` và `bfrag` hỗ trợ ba cấu hình entropy:
 
 | Mode | Ý nghĩa |
 | --- | --- |
 | `weak` | Demo dễ tái hiện: source port cố định, TXID/IPID space nhỏ. |
 | `full` | Entropy rộng nhưng attacker chỉ dùng packet budget hữu hạn để chạy nhanh. |
-| `bruteforce` / `paper` | Quét source-port candidate cùng toàn bộ TXID/IPID space, sát giả định blind brute-force hơn. |
+| `bruteforce` / `paper` | Quét source-port candidate cùng toàn bộ TXID/IPID space; riêng BFrag dùng bullseye IPID nên phần brute-force chính là source port. |
 
-Chạy lại hai lab chính với 150 query:
+Chạy lại ba lab chính với 150 query:
 
 ```bash
-bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag --entropy weak --no-multi --no-sweep
-bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag --entropy bruteforce --no-multi --no-sweep
+bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag,bfrag --entropy weak --no-multi --no-sweep
+bash labs/base/scripts/run_p2_pipeline.sh --rounds 150 --runs 1 --labs oob,sfrag,bfrag --entropy bruteforce --no-multi --no-sweep
 ```
 
 Kết quả batch mới nằm trong:
@@ -130,8 +130,10 @@ và `latency_ms.txt`:
 ```text
 artifacts/oob-weak/<case>/
 artifacts/sfrag-weak/<case>/
+artifacts/bfrag-weak/<case>/
 artifacts/oob-bruteforce/<case>/
 artifacts/sfrag-bruteforce/<case>/
+artifacts/bfrag-bruteforce/<case>/
 ```
 
 ## Kết quả đầu ra

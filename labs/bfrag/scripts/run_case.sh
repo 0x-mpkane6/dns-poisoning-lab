@@ -14,7 +14,7 @@ TARGET_ZONE="${TARGET_ZONE:-example.net}"
 POISON_IP="${POISON_IP:-6.6.6.6}"
 
 if [ -z "$CASE_NAME" ]; then
-    echo "Usage: $0 <baseline|attack-off|attack-on>[-weak|-full] [rounds]"
+    echo "Usage: $0 <baseline|attack-off|attack-on>[-weak|-full|-bruteforce|-paper] [rounds]"
     exit 1
 fi
 
@@ -30,6 +30,11 @@ case "$CASE_NAME" in
         ENTROPY_MODE="full"
         CASE_BASE="${CASE_NAME%-full}"
         CASE_BASE="${CASE_BASE%-realistic}"
+        ;;
+    *-bruteforce|*-paper)
+        ENTROPY_MODE="bruteforce"
+        CASE_BASE="${CASE_NAME%-bruteforce}"
+        CASE_BASE="${CASE_BASE%-paper}"
         ;;
 esac
 
@@ -57,7 +62,7 @@ case "$CASE_BASE" in
         ;;
     *)
         echo "Unknown case: $CASE_NAME"
-        echo "Usage: $0 <baseline|attack-off|attack-on>[-weak|-full] [rounds]"
+        echo "Usage: $0 <baseline|attack-off|attack-on>[-weak|-full|-bruteforce|-paper] [rounds]"
         exit 1
         ;;
 esac

@@ -31,6 +31,13 @@ bash ./scripts/run_case.sh attack-off-weak 50
 bash ./scripts/run_case.sh attack-on-weak  50
 ```
 
+Muốn chạy profile source-port brute-force giống batch báo cáo:
+
+```bash
+bash ./scripts/run_case.sh attack-off-bruteforce 150
+bash ./scripts/run_case.sh attack-on-bruteforce  150
+```
+
 Benchmark 3 lần:
 
 ```bash
@@ -51,10 +58,13 @@ của Người 2: BFrag thường có ASR_off ≈ 100% còn SFrag dao động th
 
 | Biến | Mặc định | Vai trò |
 |------|----------|---------|
-| `ENTROPY_MODE` | `full` | `full` dùng entropy rộng; `weak` dùng cấu hình demo |
+| `ENTROPY_MODE` | `full` | `full` dùng entropy rộng; `weak` dùng cấu hình demo; `bruteforce` quét source-port candidate |
 | `DEFENSE_MODE` | `off` | bật/tắt R2 |
 | `TXID_SPACE` | `65536` | không gian TXID |
 | `UPSTREAM_FIXED_SRC_PORT` | `0` | `0` = OS chọn port random; `33333` = demo yếu entropy |
+| `SRC_PORT_START` | unset | bắt đầu dải source-port cần quét trong mode `bruteforce` |
+| `SRC_PORT_END` | unset | kết thúc dải source-port cần quét trong mode `bruteforce` |
+| `SRC_PORT_SCAN_LIMIT` | unset | số port candidate thử trong dải quét |
 | `IPID_SPACE` | `65535` | không gian IPID của auth |
 | `BULLSEYE_IPID` | `777` | IPID cố định cho auth + attacker |
 | `ATTACK_RATE` | `0.02` | giây nghỉ giữa các vòng flood |
