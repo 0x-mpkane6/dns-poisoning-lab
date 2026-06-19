@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -euo pipefail
+# NOTE: pipefail without -e so a failing dig (e.g. defense-ON returning TC=1
+# with no TCP listener => dig exits non-zero) does NOT abort the whole loop.
+set -uo pipefail
 
 RESOLVER="${RESOLVER_IP:-10.20.0.53}"
 TARGET_ZONE="${1:-example.net}"
@@ -20,7 +22,7 @@ do
 
     # Trigger cache miss so resolver must query authoritative server.
     START_NS="$(date +%s%N)"
-    dig @"$RESOLVER" "$QNAME" +tries=1 +time=1 +short > /dev/null
+    dig @"$RESOLVER" "$QNAME" +tries=1 +time=1 +short > /dev/null 2>&1 || true
     END_NS="$(date +%s%N)"
 
     LATENCY_MS="$(awk -v s="$START_NS" -v e="$END_NS" 'BEGIN { printf "%.3f", (e - s) / 1000000.0 }')"
@@ -28,7 +30,7 @@ do
     sleep 0.05
 
     # Check if bank.com was poisoned into resolver cache.
-    BANK_IP=$(dig @"$RESOLVER" bank.com +tries=1 +time=1 +short | head -n1 | tr -d '\r')
+    BANK_IP=$(dig @"$RESOLVER" bank.com +tries=1 +time=1 +short 2>/dev/null | head -n1 | tr -d '\r' || true)
     if [ -z "$BANK_IP" ]; then
         BANK_IP="NOANSWER"
     fi

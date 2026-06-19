@@ -13,20 +13,31 @@
 
 Mỗi thư mục lab cần cung cấp:
 
-- `./scripts/run_case.sh <baseline|attack-off|attack-on> [rounds]`
+- `./scripts/run_case.sh <baseline|attack-off|attack-on>[-weak|-full|-bruteforce] [rounds]`
 - `./scripts/reset.sh`
 - file output từ client:
   - `/app/result.txt` cho ASR
   - `/app/latency_ms.txt` cho mẫu độ trễ
 
-`run_case.sh` thực hiện Docker preflight và dùng `docker compose up -d` (không ép rebuild).
-Dùng `./scripts/reset.sh` khi cần clean rebuild.
+`run_case.sh` thực hiện Docker preflight và dùng `docker compose up -d --build`.
+Khi đổi entropy, runner mặc định force-recreate container để Docker Compose áp
+dụng env mới. Đặt `BUILD_IMAGES=0` nếu muốn bỏ bước build cache.
 
 ## Biến môi trường dùng chung
 
 - `DEFENSE_MODE` (`on|off`)
+- `ENTROPY_MODE` (`full|weak|bruteforce`, mặc định `full`)
+- `BUILD_IMAGES` (`1|0`, mặc định `1` trong runner)
 - `TXID_SPACE`
+- `TXID_SCAN_LIMIT`
+- `UPSTREAM_FIXED_SRC_PORT` (`0` nghĩa là source port random)
+- `RESOLVER_UPSTREAM_PORT`
+- `SRC_PORT_START`
+- `SRC_PORT_END`
+- `SRC_PORT_SCAN_LIMIT`
+- `PACKET_CHUNK_SIZE`
 - `IPID_SPACE`
+- `IPID_SCAN_LIMIT`
 - `ATTACK_RATE`
 - `ROUNDS`
 - `POISON_IP`

@@ -14,7 +14,7 @@ BANK_REAL_IP = os.getenv("BANK_REAL_IP", "203.0.113.80")
 DELAY_SECONDS = float(os.getenv("AUTH_DELAY_SECONDS", "0.25"))
 
 FRAG_MODE = os.getenv("FRAG_MODE", "bfrag").strip().lower()
-IPID_SPACE = int(os.getenv("IPID_SPACE", "2048"))
+IPID_SPACE = int(os.getenv("IPID_SPACE", "65535"))
 BULLSEYE_IPID = int(os.getenv("BULLSEYE_IPID", "777"))
 FRAGMETA_QNAME = os.getenv("FRAGMETA_QNAME", "_fragmeta.example.net.")
 FRAG_TRIGGER_PREFIX = os.getenv("FRAG_TRIGGER_PREFIX", "frag").strip().lower()

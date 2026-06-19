@@ -14,16 +14,30 @@ TARGET_ZONE="${TARGET_ZONE:-example.net}"
 POISON_IP="${POISON_IP:-6.6.6.6}"
 
 if [ -z "$CASE_NAME" ]; then
-    echo "Usage: $0 <baseline|attack-off|attack-on> [rounds]"
+    echo "Usage: $0 <baseline|attack-off|attack-on>[-weak|-full] [rounds]"
     exit 1
 fi
 
 cd "$LAB_DIR"
 
+CASE_BASE="$CASE_NAME"
+case "$CASE_NAME" in
+    *-weak)
+        ENTROPY_MODE="weak"
+        CASE_BASE="${CASE_NAME%-weak}"
+        ;;
+    *-full|*-realistic)
+        ENTROPY_MODE="full"
+        CASE_BASE="${CASE_NAME%-full}"
+        CASE_BASE="${CASE_BASE%-realistic}"
+        ;;
+esac
+
+configure_entropy_profile "${ENTROPY_MODE:-full}"
 ensure_stack_up
 stop_attack_worker "python3 /app/spoof_bfrag.py"
 
-case "$CASE_NAME" in
+case "$CASE_BASE" in
     baseline)
         toggle_defense off
         docker compose stop attacker >/dev/null 2>&1 || true
@@ -43,7 +57,7 @@ case "$CASE_NAME" in
         ;;
     *)
         echo "Unknown case: $CASE_NAME"
-        echo "Usage: $0 <baseline|attack-off|attack-on> [rounds]"
+        echo "Usage: $0 <baseline|attack-off|attack-on>[-weak|-full] [rounds]"
         exit 1
         ;;
 esac

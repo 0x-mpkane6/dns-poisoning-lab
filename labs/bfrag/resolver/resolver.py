@@ -14,11 +14,11 @@ RESOLVER_BIND_IP = os.getenv("RESOLVER_BIND_IP", "10.40.0.53")
 
 UPSTREAM_IP = os.getenv("UPSTREAM_DNS_IP", "10.40.0.100")
 UPSTREAM_PORT = int(os.getenv("UPSTREAM_DNS_PORT", "53"))
-UPSTREAM_FIXED_SRC_PORT = int(os.getenv("UPSTREAM_FIXED_SRC_PORT", "33333"))
+UPSTREAM_FIXED_SRC_PORT = int(os.getenv("UPSTREAM_FIXED_SRC_PORT", "0"))
 UPSTREAM_TIMEOUT = float(os.getenv("UPSTREAM_TIMEOUT", "1.2"))
 
 CACHE_DEFAULT_TTL = int(os.getenv("CACHE_DEFAULT_TTL", "60"))
-TXID_SPACE = int(os.getenv("TXID_SPACE", "1024"))
+TXID_SPACE = max(1, min(65536, int(os.getenv("TXID_SPACE", "65536"))))
 
 FRAG2_KEEP_SECONDS = float(os.getenv("FRAG2_KEEP_SECONDS", "2.0"))
 FRAGMETA_QNAME = os.getenv("FRAGMETA_QNAME", "_fragmeta.example.net.")
@@ -28,6 +28,15 @@ DEFENSE_FILE = "/app/defense_mode"
 DEFENSE_DEFAULT_MODE = os.getenv("DEFENSE_MODE", "off").strip().lower()
 
 IPID_RE = re.compile(r"IPID=(\d+)")
+
+
+def random_txid() -> int:
+    return random.randint(0, TXID_SPACE - 1)
+
+
+def bind_upstream_socket(sock: socket.socket) -> None:
+    port = UPSTREAM_FIXED_SRC_PORT if UPSTREAM_FIXED_SRC_PORT > 0 else 0
+    sock.bind((RESOLVER_BIND_IP, port))
 
 
 class DNSCache:
@@ -200,7 +209,7 @@ def query_upstream(
     frag_store: Frag2Store,
 ) -> Tuple[Optional[List[Tuple[str, str, int]]], bool]:
     request = DNSRecord.question(qname, "A")
-    request.header.id = random.randint(0, max(1, TXID_SPACE - 1))
+    request.header.id = random_txid()
     upstream_sock.sendto(request.pack(), (UPSTREAM_IP, UPSTREAM_PORT))
 
     deadline = time.time() + UPSTREAM_TIMEOUT
@@ -261,11 +270,13 @@ def main() -> None:
     server.bind((LISTEN_IP, LISTEN_PORT))
 
     upstream_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    upstream_sock.bind((RESOLVER_BIND_IP, UPSTREAM_FIXED_SRC_PORT))
+    bind_upstream_socket(upstream_sock)
+    actual_upstream_port = upstream_sock.getsockname()[1]
 
     print(
         f"[resolver] listening on {LISTEN_IP}:{LISTEN_PORT} | "
-        f"upstream={UPSTREAM_IP}:{UPSTREAM_PORT} | bind={RESOLVER_BIND_IP}:{UPSTREAM_FIXED_SRC_PORT}"
+        f"upstream={UPSTREAM_IP}:{UPSTREAM_PORT} | "
+        f"bind={RESOLVER_BIND_IP}:{actual_upstream_port} | txid_space={TXID_SPACE}"
     )
 
     while True:

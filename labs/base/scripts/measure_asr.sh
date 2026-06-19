@@ -6,19 +6,13 @@ CLIENT_SERVICE="${1:-client}"
 POISON_IP="${2:-6.6.6.6}"
 RESULT_PATH="${3:-/app/result.txt}"
 
-TMP_FILE="$(mktemp)"
+# Avoid `docker cp` here: on Docker Desktop for Windows it mangles
+# /tmp/... destinations into D:\tmp\... and silently fails.
+# Stream the file via `docker compose exec ... cat` instead.
+TMP_FILE="$(mktemp -p "${TMPDIR:-/tmp}" measure_asr.XXXXXX 2>/dev/null || mktemp)"
 trap 'rm -f "$TMP_FILE"' EXIT
 
-CLIENT_CID="$(docker compose ps -q "$CLIENT_SERVICE" 2>/dev/null || true)"
-
-if [ -z "${CLIENT_CID}" ]; then
-    echo "Total: 0"
-    echo "Poisoned: 0"
-    echo "Success rate = 0.00%"
-    exit 0
-fi
-
-if ! docker cp "${CLIENT_CID}:${RESULT_PATH}" "$TMP_FILE" >/dev/null 2>&1; then
+if ! docker compose exec -T "$CLIENT_SERVICE" cat "$RESULT_PATH" > "$TMP_FILE" 2>/dev/null; then
     echo "Total: 0"
     echo "Poisoned: 0"
     echo "Success rate = 0.00%"

@@ -5,20 +5,12 @@ set -euo pipefail
 CLIENT_SERVICE="${1:-client}"
 LATENCY_PATH="${2:-/app/latency_ms.txt}"
 
-TMP_FILE="$(mktemp)"
-SORTED_FILE="$(mktemp)"
+# Stream via docker exec to avoid Docker-on-Windows /tmp path mangling.
+TMP_FILE="$(mktemp -p "${TMPDIR:-/tmp}" measure_lat.XXXXXX 2>/dev/null || mktemp)"
+SORTED_FILE="$(mktemp -p "${TMPDIR:-/tmp}" measure_lat_s.XXXXXX 2>/dev/null || mktemp)"
 trap 'rm -f "$TMP_FILE" "$SORTED_FILE"' EXIT
 
-CLIENT_CID="$(docker compose ps -q "$CLIENT_SERVICE" 2>/dev/null || true)"
-
-if [ -z "${CLIENT_CID}" ]; then
-    echo "Latency samples: 0"
-    echo "Latency avg = 0.000 ms"
-    echo "Latency p95 = 0.000 ms"
-    exit 0
-fi
-
-if ! docker cp "${CLIENT_CID}:${LATENCY_PATH}" "$TMP_FILE" >/dev/null 2>&1; then
+if ! docker compose exec -T "$CLIENT_SERVICE" cat "$LATENCY_PATH" > "$TMP_FILE" 2>/dev/null; then
     echo "Latency samples: 0"
     echo "Latency avg = 0.000 ms"
     echo "Latency p95 = 0.000 ms"

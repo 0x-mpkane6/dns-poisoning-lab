@@ -9,15 +9,25 @@ from dnslib import A, DNSHeader, DNSQuestion, DNSRecord, QTYPE, RR, RCODE
 
 LISTEN_IP = os.getenv("RESOLVER_LISTEN_IP", "0.0.0.0")
 LISTEN_PORT = int(os.getenv("RESOLVER_LISTEN_PORT", "53"))
+RESOLVER_BIND_IP = os.getenv("RESOLVER_BIND_IP", "10.10.0.53")
 UPSTREAM_IP = os.getenv("UPSTREAM_DNS_IP", "10.10.0.100")
 UPSTREAM_PORT = int(os.getenv("UPSTREAM_DNS_PORT", "53"))
 CACHE_DEFAULT_TTL = int(os.getenv("CACHE_DEFAULT_TTL", "60"))
 UPSTREAM_TIMEOUT = float(os.getenv("UPSTREAM_TIMEOUT", "1.2"))
-UPSTREAM_FIXED_SRC_PORT = int(os.getenv("UPSTREAM_FIXED_SRC_PORT", "33333"))
-TXID_SPACE = int(os.getenv("TXID_SPACE", "1024"))
+UPSTREAM_FIXED_SRC_PORT = int(os.getenv("UPSTREAM_FIXED_SRC_PORT", "0"))
+TXID_SPACE = max(1, min(65536, int(os.getenv("TXID_SPACE", "65536"))))
 
 DEFENSE_FILE = "/app/defense_mode"
 DEFENSE_ON_VALUE = "on"
+
+
+def random_txid() -> int:
+    return random.randint(0, TXID_SPACE - 1)
+
+
+def bind_upstream_socket(sock: socket.socket) -> None:
+    port = UPSTREAM_FIXED_SRC_PORT if UPSTREAM_FIXED_SRC_PORT > 0 else 0
+    sock.bind((RESOLVER_BIND_IP, port))
 
 
 class DNSCache:
@@ -113,19 +123,25 @@ def extract_a_records(response: DNSRecord) -> List[Tuple[str, str, int]]:
 
 def query_upstream(qname: str, qtype: str = "A") -> Optional[DNSRecord]:
     request = DNSRecord.question(qname, qtype)
-    # Intentionally weak entropy so poisoning can be reproduced in a small lab.
-    request.header.id = random.randint(0, max(1, TXID_SPACE - 1))
+    request.header.id = random_txid()
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.bind(("10.10.0.53", UPSTREAM_FIXED_SRC_PORT))
+        bind_upstream_socket(sock)
         sock.settimeout(UPSTREAM_TIMEOUT)
         sock.sendto(request.pack(), (UPSTREAM_IP, UPSTREAM_PORT))
 
-        while True:
-            data, _ = sock.recvfrom(4096)
+        deadline = time.time() + UPSTREAM_TIMEOUT
+        while time.time() < deadline:
+            remaining = max(0.01, deadline - time.time())
+            sock.settimeout(remaining)
+            try:
+                data, _ = sock.recvfrom(4096)
+            except socket.timeout:
+                return None
             response = DNSRecord.parse(data)
             if response.header.id == request.header.id:
                 return response
+        return None
 
 
 def main() -> None:
@@ -139,7 +155,9 @@ def main() -> None:
 
     print(
         f"[resolver] listening on {LISTEN_IP}:{LISTEN_PORT} | "
-        f"upstream={UPSTREAM_IP}:{UPSTREAM_PORT}"
+        f"upstream={UPSTREAM_IP}:{UPSTREAM_PORT} | "
+        f"bind={RESOLVER_BIND_IP}:{UPSTREAM_FIXED_SRC_PORT or 'random'} | "
+        f"txid_space={TXID_SPACE}"
     )
 
     while True:

@@ -1,0 +1,7 @@
+lab,case,run,rounds,total,poisoned,asr_pct,latency_avg_ms,latency_p95_ms,entropy_components,entropy_space,packet_budget_per_query,expected_poisoned,expected_asr_pct,src_port_start,src_port_end,txid_space,ipid_space,seed
+oob,baseline,1,150,150,0,0.00,50.000,50.000,source_port_x_txid,4227858432,65536,0.000000,0.00000000,1024,65535,65536,,20260619
+oob,attack-off,1,150,150,0,0.00,50.000,50.000,source_port_x_txid,4227858432,65536,0.002325,0.00155010,1024,65535,65536,,20260619
+oob,attack-on,1,150,150,0,0.00,50.000,50.000,source_port_x_txid,4227858432,65536,0.000000,0.00000000,1024,65535,65536,,20260619
+sfrag,baseline,1,150,150,0,0.00,50.000,50.000,source_port_x_ipid,4227793920,65535,0.000000,0.00000000,1024,65535,,65535,20260619
+sfrag,attack-off,1,150,150,0,0.00,50.000,50.000,source_port_x_ipid,4227793920,65535,0.002325,0.00155010,1024,65535,,65535,20260619
+sfrag,attack-on,1,150,150,0,0.00,50.000,50.000,source_port_x_ipid,4227793920,65535,0.000000,0.00000000,1024,65535,,65535,20260619

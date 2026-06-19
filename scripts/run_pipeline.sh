@@ -8,7 +8,7 @@ cd "$ROOT_DIR"
 usage() {
     cat <<'EOF'
 Usage:
-  bash scripts/run_pipeline.sh [--build] [--skip-up] [zone] [baseline_rounds] [attack_rounds]
+  bash scripts/run_pipeline.sh [--build] [--skip-up] [--entropy full|weak] [zone] [baseline_rounds] [attack_rounds]
 
 Examples:
   bash scripts/run_pipeline.sh
@@ -19,6 +19,7 @@ EOF
 
 DO_BUILD=0
 SKIP_UP=0
+ENTROPY_MODE="${ENTROPY_MODE:-full}"
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
@@ -30,6 +31,10 @@ while [[ $# -gt 0 ]]; do
         --skip-up)
             SKIP_UP=1
             shift
+            ;;
+        --entropy)
+            ENTROPY_MODE="$2"
+            shift 2
             ;;
         -h|--help)
             usage
@@ -51,6 +56,25 @@ if ! [[ "$BASELINE_ROUNDS" =~ ^[0-9]+$ ]] || ! [[ "$ATTACK_ROUNDS" =~ ^[0-9]+$ ]
     echo "[-] baseline_rounds and attack_rounds must be integer values"
     exit 1
 fi
+
+case "$ENTROPY_MODE" in
+    full|realistic)
+        export UPSTREAM_FIXED_SRC_PORT="${UPSTREAM_FIXED_SRC_PORT:-0}"
+        export RESOLVER_UPSTREAM_PORT="${RESOLVER_UPSTREAM_PORT:-33333}"
+        export TXID_SPACE="${TXID_SPACE:-65536}"
+        export TXID_SCAN_LIMIT="${TXID_SCAN_LIMIT:-4096}"
+        ;;
+    weak|demo)
+        export UPSTREAM_FIXED_SRC_PORT="${UPSTREAM_FIXED_SRC_PORT:-33333}"
+        export RESOLVER_UPSTREAM_PORT="${RESOLVER_UPSTREAM_PORT:-33333}"
+        export TXID_SPACE="${TXID_SPACE:-1024}"
+        export TXID_SCAN_LIMIT="${TXID_SCAN_LIMIT:-1024}"
+        ;;
+    *)
+        echo "[-] unknown entropy mode: $ENTROPY_MODE"
+        exit 1
+        ;;
+esac
 
 RUN_TS="$(date +%Y%m%d_%H%M%S)"
 OUT_DIR="$ROOT_DIR/artifacts/pipeline_$RUN_TS"
@@ -104,9 +128,9 @@ trap stop_attacker EXIT
 echo "[1/4] Preparing containers..."
 if [[ "$SKIP_UP" -eq 0 ]]; then
     if [[ "$DO_BUILD" -eq 1 ]]; then
-        docker compose up -d --build
+        docker compose up -d --build --force-recreate
     else
-        docker compose up -d
+        docker compose up -d --force-recreate
     fi
 fi
 
@@ -122,6 +146,9 @@ run_phase "attack_on" "Attack (Defense ON / Rl3 Enabled)" "on" "$ATTACK_ROUNDS"
 
 {
     echo "zone=$ZONE"
+    echo "entropy_mode=$ENTROPY_MODE"
+    echo "txid_space=$TXID_SPACE"
+    echo "upstream_fixed_src_port=$UPSTREAM_FIXED_SRC_PORT"
     echo "baseline_rounds=$BASELINE_ROUNDS"
     echo "attack_rounds=$ATTACK_ROUNDS"
     echo
@@ -133,8 +160,8 @@ run_phase "attack_on" "Attack (Defense ON / Rl3 Enabled)" "on" "$ATTACK_ROUNDS"
 
 echo
 echo "=== Summary ==="
+echo "Entropy     : mode=${ENTROPY_MODE} txid=${TXID_SPACE} src_port=${UPSTREAM_FIXED_SRC_PORT}"
 echo "Baseline    : poisoned=${PHASE_POISON[baseline]}/${PHASE_TOTAL[baseline]} | rate=${PHASE_RATE[baseline]}"
 echo "Attack OFF  : poisoned=${PHASE_POISON[attack_off]}/${PHASE_TOTAL[attack_off]} | rate=${PHASE_RATE[attack_off]}"
 echo "Attack ON   : poisoned=${PHASE_POISON[attack_on]}/${PHASE_TOTAL[attack_on]} | rate=${PHASE_RATE[attack_on]}"
 echo "Artifacts   : $OUT_DIR"
-

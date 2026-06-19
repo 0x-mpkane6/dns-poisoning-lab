@@ -97,9 +97,12 @@ Script đo nằm ở `scripts/measure.sh`, in ra:
 
 Mô hình được cố ý thiết kế để tái hiện dễ dàng:
 
-- Resolver forward query bằng source-port cố định `33333`.
-- TXID chỉ nằm trong không gian nhỏ (`0..1023`).
-- Attacker flood response giả mạo cho TXID range để thắng race.
+- Mặc định resolver dùng source-port upstream random (`UPSTREAM_FIXED_SRC_PORT=0`)
+  và TXID 16-bit (`TXID_SPACE=65536`).
+- Muốn chạy demo yếu entropy cũ để thấy attack thắng race, đặt
+  `ENTROPY_MODE=weak` hoặc `UPSTREAM_FIXED_SRC_PORT=33333 TXID_SPACE=1024`.
+- Attacker flood response giả mạo cho TXID range cấu hình bằng
+  `TXID_SCAN_LIMIT`.
 
 - `resolver/resolver.py`: resolver có cache và logic Rl3.
 - `resolver/toggle_defense.sh`: bật/tắt Rl3 (`on` / `off`).
