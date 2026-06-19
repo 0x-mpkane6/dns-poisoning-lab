@@ -19,7 +19,7 @@ Trong phạm vi repository này, lab tập trung mô phỏng [**các nhóm tấn
 
 Tương ứng với các nhóm tấn công trên, lab triển khai và đánh giá [**3 quy tắc phát hiện (Rℓ)**](./docs/pops-rules.md) trong Detection Module của POPS:
 
-* **Rule 1 (R1)**: phát hiện hành vi đoán quá mức TXID hoặc source port thông qua số lượng DNS response bất thường trong một cửa sổ thời gian ngắn.
+* **Rule 1 (Rℓ1)**: phát hiện hành vi đoán quá mức TXID hoặc source port thông qua số lượng DNS response bất thường trong một cửa sổ thời gian ngắn.
 * **Rule 2 (Rℓ2)**: phát hiện và xử lý các DNS response bị phân mảnh nhằm ngăn tấn công dựa trên IP fragmentation.
 * **Rule 3 (Rℓ3)**: phát hiện các DNS response chứa bản ghi vi phạm nguyên tắc bailiwick.
 
@@ -61,23 +61,7 @@ Mỗi lab thường bao gồm các thành phần cơ bản như `client`, `resol
 
 Mỗi lab được triển khai trong một Docker bridge network riêng, nhưng đều dùng cùng mô hình 4 thành phần:
 
-```text
-                           DNS query
-                    +-------------------+
-                    |                   v
-+----------+     +----------+     +------------+
-|  client  | --> | resolver | --> |    auth    |
-| .0.10    |     | .0.53    |     |   .0.100   |
-+----------+     +----------+     +------------+
-                      ^
-                      |
-                      | spoofed DNS response /
-                      | forged frag2 / OoB record
-                +------------+
-                |  attacker  |
-                |   .0.200   |
-                +------------+
-```
+![Overview](/docs/overview.png)
 
 Vai trò của từng thành phần:
 
