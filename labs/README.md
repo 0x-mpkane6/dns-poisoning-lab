@@ -120,7 +120,7 @@ Kết quả batch mới nằm trong:
 ```text
 Report/data/docker_weak_150/
 Report/data/docker_bruteforce_150/
-Report/data/p2_150_comparison.md
+Report/Final_report.md
 ```
 
 Nếu cần format giống các kết quả của Phúc Khang trong `artifacts/`, chạy thêm

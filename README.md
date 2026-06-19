@@ -181,7 +181,7 @@ artifacts/
 - `Report/data/docker_bruteforce_150/`: cấu hình brute-force sát paper hơn,
   quét source-port candidate cùng TXID/IPID; riêng BFrag dùng bullseye IPID nên
   phần brute-force chính là source port.
-- `Report/data/p2_150_comparison.md`: bảng so sánh ngắn.
+- `Report/Final_report.md`: báo cáo chính bằng tiếng Việt.
 
 Ngoài CSV/chart, phần OOB/SFrag/BFrag cũng đã được export sang format artifact giống
 các phần còn lại trong repo:
