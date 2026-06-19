@@ -182,11 +182,23 @@ artifacts/
   quét source-port candidate cùng TXID/IPID.
 - `Report/data/p2_150_comparison.md`: bảng so sánh ngắn.
 
+Ngoài CSV/chart, phần OOB/SFrag cũng đã được export sang format artifact giống
+các phần còn lại trong repo:
+
+```text
+artifacts/oob-weak/<case>/
+artifacts/sfrag-weak/<case>/
+artifacts/oob-bruteforce/<case>/
+artifacts/sfrag-bruteforce/<case>/
+```
+
+Mỗi thư mục case có `metrics.txt`, `result.txt` và `latency_ms.txt`.
+
 Tóm tắt Docker batch 150 query:
 
 | Mode | OOB attack-off | SFrag attack-off | Defense on |
 | --- | ---: | ---: | ---: |
-| `weak` | 146/150 = 97.33% | 135/150 = 90.00% | 0% |
+| `weak` | 148/150 = 98.67% | 147/150 = 98.00% | 0% |
 | `bruteforce` | 0/150 = 0.00% | 0/150 = 0.00% | 0% |
 
 ---

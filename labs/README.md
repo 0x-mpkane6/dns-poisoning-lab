@@ -123,6 +123,17 @@ Report/data/docker_bruteforce_150/
 Report/data/p2_150_comparison.md
 ```
 
+Nếu cần format giống các kết quả của Phúc Khang trong `artifacts/`, chạy thêm
+`--artifact-dir artifacts`. Khi đó mỗi case có đủ `metrics.txt`, `result.txt`
+và `latency_ms.txt`:
+
+```text
+artifacts/oob-weak/<case>/
+artifacts/sfrag-weak/<case>/
+artifacts/oob-bruteforce/<case>/
+artifacts/sfrag-bruteforce/<case>/
+```
+
 ## Kết quả đầu ra
 
 Kết quả sau khi chạy được lưu trong thư mục `artifacts/` ở root repository.

@@ -11,6 +11,7 @@
 # Usage:
 #   bash run_p2_pipeline.sh [--rounds 50] [--runs 3] [--entropy full|weak|bruteforce] [--out-dir DIR]
 #                           [--labs oob,sfrag,bfrag]
+#                           [--artifact-dir DIR]
 #                           [--ipid-list "256 512 1024 2048 4096 8192"]
 #                           [--quick] [--no-multi] [--no-sweep] [--no-charts]
 # --quick = rounds=20, runs=2, ipid-list "512 2048 8192".
@@ -21,6 +22,7 @@ ROUNDS=50
 RUNS=3
 ENTROPY_MODE="${ENTROPY_MODE:-full}"
 OUT_DIR=""
+ARTIFACT_DIR=""
 LABS_CSV="${LABS_CSV:-oob,sfrag,bfrag}"
 IPID_LIST="256 512 1024 2048 4096 8192"
 DO_CORE=1
@@ -35,6 +37,7 @@ while [ $# -gt 0 ]; do
         --runs) RUNS="$2"; shift 2 ;;
         --entropy) ENTROPY_MODE="$2"; shift 2 ;;
         --out-dir) OUT_DIR="$2"; shift 2 ;;
+        --artifact-dir) ARTIFACT_DIR="$2"; shift 2 ;;
         --labs) LABS_CSV="$2"; shift 2 ;;
         --ipid-list) IPID_LIST="$2"; shift 2 ;;
         --quick) ROUNDS=20; RUNS=2; IPID_LIST="512 2048 8192"; shift ;;
@@ -56,6 +59,10 @@ if [ -z "$OUT_DIR" ]; then
     OUT_DIR="$(cd "$LABS_ROOT/../.." && pwd)/Report/data"
 fi
 mkdir -p "$OUT_DIR"
+if [ -n "$ARTIFACT_DIR" ]; then
+    mkdir -p "$ARTIFACT_DIR"
+    ARTIFACT_DIR="$(cd "$ARTIFACT_DIR" && pwd)"
+fi
 
 CORE_CSV="${OUT_DIR}/p2_metrics.csv"
 SWEEP_CSV="${OUT_DIR}/sfrag_ipid_sweep.csv"
@@ -78,6 +85,7 @@ lab_selected() {
 echo "  rounds=${ROUNDS} runs=${RUNS} entropy=${ENTROPY_MODE} labs=${LABS_CSV}"
 echo "  core=${DO_CORE} multi=${DO_MULTI} sweep=${DO_SWEEP} analyze=${DO_ANALYZE} charts=${DO_CHARTS}"
 echo "  out_dir=${OUT_DIR}"
+[ -n "$ARTIFACT_DIR" ] && echo "  artifact_dir=${ARTIFACT_DIR}"
 echo
 
 CORE_CASES=(baseline attack-off attack-on)
@@ -97,6 +105,16 @@ run_case_collect() {
     AVG_LAT="$(echo "$OUTPUT"  | awk -F'= ' '/Latency avg/  {gsub(" ms","",$2); print $2; exit}')"
     P95_LAT="$(echo "$OUTPUT"  | awk -F'= ' '/Latency p95/  {gsub(" ms","",$2); print $2; exit}')"
     echo "${lab},${case_name},${run_idx},${rounds},${TOTAL:-0},${POISONED:-0},${ASR:-0},${AVG_LAT:-0},${P95_LAT:-0}" >> "$CORE_CSV"
+    if [ -n "$ARTIFACT_DIR" ]; then
+        local target_dir="${ARTIFACT_DIR}/${lab}-${ENTROPY_MODE}/${case_name}"
+        if [ "$RUNS" -gt 1 ]; then
+            target_dir="${ARTIFACT_DIR}/${lab}-${ENTROPY_MODE}/run-${run_idx}/${case_name}"
+        fi
+        mkdir -p "$target_dir"
+        echo "$OUTPUT" | awk '/^(Total|Poisoned|Success rate|Latency samples|Latency avg|Latency p95)/ {print}' > "${target_dir}/metrics.txt"
+        docker compose exec -T client cat /app/result.txt > "${target_dir}/result.txt" 2>/dev/null || true
+        docker compose exec -T client cat /app/latency_ms.txt > "${target_dir}/latency_ms.txt" 2>/dev/null || true
+    fi
     popd >/dev/null
 }
 
@@ -154,3 +172,4 @@ echo "  CSV:        $CORE_CSV"
 [ -f "$SWEEP_CSV" ] && echo "  Sweep CSV:  $SWEEP_CSV"
 [ -f "$SUMMARY_MD" ] && echo "  Summary MD: $SUMMARY_MD"
 [ -f "${OUT_DIR}/asr_by_case.png" ] && echo "  Charts:     ${OUT_DIR}/*.png"
+exit 0

@@ -1,0 +1,6 @@
+Total: 150
+Poisoned: 0
+Success rate = 0.00%
+Latency samples: 150
+Latency avg = 275.347 ms
+Latency p95 = 274.763 ms
