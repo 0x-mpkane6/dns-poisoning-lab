@@ -2,7 +2,9 @@
 
 ## 1. Tóm tắt
 
-- Case `benign-on` trước đây báo cáo "150/150 allow, entropy = 0.000" - đúng về mặt kỹ thuật nhưng **vô nghĩa về mặt khoa học**: `total_frag2_observed = 0` trong suốt case, tức resolver chưa từng nhận được một gói fragment thứ hai (FRAG2, offset > 0) hợp lệ nào, nên `shannon_entropy([])` luôn trả về 0 trên một cửa sổ quan sát rỗng. Nói cách khác, chỉ số FPR = 0% khi đó không phải là bằng chứng "rule không chặn nhầm luồng hợp lệ" - mà là hệ quả của việc rule **chưa từng được thử nghiệm** với luồng hợp lệ nào cả.
+- Case `benign-on` trước đây báo cáo "150/150 allow, entropy = 0.000" - đúng về mặt kỹ thuật nhưng **vô nghĩa về mặt khoa học**: `total_frag2_observed = 0` trong suốt case, tức resolver chưa từng nhận được một gói fragment thứ hai (FRAG2, offset > 0) hợp lệ nào, nên `shannon_entropy([])` luôn trả về 0 trên một cửa sổ quan sát rỗng.
+
+> Chỉ số FPR = 0% khi đó không phải là bằng chứng "rule không chặn nhầm luồng hợp lệ" - mà là hệ quả của việc rule **chưa từng được thử nghiệm** với luồng hợp lệ nào cả.
 
 - Đã sửa `labs/r2entropy/auth/auth_server.py` để auth server phát sinh một gói FRAG2 hợp lệ, đúng bản chất vật lý IP fragmentation, ngay sau mỗi response benign bị đánh dấu fragment - chỉ bật trong case `benign-on`. Đo lại bằng đúng Docker Compose chính thức (4 container thật, `dnslib` thật, mạng bridge Docker thật) ở N=150: entropy đo được thật ở mức **~2.4 bit**, thấp hơn nhiều so với ngưỡng cấu hình, và **FPR vẫn = 0%** - nhưng lần này là một kết luận đã được kiểm chứng bằng dữ liệu thật.
 
@@ -23,11 +25,13 @@ Rule chưa từng có cơ hội báo sai (false positive) trên luồng fragment
 
 ## 4. Kết quả
 
-| Nguồn đo | Môi trường | N | ASR | Entropy avg (bit) | Samples avg (min/max) | Unique ratio avg | Decision |
+| Nguồn đo | Môi trường | Số vòng | ASR | Entropy avg (bit) | Samples avg/cửa sổ (min/max) | Unique ratio avg | Decision |
 | --- | --- | ---: | ---: | ---: | --- | ---: | --- |
 | Benign-on, **trước khi sửa** | Docker | 150 | 0.00% | 0.000 (luôn 0, samples luôn 0) | 0 (0/0) | 0.000 | 150 allow / 0 block |
 | Benign-on, **đã sửa** | Docker | 150 | 0.00% | **2.4045** | **5.573 (0/6)** | **0.9767** | 150 allow / 0 block |
 | Attack-on (đối chứng, không đổi code) | Docker | 150 | 0.00% | 10.170 (gốc: 10.836) | ~1250 | ~1.000 | 147 block / 1 allow (gốc: 148/148) |
+
+Ngưỡng để resolver quyết định `tc_block` (phải đúng cả 3 đồng thời): `R2_MIN_SAMPLES=24` mẫu, `R2_ENTROPY_THRESHOLD=4.0` bit, `R2_UNIQUE_RATIO_THRESHOLD=0.70`. Benign-on đã sửa không đạt ngưỡng nào trong 3 ngưỡng đó (5.573 < 24; 2.4045 < 4.0) nên `allow`; attack-on vượt cả 3 (~1250 ≥ 24; 10.170 ≥ 4.0; ~1.000 ≥ 0.70) nên `tc_block`.
 
 `total_frag2_observed = 149/150` - khớp với cơ chế: hầu như mọi vòng đều sinh ra đúng một gói FRAG2 hợp lệ như thiết kế. Nguồn dữ liệu: `artifacts/r2entropy/benign-on/` (trước sửa) và `artifacts/r2entropy/benign-on-fixed/{benign-on,attack-on}/` (đã sửa).
 
