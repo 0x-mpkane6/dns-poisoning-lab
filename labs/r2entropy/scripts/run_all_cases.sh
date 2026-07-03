@@ -43,7 +43,7 @@ echo "[+] Run artifacts: $LAB_DIR/artifacts/$RUN_ID"
 for case_name in "${CASES[@]}"; do
     echo
     echo "--- Running $case_name, rounds=$ROUNDS ---"
-    compose down -v --remove-orphans >/dev/null 2>&1 || true
+    docker compose down -v --remove-orphans >/dev/null 2>&1 || true
     bash "$SCRIPT_DIR/run_case.sh" "$case_name" "$ROUNDS"
 done
 
