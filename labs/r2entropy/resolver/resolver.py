@@ -31,7 +31,7 @@ R2_UNIQUE_RATIO_THRESHOLD = float(os.getenv("R2_UNIQUE_RATIO_THRESHOLD", "0.70")
 
 FRAGMETA_QNAME = os.getenv("FRAGMETA_QNAME", "_fragmeta.example.net.")
 FRAG2_QNAME = os.getenv("FRAG2_QNAME", "_frag2.example.net.")
-DEFENSE_FILE = "/app/defense_mode"
+DEFENSE_FILE = os.getenv("DEFENSE_FILE", "/app/defense_mode")
 DEFENSE_DEFAULT_MODE = os.getenv("DEFENSE_MODE", "off").strip().lower()
 
 FRAG2_EVENTS_PATH = os.getenv("FRAG2_EVENTS_PATH", "/app/frag2_events.jsonl")

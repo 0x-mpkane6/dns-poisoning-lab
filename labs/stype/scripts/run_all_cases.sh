@@ -51,7 +51,7 @@ for variant in "${VARIANTS[@]}"; do
         echo
         echo "--- Running $case_name ($variant), rounds=$ROUNDS ---"
         # Keep each measurement isolated so poisoned cache cannot leak into the next case.
-        compose down -v --remove-orphans >/dev/null 2>&1 || true
+        docker compose down -v --remove-orphans >/dev/null 2>&1 || true
         ATTACK_VARIANT="$variant" bash "$SCRIPT_DIR/run_case.sh" "$case_name" "$ROUNDS"
     done
 done

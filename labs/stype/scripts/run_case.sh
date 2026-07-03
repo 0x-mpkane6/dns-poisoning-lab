@@ -30,29 +30,30 @@ stop_attack_worker "python3 /app/spoof_stype.py"
 snapshot_case_artifacts() {
     local metrics="$1"
     local out_dir="$LAB_DIR/artifacts/$RUN_ID/$ATTACK_VARIANT/$CASE_NAME"
-    local client_cid
 
     mkdir -p "$out_dir"
     printf "%s\n" "$metrics" > "$out_dir/metrics.txt"
 
-    client_cid="$(compose ps -q client 2>/dev/null || true)"
-    if [ -n "$client_cid" ]; then
-        docker cp "${client_cid}:/app/result.txt" "$out_dir/result.txt" >/dev/null 2>&1 || true
-        docker cp "${client_cid}:/app/latency_ms.txt" "$out_dir/latency_ms.txt" >/dev/null 2>&1 || true
-    fi
+    # Stream via `docker compose exec ... cat` instead of `docker cp`: on
+    # Docker Desktop for Windows, `docker cp <cid>:<path> <out_dir>` mangles
+    # MSYS-style absolute destination paths (e.g. /d/foo/bar) into invalid
+    # ones (e.g. D:\d\foo\bar) and fails silently under `|| true` (see
+    # measure_asr.sh / measure_latency.sh, which use the same workaround).
+    docker compose exec -T client cat /app/result.txt > "$out_dir/result.txt" 2>/dev/null || true
+    docker compose exec -T client cat /app/latency_ms.txt > "$out_dir/latency_ms.txt" 2>/dev/null || true
 
     echo "[+] Artifacts saved to $out_dir"
 }
 
 run_stype_probe() {
     local profile="$1"
-    compose exec -T client bash /app/test.sh "$TARGET_ZONE" "$ROUNDS" "$profile" "$ATTACK_VARIANT"
+    docker compose exec -T client bash /app/test.sh "$TARGET_ZONE" "$ROUNDS" "$profile" "$ATTACK_VARIANT"
 }
 
 case "$CASE_NAME" in
     baseline)
         toggle_defense off
-        compose stop attacker >/dev/null 2>&1 || true
+        docker compose stop attacker >/dev/null 2>&1 || true
         run_stype_probe "baseline"
         ;;
     attack-off)

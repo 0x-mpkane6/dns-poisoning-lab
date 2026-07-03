@@ -10,7 +10,7 @@ source "$BASE_SCRIPT_DIR/run_case_common.sh"
 
 cd "$LAB_DIR"
 ensure_docker_ready
-compose down -v
-compose up -d --build
+docker compose down -v
+docker compose up -d --build
 
 echo "[+] Lab reset done"

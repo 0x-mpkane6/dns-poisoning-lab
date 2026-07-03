@@ -5,3 +5,4 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 Report/logs/
+labs/r2entropy/localtest/runs/
