@@ -1,0 +1,76 @@
+name: pops-r2-framework
+
+x-common-environment: &common-environment
+  PYTHONUNBUFFERED: "1"
+
+services:
+  client:
+    build: ../../../labs/r2entropy/client
+    environment:
+      RESOLVER_IP: 10.70.0.53
+      ROUNDS: ${ROUNDS:-150}
+    networks:
+      dnsnet:
+        ipv4_address: 10.70.0.10
+
+  resolver:
+    build: ../../../labs/r2entropy/resolver
+    environment:
+      <<: *common-environment
+      RESOLVER_BIND_IP: 10.70.0.53
+      UPSTREAM_DNS_IP: 10.70.0.100
+      UPSTREAM_FIXED_SRC_PORT: 33333
+      TXID_SPACE: ${TXID_SPACE:-1024}
+      DEFENSE_MODE: ${DEFENSE_MODE:-on}
+      R2_VARIANT: ${R2_VARIANT:-combined}
+      IPID_SPACE: ${IPID_SPACE:-2048}
+      FRAG2_WINDOW_SECONDS: ${FRAG2_WINDOW_SECONDS:-2.0}
+      FRAG2_KEEP_SECONDS: ${FRAG2_KEEP_SECONDS:-2.0}
+      R2_MIN_SAMPLES: ${R2_MIN_SAMPLES:-24}
+      R2_ENTROPY_THRESHOLD: ${R2_ENTROPY_THRESHOLD:-4.0}
+      R2_UNIQUE_RATIO_THRESHOLD: ${R2_UNIQUE_RATIO_THRESHOLD:-0.70}
+      POISON_IP: ${POISON_IP:-6.6.6.6}
+    networks:
+      dnsnet:
+        ipv4_address: 10.70.0.53
+
+  auth:
+    build: ../../../labs/r2entropy/auth
+    environment:
+      <<: *common-environment
+      AUTH_DELAY_SECONDS: ${AUTH_DELAY:-0.25}
+      IPID_SPACE: ${IPID_SPACE:-2048}
+      RESOLVER_IP: 10.70.0.53
+      RESOLVER_UPSTREAM_PORT: 33333
+      FRAG2_OFFSET: ${FRAG2_OFFSET:-1480}
+      BENIGN_FRAG2_ENABLED: ${BENIGN_FRAG2_ENABLED:-0}
+      BENIGN_FRAG2_DELAY_MS: ${BENIGN_FRAG2_DELAY_MS:-3}
+    networks:
+      dnsnet:
+        ipv4_address: 10.70.0.100
+
+  attacker:
+    build: ../../../labs/r2entropy/attacker
+    environment:
+      <<: *common-environment
+      RESOLVER_IP: 10.70.0.53
+      AUTH_IP: 10.70.0.100
+      RESOLVER_UPSTREAM_PORT: 33333
+      IPID_SPACE: ${IPID_SPACE:-2048}
+      ATTACK_RATE: ${ATTACK_RATE:-0.02}
+      ATTACK_VARIANT: ${ATTACK_VARIANT:-random}
+      FRAG2_OFFSET: ${FRAG2_OFFSET:-1480}
+      POISON_IP: ${POISON_IP:-6.6.6.6}
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      dnsnet:
+        ipv4_address: 10.70.0.200
+
+networks:
+  dnsnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.70.0.0/24

@@ -112,7 +112,22 @@ Desktop; sau khi xác nhận Docker chạy được, đã đo lại bằng đún
 Docker chính thức và **thay thế** số liệu harness đó — số trong bảng trên là
 số Docker, không phải số harness.)
 
-Kết luận không đổi (allow 100%, FPR=0% ở tốc độ lưu lượng hợp lệ này), nhưng giờ đây kết luận đó dựa trên entropy đo được thật (~2.4 bit từ trung bình ~5.6 mẫu IPID hợp lệ/cửa sổ 2 giây) thay vì một giá trị mặc định của cửa sổ rỗng.
+**Lưu ý cách đọc cột ASR vs. cột Decision ở bảng trên** — hai cột này đo hai
+thứ khác nhau và không thể thay thế cho nhau: cột **ASR** đo bank.com có
+resolve đúng IP không (`result.txt`), nhưng gói FRAG2 mà auth tự gửi trong
+`benign-on` **không mang theo Answer/poison nào** (chỉ là marker rỗng để rule
+có dữ liệu tính entropy) — nên ASR luôn tất nhiên bằng 0% dù rule ở dưới có
+`allow` hay lỡ `tc_block` đi nữa, không chứng minh được gì về hành vi của
+rule. Bằng chứng thật cho **FPR** (rule có chặn nhầm luồng hợp lệ hay không)
+nằm ở cột **Decision** (`150 allow / 0 block`) — đây là quyết định thật của
+resolver được ghi lại trong `r2_entropy_decisions.jsonl`, không phải suy ra từ
+ASR. Câu kết luận "FPR=0%" ngay dưới đây dựa vào cột Decision, không dựa vào
+ASR.
+
+Kết luận không đổi (allow 100%, FPR=0% ở tốc độ lưu lượng hợp lệ này — dựa
+trên cột Decision `150 allow/0 block`, không phải cột ASR), nhưng giờ đây kết
+luận đó dựa trên entropy đo được thật (~2.4 bit từ trung bình ~5.6 mẫu IPID
+hợp lệ/cửa sổ 2 giây) thay vì một giá trị mặc định của cửa sổ rỗng.
 
 ### Các bug đã sửa để chạy được Docker Compose chính thức
 

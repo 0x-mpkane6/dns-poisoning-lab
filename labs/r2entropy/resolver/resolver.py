@@ -28,6 +28,8 @@ FRAG2_WINDOW_SECONDS = float(os.getenv("FRAG2_WINDOW_SECONDS", "2.0"))
 R2_MIN_SAMPLES = int(os.getenv("R2_MIN_SAMPLES", "24"))
 R2_ENTROPY_THRESHOLD = float(os.getenv("R2_ENTROPY_THRESHOLD", "4.0"))
 R2_UNIQUE_RATIO_THRESHOLD = float(os.getenv("R2_UNIQUE_RATIO_THRESHOLD", "0.70"))
+R2_VARIANT = os.getenv("R2_VARIANT", "combined").strip().lower()
+VALID_R2_VARIANTS = {"legacy", "volume", "entropy", "unique", "combined"}
 
 FRAGMETA_QNAME = os.getenv("FRAGMETA_QNAME", "_fragmeta.example.net.")
 FRAG2_QNAME = os.getenv("FRAG2_QNAME", "_frag2.example.net.")
@@ -117,12 +119,7 @@ class R2EntropyTable:
         unique = len(set(ipids))
         entropy = shannon_entropy(ipids)
         unique_ratio = (unique / total) if total else 0.0
-        suspicious = (
-            defense_on
-            and total >= R2_MIN_SAMPLES
-            and entropy >= R2_ENTROPY_THRESHOLD
-            and unique_ratio >= R2_UNIQUE_RATIO_THRESHOLD
-        )
+        suspicious = r2_should_block(R2_VARIANT, defense_on, total, entropy, unique_ratio)
         action = "tc_block" if suspicious else "allow"
         legacy_r2_action = "tc_block_on_any_frag1"
 
@@ -139,6 +136,7 @@ class R2EntropyTable:
             "entropy_threshold": R2_ENTROPY_THRESHOLD,
             "unique_ratio_threshold": R2_UNIQUE_RATIO_THRESHOLD,
             "min_samples": R2_MIN_SAMPLES,
+            "r2_variant": R2_VARIANT,
             "defense_on": defense_on,
             "action": action,
             "legacy_r2_action": legacy_r2_action,
@@ -184,6 +182,33 @@ def shannon_entropy(values: List[int]) -> float:
     counts = Counter(values)
     total = len(values)
     return -sum((count / total) * math.log2(count / total) for count in counts.values())
+
+
+def r2_should_block(
+    variant: str,
+    defense_on: bool,
+    samples: int,
+    entropy: float,
+    unique_ratio: float,
+) -> bool:
+    """Apply one B1--B5 policy without changing the lab topology."""
+    if not defense_on:
+        return False
+    if variant == "legacy":
+        return True
+    if variant == "volume":
+        return samples >= R2_MIN_SAMPLES
+    if variant == "entropy":
+        return entropy >= R2_ENTROPY_THRESHOLD
+    if variant == "unique":
+        return unique_ratio >= R2_UNIQUE_RATIO_THRESHOLD
+    if variant == "combined":
+        return (
+            samples >= R2_MIN_SAMPLES
+            and entropy >= R2_ENTROPY_THRESHOLD
+            and unique_ratio >= R2_UNIQUE_RATIO_THRESHOLD
+        )
+    raise ValueError(f"unknown R2_VARIANT={variant!r}; expected one of {sorted(VALID_R2_VARIANTS)}")
 
 
 def normalize_name(name: str) -> str:
@@ -368,6 +393,10 @@ def query_upstream(
 
 
 def main() -> None:
+    if R2_VARIANT not in VALID_R2_VARIANTS:
+        raise ValueError(
+            f"unknown R2_VARIANT={R2_VARIANT!r}; expected one of {sorted(VALID_R2_VARIANTS)}"
+        )
     if not os.path.exists(DEFENSE_FILE):
         with open(DEFENSE_FILE, "w", encoding="utf-8") as handle:
             handle.write("on\n" if DEFENSE_DEFAULT_MODE == "on" else "off\n")
@@ -390,7 +419,8 @@ def main() -> None:
 
     print(
         f"[resolver] listening on {LISTEN_IP}:{LISTEN_PORT} | "
-        f"upstream={UPSTREAM_IP}:{UPSTREAM_PORT} | r2_entropy_threshold={R2_ENTROPY_THRESHOLD}"
+        f"upstream={UPSTREAM_IP}:{UPSTREAM_PORT} | r2_variant={R2_VARIANT} | "
+        f"r2_entropy_threshold={R2_ENTROPY_THRESHOLD}"
     )
 
     while True:

@@ -33,6 +33,8 @@ Rule chưa từng có cơ hội báo sai (false positive) trên luồng fragment
 
 Ngưỡng để resolver quyết định `tc_block` (phải đúng cả 3 đồng thời): `R2_MIN_SAMPLES=24` mẫu, `R2_ENTROPY_THRESHOLD=4.0` bit, `R2_UNIQUE_RATIO_THRESHOLD=0.70`. Benign-on đã sửa không đạt ngưỡng nào trong 3 ngưỡng đó (5.573 < 24; 2.4045 < 4.0) nên `allow`; attack-on vượt cả 3 (~1250 ≥ 24; 10.170 ≥ 4.0; ~1.000 ≥ 0.70) nên `tc_block`.
 
+> **Cột ASR không phải bằng chứng cho FPR ở bảng trên.** Gói FRAG2 mà auth tự gửi trong `benign-on` không mang Answer/poison nào (chỉ là marker rỗng để rule có dữ liệu tính entropy), nên bank.com luôn resolve đúng bất kể rule `allow` hay lỡ `tc_block` — ASR=0.00% là hệ quả tất nhiên của cách dựng thí nghiệm, không chứng minh gì về hành vi của rule. Bằng chứng thật cho FPR nằm ở cột **Decision** (`150 allow / 0 block`) — quyết định thật của resolver, ghi trong `r2_entropy_decisions.jsonl`. Mọi kết luận "FPR=0%" trong báo cáo này đều dựa vào cột Decision, không dựa vào ASR.
+
 `total_frag2_observed = 149/150` - khớp với cơ chế: hầu như mọi vòng đều sinh ra đúng một gói FRAG2 hợp lệ như thiết kế. Nguồn dữ liệu: `artifacts/r2entropy/benign-on/` (trước sửa) và `artifacts/r2entropy/benign-on-fixed/{benign-on,attack-on}/` (đã sửa).
 
 ## 5. Diễn giải

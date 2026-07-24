@@ -5,14 +5,16 @@
 (____/\_)__)(____/   \___)\_/\_/ \___)\_)(_/(____)  (__)   \__/(__)(____/ \__/ \_)__)(__)\_)__) \___/  \____/\_/\_/(____/
 ```
 
-# DNS CACHE POISONING LAB 
+# DNS CACHE POISONING LAB
 
-## 1. Tổng quan 
+## 1. Tổng quan
+
 Repository này xây dựng một môi trường lab có kiểm soát nhằm mô phỏng lại các cuộc tấn công **DNS Cache Poisoning** kinh điển, đồng thời đánh giá khả năng phát hiện và phòng thủ của hệ thống **POPS (POisoning Prevention System)**.
 
 POPS là một cơ chế phòng thủ được đề xuất trong bài báo [**“POPS: From History to Mitigation of DNS Cache Poisoning Attacks”**](https://www.usenix.org/conference/usenixsecurity25/presentation/afek) tại USENIX Security 2025. Hệ thống này tiếp cận bài toán DNS Cache Poisoning theo hướng nhận diện các dấu hiệu hành vi đặc trưng của từng nhóm tấn công, thay vì chỉ phụ thuộc vào chữ ký cố định của từng lỗ hổng riêng lẻ.
 
 Trong phạm vi repository này, lab tập trung mô phỏng [**các nhóm tấn công DNS Cache Poisoning**](./docs/pops-attack.md) được đề cập trong bài báo:
+
 * **S-type attacks**: nhóm tấn công thống kê dựa trên việc brute-force **TXID** hoặc **source port**, bao gồm TXID brute-force, source port brute-force và Kaminsky-style attack.
 * **Fragmentation-based attacks**: nhóm tấn công lợi dụng cơ chế phân mảnh IP để chèn fragment độc hại vào DNS response.
 * **Out-of-Bailiwick attacks**: nhóm tấn công chèn các bản ghi DNS nằm ngoài phạm vi thẩm quyền của name server được truy vấn.
@@ -23,11 +25,9 @@ Tương ứng với các nhóm tấn công trên, lab triển khai và đánh gi
 * **Rule 2 (Rℓ2)**: phát hiện và xử lý các DNS response bị phân mảnh nhằm ngăn tấn công dựa trên IP fragmentation.
 * **Rule 3 (Rℓ3)**: phát hiện các DNS response chứa bản ghi vi phạm nguyên tắc bailiwick.
 
-
-Ngoài việc mô phỏng các cơ chế trong bài báo, respontory cũng đề xuất một cải tiến cho **Rule 2 (Rℓ2)** đối với nhóm tấn công fragmentation. Thay vì chặn ngay mọi luồng DNS fragment, cơ chế cải tiến theo dõi các fragment có `offset > 0`, ghi nhận các đặc trưng như `địa chỉ nguồn, địa chỉ đích, IPID và offset`, sau đó tính entropy phân bố IPID trong một cửa sổ thời gian. 
+Ngoài việc mô phỏng các cơ chế trong bài báo, respontory cũng đề xuất một cải tiến cho **Rule 2 (Rℓ2)** đối với nhóm tấn công fragmentation. Thay vì chặn ngay mọi luồng DNS fragment, cơ chế cải tiến theo dõi các fragment có `offset > 0`, ghi nhận các đặc trưng như `địa chỉ nguồn, địa chỉ đích, IPID và offset`, sau đó tính entropy phân bố IPID trong một cửa sổ thời gian.
 
 Hướng tiếp cận này nhằm giảm false positive với các luồng fragment hợp lệ, đồng thời vẫn phát hiện được dấu hiệu flood IPID bất thường trong tấn công **SFrag**.
-
 
 > Repository này chỉ phục vụ mục đích học thuật, nghiên cứu và mô phỏng trong môi trường local/isolated lab. Không sử dụng các script hoặc kỹ thuật trong repository để tấn công hệ thống thật.
 
@@ -156,6 +156,7 @@ Kết quả sau khi chạy được lưu trong:
 ```text
 artifacts/
 ```
+
 ---
 
 ## TÀI LIỆU THAM KHẢO
