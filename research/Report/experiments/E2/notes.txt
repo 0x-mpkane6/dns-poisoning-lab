@@ -1,0 +1,27 @@
+E2 -- Volume-matched benign vs attack
+============================================================
+
+MỤC TIÊU (RQ2): cô lập sức phân biệt của entropy/unique_ratio khỏi volume.
+operating point: {'min_samples': 24, 'entropy_threshold': 4.0, 'unique_ratio_threshold': 0.7, 'window_seconds': 2.0}
+levels: [24, 60, 120, 200] | conditions: ['benign', 'attack_sweep', 'attack_random', 'attack_fixed', 'attack_bursty']
+K=20 runs, 150 windows/run, benign_frac(attack)=0.1
+
+PR-AUC (attack=positive, benign=negative) tại cùng volume:
+    attack_sweep lvl= 24: PR-AUC entropy=0.523 volume=0.510 | B5-B2 margin=+0.000
+    attack_sweep lvl= 60: PR-AUC entropy=0.592 volume=0.553 | B5-B2 margin=+0.000
+    attack_sweep lvl=120: PR-AUC entropy=0.697 volume=0.608 | B5-B2 margin=+0.000
+    attack_sweep lvl=200: PR-AUC entropy=0.781 volume=0.509 | B5-B2 margin=+0.000
+   attack_random lvl= 24: PR-AUC entropy=0.509 volume=0.490 | B5-B2 margin=+0.000
+   attack_random lvl= 60: PR-AUC entropy=0.543 volume=0.547 | B5-B2 margin=+0.000
+   attack_random lvl=120: PR-AUC entropy=0.547 volume=0.553 | B5-B2 margin=+0.000
+   attack_random lvl=200: PR-AUC entropy=0.604 volume=0.613 | B5-B2 margin=+0.000
+    attack_fixed lvl= 24: PR-AUC entropy=1.000 volume=0.484 | B5-B2 margin=-0.587
+    attack_fixed lvl= 60: PR-AUC entropy=1.000 volume=0.556 | B5-B2 margin=-1.000
+    attack_fixed lvl=120: PR-AUC entropy=1.000 volume=0.602 | B5-B2 margin=-1.000
+    attack_fixed lvl=200: PR-AUC entropy=1.000 volume=0.485 | B5-B2 margin=-1.000
+   attack_bursty lvl= 24: PR-AUC entropy=0.736 volume=0.723 | B5-B2 margin=+0.000
+   attack_bursty lvl= 60: PR-AUC entropy=0.940 volume=0.927 | B5-B2 margin=+0.000
+   attack_bursty lvl=120: PR-AUC entropy=0.989 volume=0.978 | B5-B2 margin=+0.000
+   attack_bursty lvl=200: PR-AUC entropy=1.000 volume=1.000 | B5-B2 margin=+0.000
+
+Diễn giải: xem E2_report.md.

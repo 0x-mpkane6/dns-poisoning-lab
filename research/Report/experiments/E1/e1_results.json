@@ -1,0 +1,2230 @@
+{
+  "meta": {
+    "experiment": "E1 -- FPR vs benign fragment rate (operating boundary)",
+    "run_id": "20260805_185616",
+    "generated_utc": "2026-08-05T11:56:19Z",
+    "code_git_commit": "1c32ef1",
+    "python": "3.10.11",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "detector_source": "D:/ATM/Project/Code/labs/r2entropy/resolver/resolver.py",
+    "fidelity_note": "Imports the real shannon_entropy + r2_should_block from resolver.py; sliding window mirrors R2EntropyTable._prune; IPID model from auth_server.py. Controlled-emulation testbed (no Docker / real IP fragmentation).",
+    "operating_point": {
+      "min_samples": 24,
+      "entropy_threshold": 4.0,
+      "unique_ratio_threshold": 0.7,
+      "window_seconds": 2.0
+    },
+    "levels_samples_per_window": [
+      5,
+      12,
+      18,
+      24,
+      36,
+      60,
+      120,
+      300
+    ],
+    "behaviors": {
+      "random2048": "Random IPID (uniform 0..2047) -- auth_server model",
+      "sequential": "Sequential IPID (global +1 counter)",
+      "smallpool16": "Small IPID pool (uniform 0..15) -- NAT / constrained host"
+    },
+    "variants": [
+      "combined",
+      "volume",
+      "entropy",
+      "unique"
+    ],
+    "primary_variant": "combined",
+    "runs_per_cell": 20,
+    "decisions_per_run": 300,
+    "experiment_seed": 20260805,
+    "fpr_definition": "false positives = benign tc_block; FPR = blocks / decisions"
+  },
+  "levels": [
+    {
+      "behavior": "random2048",
+      "level": 5,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 5.9238333333333335,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "entropy": {
+          "blocks_total": 1,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.00016666666666666666,
+          "fpr_run_mean": 0.0001666666666666667,
+          "fpr_run_ci95_t": [
+            -0.00018217067573471048,
+            0.0005155040090680438
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0005
+          ],
+          "fpr_clopper_pearson_ci95": [
+            4.2196257614024855e-06,
+            0.000928253537311408
+          ]
+        },
+        "unique": {
+          "blocks_total": 5996,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9993333333333333,
+          "fpr_run_mean": 0.9993333333333332,
+          "fpr_run_ci95_t": [
+            0.9983729880344315,
+            1.0002936786322347
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9983333333333333,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9982939562087765,
+            0.9998183268493714
+          ]
+        }
+      },
+      "entropy_mean": 2.4533662395049265,
+      "entropy_ci95": [
+        2.4187996537662695,
+        2.4879328252435835
+      ],
+      "unique_ratio_mean": 0.9986412037037038,
+      "unique_ratio_ci95": [
+        0.997465656014488,
+        0.9998167513929196
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 12,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 12.604,
+      "variants": {
+        "combined": {
+          "blocks_total": 8,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0013333333333333333,
+          "fpr_run_mean": 0.0013333333333333333,
+          "fpr_run_ci95_t": [
+            -0.000519466758407748,
+            0.0031861334250744148
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0033333333333333335
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.000575808897930169,
+            0.002625498798615879
+          ]
+        },
+        "volume": {
+          "blocks_total": 8,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0013333333333333333,
+          "fpr_run_mean": 0.0013333333333333333,
+          "fpr_run_ci95_t": [
+            -0.000519466758407748,
+            0.0031861334250744148
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0033333333333333335
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.000575808897930169,
+            0.002625498798615879
+          ]
+        },
+        "entropy": {
+          "blocks_total": 1162,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.19366666666666665,
+          "fpr_run_mean": 0.19366666666666668,
+          "fpr_run_ci95_t": [
+            0.17093004242043386,
+            0.2164032909128995
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.17266666666666666,
+            0.21433333333333332
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.18373508743497088,
+            0.20389696906947408
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 3.5943006934465473,
+      "entropy_ci95": [
+        3.560766866523502,
+        3.6278345203695928
+      ],
+      "unique_ratio_mean": 0.9976940961493787,
+      "unique_ratio_ci95": [
+        0.9966467652895742,
+        0.9987414270091831
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 18,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 19.03066666666667,
+      "variants": {
+        "combined": {
+          "blocks_total": 841,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.14016666666666666,
+          "fpr_run_mean": 0.14016666666666666,
+          "fpr_run_ci95_t": [
+            0.09790882112937599,
+            0.18242451220395733
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.10283333333333333,
+            0.18083333333333335
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.13147563952407315,
+            0.1492091133241753
+          ]
+        },
+        "volume": {
+          "blocks_total": 841,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.14016666666666666,
+          "fpr_run_mean": 0.14016666666666666,
+          "fpr_run_ci95_t": [
+            0.09790882112937599,
+            0.18242451220395733
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.10283333333333333,
+            0.18083333333333335
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.13147563952407315,
+            0.1492091133241753
+          ]
+        },
+        "entropy": {
+          "blocks_total": 4733,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.7888333333333334,
+          "fpr_run_mean": 0.7888333333333333,
+          "fpr_run_ci95_t": [
+            0.7511423291247155,
+            0.8265243375419511
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.7553333333333333,
+            0.8246666666666667
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.7782836979114574,
+            0.799101407802103
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 4.205327213202275,
+      "entropy_ci95": [
+        4.160532200552775,
+        4.250122225851775
+      ],
+      "unique_ratio_mean": 0.9956299967060527,
+      "unique_ratio_ci95": [
+        0.9940969610754312,
+        0.9971630323366741
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 24,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 24.90566666666667,
+      "variants": {
+        "combined": {
+          "blocks_total": 3721,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.6201666666666666,
+          "fpr_run_mean": 0.6201666666666668,
+          "fpr_run_ci95_t": [
+            0.5578829390097461,
+            0.6824503943235875
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.5651625,
+            0.6780041666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.6077465939509474,
+            0.6324697941093945
+          ]
+        },
+        "volume": {
+          "blocks_total": 3721,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.6201666666666666,
+          "fpr_run_mean": 0.6201666666666668,
+          "fpr_run_ci95_t": [
+            0.5578829390097461,
+            0.6824503943235875
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.5651625,
+            0.6780041666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.6077465939509474,
+            0.6324697941093945
+          ]
+        },
+        "entropy": {
+          "blocks_total": 5801,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9668333333333333,
+          "fpr_run_mean": 0.9668333333333333,
+          "fpr_run_ci95_t": [
+            0.9537763744405984,
+            0.9798902922260683
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9545,
+            0.9783333333333334
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9619859977267508,
+            0.971219518673722
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 4.59586374309046,
+      "entropy_ci95": [
+        4.547127064029123,
+        4.644600422151797
+      ],
+      "unique_ratio_mean": 0.9941541884551917,
+      "unique_ratio_ci95": [
+        0.9923167272129989,
+        0.9959916496973844
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 36,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 37.08583333333333,
+      "variants": {
+        "combined": {
+          "blocks_total": 5912,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9853333333333333,
+          "fpr_run_mean": 0.9853333333333334,
+          "fpr_run_ci95_t": [
+            0.971852344267852,
+            0.9988143223988147
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9718333333333333,
+            0.9961666666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9819610775927962,
+            0.9882207312451132
+          ]
+        },
+        "volume": {
+          "blocks_total": 5912,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9853333333333333,
+          "fpr_run_mean": 0.9853333333333334,
+          "fpr_run_ci95_t": [
+            0.971852344267852,
+            0.9988143223988147
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9718333333333333,
+            0.9961666666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9819610775927962,
+            0.9882207312451132
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 5.173282771082274,
+      "entropy_ci95": [
+        5.133488181821429,
+        5.213077360343119
+      ],
+      "unique_ratio_mean": 0.9912592477641317,
+      "unique_ratio_ci95": [
+        0.9894991716958561,
+        0.9930193238324072
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 60,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 59.18416666666667,
+      "variants": {
+        "combined": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 5.845304203291326,
+      "entropy_ci95": [
+        5.79818395922818,
+        5.892424447354471
+      ],
+      "unique_ratio_mean": 0.9852155624739364,
+      "unique_ratio_ci95": [
+        0.9827957962094251,
+        0.9876353287384476
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 120,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 118.06883333333333,
+      "variants": {
+        "combined": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 6.826770885621228,
+      "entropy_ci95": [
+        6.786869348978512,
+        6.866672422263943
+      ],
+      "unique_ratio_mean": 0.9747267157555017,
+      "unique_ratio_ci95": [
+        0.9721467570604809,
+        0.9773066744505226
+      ]
+    },
+    {
+      "behavior": "random2048",
+      "level": 300,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 301.7215,
+      "variants": {
+        "combined": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 8.087939860504099,
+      "entropy_ci95": [
+        8.055010875377846,
+        8.120868845630351
+      ],
+      "unique_ratio_mean": 0.9283796679924473,
+      "unique_ratio_ci95": [
+        0.9229939662354146,
+        0.93376536974948
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 5,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 6.007,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "entropy": {
+          "blocks_total": 2,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0003333333333333333,
+          "fpr_run_mean": 0.0003333333333333334,
+          "fpr_run_ci95_t": [
+            -0.00036434135146942096,
+            0.0010310080181360876
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.001
+          ],
+          "fpr_clopper_pearson_ci95": [
+            4.037076261912849e-05,
+            0.0012035904650966366
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 2.4779422120668437,
+      "entropy_ci95": [
+        2.446571071741878,
+        2.5093133523918096
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 12,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 12.9385,
+      "variants": {
+        "combined": {
+          "blocks_total": 15,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0025,
+          "fpr_run_mean": 0.0025,
+          "fpr_run_ci95_t": [
+            -0.00026649647604214425,
+            0.005266496476042144
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.00016666666666666666,
+            0.005333333333333333
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0013998851654661456,
+            0.004120022796182768
+          ]
+        },
+        "volume": {
+          "blocks_total": 15,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0025,
+          "fpr_run_mean": 0.0025,
+          "fpr_run_ci95_t": [
+            -0.00026649647604214425,
+            0.005266496476042144
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.00016666666666666666,
+            0.005333333333333333
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0013998851654661456,
+            0.004120022796182768
+          ]
+        },
+        "entropy": {
+          "blocks_total": 1442,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.24033333333333334,
+          "fpr_run_mean": 0.24033333333333337,
+          "fpr_run_ci95_t": [
+            0.2065051029682939,
+            0.2741615636983728
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.21183333333333335,
+            0.27316666666666667
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.22956666813797447,
+            0.2513530080673898
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 3.638618292318687,
+      "entropy_ci95": [
+        3.6060235640857434,
+        3.671213020551631
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 18,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 19.054166666666667,
+      "variants": {
+        "combined": {
+          "blocks_total": 999,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.1665,
+          "fpr_run_mean": 0.1665,
+          "fpr_run_ci95_t": [
+            0.12364318999543032,
+            0.20935681000456968
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.1275,
+            0.2070041666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.15715439836275047,
+            0.1761710306846235
+          ]
+        },
+        "volume": {
+          "blocks_total": 999,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.1665,
+          "fpr_run_mean": 0.1665,
+          "fpr_run_ci95_t": [
+            0.12364318999543032,
+            0.20935681000456968
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.1275,
+            0.2070041666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.15715439836275047,
+            0.1761710306846235
+          ]
+        },
+        "entropy": {
+          "blocks_total": 4704,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.784,
+          "fpr_run_mean": 0.784,
+          "fpr_run_ci95_t": [
+            0.7659865911537106,
+            0.8020134088462895
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.7676666666666667,
+            0.8
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.7733673015779305,
+            0.794355872964152
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 4.212790184145261,
+      "entropy_ci95": [
+        4.182761409202481,
+        4.242818959088041
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 24,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 24.443333333333335,
+      "variants": {
+        "combined": {
+          "blocks_total": 3380,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.5633333333333334,
+          "fpr_run_mean": 0.5633333333333335,
+          "fpr_run_ci95_t": [
+            0.5166826665044828,
+            0.6099840001621841
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.5198333333333334,
+            0.604
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.5506721279574585,
+            0.5759329148955807
+          ]
+        },
+        "volume": {
+          "blocks_total": 3380,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.5633333333333334,
+          "fpr_run_mean": 0.5633333333333335,
+          "fpr_run_ci95_t": [
+            0.5166826665044828,
+            0.6099840001621841
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.5198333333333334,
+            0.604
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.5506721279574585,
+            0.5759329148955807
+          ]
+        },
+        "entropy": {
+          "blocks_total": 5851,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9751666666666666,
+          "fpr_run_mean": 0.9751666666666665,
+          "fpr_run_ci95_t": [
+            0.963291356422923,
+            0.9870419769104101
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9633333333333334,
+            0.9855
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9709071077298193,
+            0.9789551985938364
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 4.581379666576565,
+      "entropy_ci95": [
+        4.545424385194369,
+        4.61733494795876
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 36,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 36.42016666666667,
+      "variants": {
+        "combined": {
+          "blocks_total": 5925,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9875,
+          "fpr_run_mean": 0.9875,
+          "fpr_run_ci95_t": [
+            0.9797595169382725,
+            0.9952404830617276
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9796666666666667,
+            0.9941666666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9843560169278566,
+            0.9901556104816117
+          ]
+        },
+        "volume": {
+          "blocks_total": 5925,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9875,
+          "fpr_run_mean": 0.9875,
+          "fpr_run_ci95_t": [
+            0.9797595169382725,
+            0.9952404830617276
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9796666666666667,
+            0.9941666666666666
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9843560169278566,
+            0.9901556104816117
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 5.1667120311502845,
+      "entropy_ci95": [
+        5.134804286944945,
+        5.198619775355624
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 60,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 61.465333333333334,
+      "variants": {
+        "combined": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 5.9295407003881895,
+      "entropy_ci95": [
+        5.895474394405801,
+        5.963607006370578
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 120,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 123.36466666666665,
+      "variants": {
+        "combined": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 6.939824709818001,
+      "entropy_ci95": [
+        6.8934878144896485,
+        6.986161605146353
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "sequential",
+      "level": 300,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 295.4878333333334,
+      "variants": {
+        "combined": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "unique": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        }
+      },
+      "entropy_mean": 8.204431761630001,
+      "entropy_ci95": [
+        8.170282851821975,
+        8.238580671438028
+      ],
+      "unique_ratio_mean": 1.0,
+      "unique_ratio_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 5,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 6.026166666666667,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 5192,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.8653333333333333,
+          "fpr_run_mean": 0.8653333333333333,
+          "fpr_run_ci95_t": [
+            0.8527670317183805,
+            0.877899634948286
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.854,
+            0.8766666666666667
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.8564346572449583,
+            0.8738751440627359
+          ]
+        }
+      },
+      "entropy_mean": 2.1770255908739617,
+      "entropy_ci95": [
+        2.142246748701164,
+        2.2118044330467597
+      ],
+      "unique_ratio_mean": 0.8572852228245612,
+      "unique_ratio_ci95": [
+        0.8510064800576677,
+        0.8635639655914548
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 12,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 12.826666666666668,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 3,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0005,
+          "fpr_run_mean": 0.0005,
+          "fpr_run_ci95_t": [
+            -0.0002634258562656082,
+            0.0012634258562656082
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0013333333333333333
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.00010312389215285483,
+            0.0014605100581662194
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 2990,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.49833333333333335,
+          "fpr_run_mean": 0.49833333333333335,
+          "fpr_run_ci95_t": [
+            0.4567599445499937,
+            0.539906722116673
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.46216250000000003,
+            0.5371708333333333
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.48560195993624183,
+            0.5110663282965576
+          ]
+        }
+      },
+      "entropy_mean": 2.9856878523561723,
+      "entropy_ci95": [
+        2.9551948768877696,
+        3.016180827824575
+      ],
+      "unique_ratio_mean": 0.704546846698648,
+      "unique_ratio_ci95": [
+        0.6944873470199783,
+        0.7146063463773177
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 18,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 18.866333333333333,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 770,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.12833333333333333,
+          "fpr_run_mean": 0.12833333333333335,
+          "fpr_run_ci95_t": [
+            0.09838289176467126,
+            0.15828377490199547
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.10183333333333333,
+            0.156
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.11996932489562111,
+            0.13706048737516544
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 898,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.14966666666666667,
+          "fpr_run_mean": 0.14966666666666667,
+          "fpr_run_ci95_t": [
+            0.12550433738396383,
+            0.1738289959493695
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.12799583333333334,
+            0.1715
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.14072855479389645,
+            0.1589468071274192
+          ]
+        }
+      },
+      "entropy_mean": 3.2974973221191624,
+      "entropy_ci95": [
+        3.275129960168921,
+        3.3198646840694037
+      ],
+      "unique_ratio_mean": 0.6029962351506821,
+      "unique_ratio_ci95": [
+        0.5946075154359355,
+        0.6113849548654288
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 24,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 24.529333333333334,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 3336,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.556,
+          "fpr_run_mean": 0.5559999999999999,
+          "fpr_run_ci95_t": [
+            0.5021516351073175,
+            0.6098483648926823
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.5056583333333334,
+            0.6031708333333332
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.5433200691508892,
+            0.5686254432625037
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 242,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.04033333333333333,
+          "fpr_run_mean": 0.04033333333333333,
+          "fpr_run_ci95_t": [
+            0.02373898524264868,
+            0.05692768142401798
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.026833333333333334,
+            0.0565
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.03549655444528216,
+            0.045623232031015565
+          ]
+        }
+      },
+      "entropy_mean": 3.4714556898456173,
+      "entropy_ci95": [
+        3.448308138966237,
+        3.4946032407249974
+      ],
+      "unique_ratio_mean": 0.5288623677476215,
+      "unique_ratio_ci95": [
+        0.5193605639838256,
+        0.5383641715114175
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 36,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 37.526500000000006,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 5931,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.9885,
+          "fpr_run_mean": 0.9884999999999999,
+          "fpr_run_ci95_t": [
+            0.97838371707036,
+            0.9986162829296399
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.9785,
+            0.9968333333333333
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9854682770143366,
+            0.9910416001900972
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 5,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0008333333333333334,
+          "fpr_run_mean": 0.0008333333333333333,
+          "fpr_run_ci95_t": [
+            -0.0009108533786735527,
+            0.0025775200453402192
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0025
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.00027063467017102025,
+            0.0019436415398681349
+          ]
+        }
+      },
+      "entropy_mean": 3.6643235258091416,
+      "entropy_ci95": [
+        3.6477826232325192,
+        3.680864428385764
+      ],
+      "unique_ratio_mean": 0.39438753029448315,
+      "unique_ratio_ci95": [
+        0.386064919954186,
+        0.4027101406347803
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 60,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 61.091666666666676,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        }
+      },
+      "entropy_mean": 3.802685351297124,
+      "entropy_ci95": [
+        3.78966749609965,
+        3.8157032064945984
+      ],
+      "unique_ratio_mean": 0.2596863515910179,
+      "unique_ratio_ci95": [
+        0.2542068255991353,
+        0.26516587758290044
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 120,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 119.89500000000001,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        }
+      },
+      "entropy_mean": 3.903945879614922,
+      "entropy_ci95": [
+        3.894008760149701,
+        3.913882999080143
+      ],
+      "unique_ratio_mean": 0.13438434238497343,
+      "unique_ratio_ci95": [
+        0.13115183747203604,
+        0.13761684729791082
+      ]
+    },
+    {
+      "behavior": "smallpool16",
+      "level": 300,
+      "n_runs": 20,
+      "total_decisions": 6000,
+      "samples_mean": 298.75216666666665,
+      "variants": {
+        "combined": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "volume": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
+        "entropy": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        },
+        "unique": {
+          "blocks_total": 0,
+          "decisions_total": 6000,
+          "fpr_pooled": 0.0,
+          "fpr_run_mean": 0.0,
+          "fpr_run_ci95_t": [
+            0.0,
+            0.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.0,
+            0.000614624283417639
+          ]
+        }
+      },
+      "entropy_mean": 3.9631732302368166,
+      "entropy_ci95": [
+        3.9594054491562,
+        3.966941011317433
+      ],
+      "unique_ratio_mean": 0.053701235722709226,
+      "unique_ratio_ci95": [
+        0.052575029950044844,
+        0.05482744149537361
+      ]
+    }
+  ]
+}

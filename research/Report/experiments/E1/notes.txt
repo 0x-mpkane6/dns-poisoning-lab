@@ -1,0 +1,44 @@
+E1 -- FPR theo tốc độ fragment hợp lệ (operating boundary của Rℓ₂)
+======================================================================
+
+MỤC TIÊU (outline E1): xác định operating boundary của detector trên
+benign traffic và đo FPR ở/ngoài vùng samples < MIN_SAMPLES.
+
+THIẾT LẬP:
+  - detector: D:/ATM/Project/Code/labs/r2entropy/resolver/resolver.py (import trực tiếp, không cài lại)
+  - operating point B5: {'min_samples': 24, 'entropy_threshold': 4.0, 'unique_ratio_threshold': 0.7, 'window_seconds': 2.0}
+  - levels samples/window: [5, 12, 18, 24, 36, 60, 120, 300]
+  - behaviors: ['random2048', 'sequential', 'smallpool16']
+  - K = 20 runs/cell, 300 decisions/run
+  - FPR = false positives = benign tc_block; FPR = blocks / decisions
+
+KẾT QUẢ CHÍNH (variant combined = B5):
+  [random2048]
+    s/win=  5: FPR=0.000 CI=[0.000,0.000] entropy=2.453 uniq=0.999
+    s/win= 12: FPR=0.001 CI=[-0.001,0.003] entropy=3.594 uniq=0.998
+    s/win= 18: FPR=0.140 CI=[0.098,0.182] entropy=4.205 uniq=0.996
+    s/win= 24: FPR=0.620 CI=[0.558,0.682] entropy=4.596 uniq=0.994
+    s/win= 36: FPR=0.985 CI=[0.972,0.999] entropy=5.173 uniq=0.991
+    s/win= 60: FPR=1.000 CI=[1.000,1.000] entropy=5.845 uniq=0.985
+    s/win=120: FPR=1.000 CI=[1.000,1.000] entropy=6.827 uniq=0.975
+    s/win=300: FPR=1.000 CI=[1.000,1.000] entropy=8.088 uniq=0.928
+  [sequential]
+    s/win=  5: FPR=0.000 CI=[0.000,0.000] entropy=2.478 uniq=1.000
+    s/win= 12: FPR=0.003 CI=[-0.000,0.005] entropy=3.639 uniq=1.000
+    s/win= 18: FPR=0.167 CI=[0.124,0.209] entropy=4.213 uniq=1.000
+    s/win= 24: FPR=0.563 CI=[0.517,0.610] entropy=4.581 uniq=1.000
+    s/win= 36: FPR=0.988 CI=[0.980,0.995] entropy=5.167 uniq=1.000
+    s/win= 60: FPR=1.000 CI=[1.000,1.000] entropy=5.930 uniq=1.000
+    s/win=120: FPR=1.000 CI=[1.000,1.000] entropy=6.940 uniq=1.000
+    s/win=300: FPR=1.000 CI=[1.000,1.000] entropy=8.204 uniq=1.000
+  [smallpool16]
+    s/win=  5: FPR=0.000 CI=[0.000,0.000] entropy=2.177 uniq=0.857
+    s/win= 12: FPR=0.000 CI=[0.000,0.000] entropy=2.986 uniq=0.705
+    s/win= 18: FPR=0.000 CI=[0.000,0.000] entropy=3.297 uniq=0.603
+    s/win= 24: FPR=0.000 CI=[0.000,0.000] entropy=3.471 uniq=0.529
+    s/win= 36: FPR=0.000 CI=[0.000,0.000] entropy=3.664 uniq=0.394
+    s/win= 60: FPR=0.000 CI=[0.000,0.000] entropy=3.803 uniq=0.260
+    s/win=120: FPR=0.000 CI=[0.000,0.000] entropy=3.904 uniq=0.134
+    s/win=300: FPR=0.000 CI=[0.000,0.000] entropy=3.963 uniq=0.054
+
+DIỄN GIẢI: xem E1_report.md.

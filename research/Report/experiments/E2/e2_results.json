@@ -1,0 +1,1110 @@
+{
+  "meta": {
+    "experiment": "E2 -- volume-matched benign vs attack",
+    "run_id": "20260805_191309",
+    "generated_utc": "2026-08-05T12:13:12Z",
+    "code_git_commit": "1c32ef1",
+    "python": "3.10.11",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "detector_source": "D:/ATM/Project/Code/labs/r2entropy/resolver/resolver.py",
+    "operating_point": {
+      "min_samples": 24,
+      "entropy_threshold": 4.0,
+      "unique_ratio_threshold": 0.7,
+      "window_seconds": 2.0
+    },
+    "levels": [
+      24,
+      60,
+      120,
+      200
+    ],
+    "conditions": {
+      "benign": "Benign (auth model: random IPID 0..2047)",
+      "attack_sweep": "Attack sweep (continuous, IPID 0..2047) -- real default",
+      "attack_random": "Attack random spoof (continuous, ~ gi\u1ed1ng benign)",
+      "attack_fixed": "Attack fixed IPID=777 (adaptive / low-entropy evasion)",
+      "attack_bursty": "Attack sweep, bursty arrival"
+    },
+    "variants": [
+      "combined",
+      "volume",
+      "entropy",
+      "unique"
+    ],
+    "primary_variant": "combined",
+    "runs_per_cell": 20,
+    "windows_per_run": 150,
+    "benign_frac_in_attack": 0.1,
+    "experiment_seed": 20260805,
+    "note": "Controlled-emulation testbed: real resolver.py detector primitives, Poisson sliding window, attacker IPID models from spoof_r2entropy.py. No Docker / real IP fragmentation (E5)."
+  },
+  "block_rates": [
+    {
+      "condition": "benign",
+      "level": 24,
+      "is_attack": false,
+      "samples_mean": 24.823333333333334,
+      "entropy_mean": 4.592318702582551,
+      "unique_ratio_mean": 0.9943603055723129,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.6106666666666667,
+          "ci95": [
+            0.53838583968702,
+            0.6829474936463134
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 0.6106666666666667,
+          "ci95": [
+            0.53838583968702,
+            0.6829474936463134
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.9663333333333334,
+          "ci95": [
+            0.9491996978106335,
+            0.9834669688560332
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "benign",
+      "level": 60,
+      "is_attack": false,
+      "samples_mean": 59.93266666666667,
+      "entropy_mean": 5.867994711422355,
+      "unique_ratio_mean": 0.9856912023480751,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "benign",
+      "level": 120,
+      "is_attack": false,
+      "samples_mean": 115.86500000000001,
+      "entropy_mean": 6.7986390016829885,
+      "unique_ratio_mean": 0.9747143881494192,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "benign",
+      "level": 200,
+      "is_attack": false,
+      "samples_mean": 197.91699999999997,
+      "entropy_mean": 7.531101677842796,
+      "unique_ratio_mean": 0.9529085348757025,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_sweep",
+      "level": 24,
+      "is_attack": true,
+      "samples_mean": 24.799666666666667,
+      "entropy_mean": 4.59538405165641,
+      "unique_ratio_mean": 0.9993423741745342,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.5866666666666666,
+          "ci95": [
+            0.49772880561368105,
+            0.6756045277196521
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 0.5866666666666666,
+          "ci95": [
+            0.49772880561368105,
+            0.6756045277196521
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.9616666666666667,
+          "ci95": [
+            0.9390339405168685,
+            0.9842993928164648
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_sweep",
+      "level": 60,
+      "is_attack": true,
+      "samples_mean": 61.025666666666666,
+      "entropy_mean": 5.914485730098272,
+      "unique_ratio_mean": 0.9971099599149872,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_sweep",
+      "level": 120,
+      "is_attack": true,
+      "samples_mean": 121.21933333333331,
+      "entropy_mean": 6.90454630342837,
+      "unique_ratio_mean": 0.9942658617452194,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_sweep",
+      "level": 200,
+      "is_attack": true,
+      "samples_mean": 198.67933333333332,
+      "entropy_mean": 7.615342129621854,
+      "unique_ratio_mean": 0.9917102972296048,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_random",
+      "level": 24,
+      "is_attack": true,
+      "samples_mean": 24.61866666666667,
+      "entropy_mean": 4.578466349371327,
+      "unique_ratio_mean": 0.992790246288819,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.5703333333333332,
+          "ci95": [
+            0.49639800563492176,
+            0.6442686610317447
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 0.5703333333333332,
+          "ci95": [
+            0.49639800563492176,
+            0.6442686610317447
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.9773333333333334,
+          "ci95": [
+            0.9599348494367926,
+            0.9947318172298741
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_random",
+      "level": 60,
+      "is_attack": true,
+      "samples_mean": 60.71633333333333,
+      "entropy_mean": 5.879258825635175,
+      "unique_ratio_mean": 0.9837382972407724,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_random",
+      "level": 120,
+      "is_attack": true,
+      "samples_mean": 118.86999999999998,
+      "entropy_mean": 6.831910708828028,
+      "unique_ratio_mean": 0.9726707467198322,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_random",
+      "level": 200,
+      "is_attack": true,
+      "samples_mean": 200.97066666666666,
+      "entropy_mean": 7.544671932213386,
+      "unique_ratio_mean": 0.9502658528316548,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_fixed",
+      "level": 24,
+      "is_attack": true,
+      "samples_mean": 24.589666666666666,
+      "entropy_mean": 0.5576504370235759,
+      "unique_ratio_mean": 0.13654706429560567,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 0.587,
+          "ci95": [
+            0.5060641971394894,
+            0.6679358028605106
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_fixed",
+      "level": 60,
+      "is_attack": true,
+      "samples_mean": 61.27366666666667,
+      "entropy_mean": 0.6965723151520892,
+      "unique_ratio_mean": 0.11195209421784662,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_fixed",
+      "level": 120,
+      "is_attack": true,
+      "samples_mean": 121.08566666666665,
+      "entropy_mean": 0.7817477274298743,
+      "unique_ratio_mean": 0.10245652059685176,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_fixed",
+      "level": 200,
+      "is_attack": true,
+      "samples_mean": 196.65266666666668,
+      "entropy_mean": 0.9568770840840968,
+      "unique_ratio_mean": 0.11144949869362619,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_bursty",
+      "level": 24,
+      "is_attack": true,
+      "samples_mean": 29.260333333333328,
+      "entropy_mean": 4.831816198058172,
+      "unique_ratio_mean": 0.9988350858524901,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 0.8193333333333334,
+          "ci95": [
+            0.7568829876700723,
+            0.8817836789965944
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 0.8193333333333334,
+          "ci95": [
+            0.7568829876700723,
+            0.8817836789965944
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.984,
+          "ci95": [
+            0.9709026363217335,
+            0.9970973636782665
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_bursty",
+      "level": 60,
+      "is_attack": true,
+      "samples_mean": 75.50466666666665,
+      "entropy_mean": 6.222888670388144,
+      "unique_ratio_mean": 0.9966786433828408,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_bursty",
+      "level": 120,
+      "is_attack": true,
+      "samples_mean": 148.63799999999998,
+      "entropy_mean": 7.197669909072802,
+      "unique_ratio_mean": 0.9930940230171276,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_bursty",
+      "level": 200,
+      "is_attack": true,
+      "samples_mean": 248.9333333333333,
+      "entropy_mean": 7.933032906367609,
+      "unique_ratio_mean": 0.9874245255928832,
+      "variants": {
+        "combined": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    }
+  ],
+  "discrimination": [
+    {
+      "attack": "attack_sweep",
+      "level": 24,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5097972904142128,
+      "pr_auc_entropy": 0.522748832500515,
+      "pr_auc_unique": 0.5326365299114778,
+      "fpr_at_tpr95_entropy": 0.9663333333333334,
+      "fpr_at_tpr95_volume": 0.9706666666666667,
+      "b5_margin_mean": -0.024000000000000014,
+      "b2_margin_mean": -0.024000000000000014,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_sweep",
+      "level": 60,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5530992353092977,
+      "pr_auc_entropy": 0.5920835005588759,
+      "pr_auc_unique": 0.6696559878971272,
+      "fpr_at_tpr95_entropy": 0.9273333333333333,
+      "fpr_at_tpr95_volume": 0.9526666666666667,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_sweep",
+      "level": 120,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.6082972392714943,
+      "pr_auc_entropy": 0.6967513324110766,
+      "pr_auc_unique": 0.9142674672545817,
+      "fpr_at_tpr95_entropy": 0.7406666666666667,
+      "fpr_at_tpr95_volume": 0.8583333333333333,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_sweep",
+      "level": 200,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5087023010020834,
+      "pr_auc_entropy": 0.7814222492745467,
+      "pr_auc_unique": 0.9928933686174993,
+      "fpr_at_tpr95_entropy": 0.8253333333333334,
+      "fpr_at_tpr95_volume": 0.9616666666666667,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_random",
+      "level": 24,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.4899571063580377,
+      "pr_auc_entropy": 0.508522534999508,
+      "pr_auc_unique": 0.5185846854747056,
+      "fpr_at_tpr95_entropy": 0.946,
+      "fpr_at_tpr95_volume": 0.9523333333333334,
+      "b5_margin_mean": -0.04033333333333333,
+      "b2_margin_mean": -0.04033333333333333,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_random",
+      "level": 60,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5473759522126042,
+      "pr_auc_entropy": 0.5433899149070219,
+      "pr_auc_unique": 0.5314824123826154,
+      "fpr_at_tpr95_entropy": 0.969,
+      "fpr_at_tpr95_volume": 0.982,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_random",
+      "level": 120,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5534784418202479,
+      "pr_auc_entropy": 0.5469885276902499,
+      "pr_auc_unique": 0.5374706278804713,
+      "fpr_at_tpr95_entropy": 0.9673333333333334,
+      "fpr_at_tpr95_volume": 0.9753333333333334,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_random",
+      "level": 200,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.6134522462959686,
+      "pr_auc_entropy": 0.6043961750327744,
+      "pr_auc_unique": 0.5686102299382434,
+      "fpr_at_tpr95_entropy": 0.995,
+      "fpr_at_tpr95_volume": 0.998,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_fixed",
+      "level": 24,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.48399076548273245,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 0.9999999999999998,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.9523333333333334,
+      "b5_margin_mean": -0.6106666666666667,
+      "b2_margin_mean": -0.023666666666666673,
+      "paired_b5_minus_b2_margin": {
+        "mean": -0.587,
+        "ci95": [
+          -0.6679358028605106,
+          -0.5060641971394894
+        ]
+      }
+    },
+    {
+      "attack": "attack_fixed",
+      "level": 60,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.555564525845837,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 0.9999999999999999,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.9686666666666667,
+      "b5_margin_mean": -1.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": -1.0,
+        "ci95": [
+          -1.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_fixed",
+      "level": 120,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.6020005723339761,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 1.0,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.8583333333333333,
+      "b5_margin_mean": -1.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": -1.0,
+        "ci95": [
+          -1.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_fixed",
+      "level": 200,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.4849428589349142,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 1.0,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.9803333333333333,
+      "b5_margin_mean": -1.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": -1.0,
+        "ci95": [
+          -1.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_bursty",
+      "level": 24,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.7232340081762472,
+      "pr_auc_entropy": 0.7356485363143372,
+      "pr_auc_unique": 0.5275209209999719,
+      "fpr_at_tpr95_entropy": 0.883,
+      "fpr_at_tpr95_volume": 0.8886666666666667,
+      "b5_margin_mean": 0.20866666666666664,
+      "b2_margin_mean": 0.20866666666666664,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_bursty",
+      "level": 60,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.926554641343838,
+      "pr_auc_entropy": 0.9404305330833267,
+      "pr_auc_unique": 0.6690964323819384,
+      "fpr_at_tpr95_entropy": 0.3393333333333333,
+      "fpr_at_tpr95_volume": 0.43133333333333335,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_bursty",
+      "level": 120,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.9784140446537278,
+      "pr_auc_entropy": 0.9885161958978246,
+      "pr_auc_unique": 0.915293372568549,
+      "fpr_at_tpr95_entropy": 0.053,
+      "fpr_at_tpr95_volume": 0.10233333333333333,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_bursty",
+      "level": 200,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.9999074537858915,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 0.9806071049693786,
+      "fpr_at_tpr95_entropy": 0.0,
+      "fpr_at_tpr95_volume": 0.0,
+      "b5_margin_mean": 0.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}
