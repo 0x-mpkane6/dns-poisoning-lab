@@ -1,5 +1,10 @@
 # E1 — Biên bản kiểm định số liệu (verification memo)
 
+> **CẢNH BÁO — tài liệu này đã LỖI THỜI một phần (2026-08-06).** Biên bản được viết cho phiên bản harness
+> trước khi bổ sung biến thể `legacy` (Rℓ2 gốc) và phần mở rộng tải cao (§3.6 của E1_report). Các kiểm tra
+> tính đúng đắn/tái lập trong đây vẫn còn hiệu lực (đã chạy lại: `e1_verify.py` 11/11 PASS), nhưng
+> run_id/commit và danh sách biến thể trong đây không còn khớp. Số liệu hiện hành: xem `e1_results.json`.
+
 **Mục đích:** xác nhận số liệu E1 đáng tin và đúng yêu cầu outline của thầy, bằng kiểm tra tự tay chạy (không chỉ dựa vào audit trước).
 **Ngày:** 2026-08-05 · **Run kiểm định:** `e1_verify.py` (11/11 PASS) + re-run tất định + soát dữ liệu thô.
 **Kết luận:** Số liệu E1 **tin cậy**. Tái lập bit-for-bit, primitive detector khớp công thức chuẩn, FPR tái dựng độc lập nhất quán, và bộ yêu cầu E1/P0 của thầy được đáp ứng (trừ metric hệ thống được hoãn có công bố).

@@ -1,9 +1,9 @@
 {
   "meta": {
     "experiment": "E1 -- FPR vs benign fragment rate (operating boundary)",
-    "run_id": "20260805_185616",
-    "generated_utc": "2026-08-05T11:56:19Z",
-    "code_git_commit": "1c32ef1",
+    "run_id": "20260806_215941",
+    "generated_utc": "2026-08-06T14:59:44Z",
+    "code_git_commit": "5086e45",
     "python": "3.10.11",
     "platform": "Windows-10-10.0.26200-SP0",
     "detector_source": "D:/ATM/Project/Code/labs/r2entropy/resolver/resolver.py",
@@ -13,6 +13,10 @@
       "entropy_threshold": 4.0,
       "unique_ratio_threshold": 0.7,
       "window_seconds": 2.0
+    },
+    "detectors": {
+      "legacy": "R\u21132 g\u1ed1c (paper POPS, Algorithm 3): ch\u1eb7n m\u1ecdi fragment",
+      "combined": "R\u21132 c\u1ea3i ti\u1ebfn c\u1ee7a nh\u00f3m: samples>=24 AND entropy>=4.0 AND unique_ratio>=0.70"
     },
     "levels_samples_per_window": [
       5,
@@ -30,6 +34,7 @@
       "smallpool16": "Small IPID pool (uniform 0..15) -- NAT / constrained host"
     },
     "variants": [
+      "legacy",
       "combined",
       "volume",
       "entropy",
@@ -49,6 +54,24 @@
       "total_decisions": 6000,
       "samples_mean": 5.9238333333333335,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -140,6 +163,24 @@
       "total_decisions": 6000,
       "samples_mean": 12.604,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 8,
           "decisions_total": 6000,
@@ -231,6 +272,24 @@
       "total_decisions": 6000,
       "samples_mean": 19.03066666666667,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 841,
           "decisions_total": 6000,
@@ -322,6 +381,24 @@
       "total_decisions": 6000,
       "samples_mean": 24.90566666666667,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 3721,
           "decisions_total": 6000,
@@ -413,6 +490,24 @@
       "total_decisions": 6000,
       "samples_mean": 37.08583333333333,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 5912,
           "decisions_total": 6000,
@@ -504,6 +599,24 @@
       "total_decisions": 6000,
       "samples_mean": 59.18416666666667,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 6000,
           "decisions_total": 6000,
@@ -595,6 +708,24 @@
       "total_decisions": 6000,
       "samples_mean": 118.06883333333333,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 6000,
           "decisions_total": 6000,
@@ -686,6 +817,24 @@
       "total_decisions": 6000,
       "samples_mean": 301.7215,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 6000,
           "decisions_total": 6000,
@@ -777,6 +926,24 @@
       "total_decisions": 6000,
       "samples_mean": 6.007,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -868,6 +1035,24 @@
       "total_decisions": 6000,
       "samples_mean": 12.9385,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 15,
           "decisions_total": 6000,
@@ -959,6 +1144,24 @@
       "total_decisions": 6000,
       "samples_mean": 19.054166666666667,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 999,
           "decisions_total": 6000,
@@ -1050,6 +1253,24 @@
       "total_decisions": 6000,
       "samples_mean": 24.443333333333335,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 3380,
           "decisions_total": 6000,
@@ -1141,6 +1362,24 @@
       "total_decisions": 6000,
       "samples_mean": 36.42016666666667,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 5925,
           "decisions_total": 6000,
@@ -1232,6 +1471,24 @@
       "total_decisions": 6000,
       "samples_mean": 61.465333333333334,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 6000,
           "decisions_total": 6000,
@@ -1323,6 +1580,24 @@
       "total_decisions": 6000,
       "samples_mean": 123.36466666666665,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 6000,
           "decisions_total": 6000,
@@ -1414,6 +1689,24 @@
       "total_decisions": 6000,
       "samples_mean": 295.4878333333334,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 6000,
           "decisions_total": 6000,
@@ -1505,6 +1798,24 @@
       "total_decisions": 6000,
       "samples_mean": 6.026166666666667,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -1596,6 +1907,24 @@
       "total_decisions": 6000,
       "samples_mean": 12.826666666666668,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -1687,6 +2016,24 @@
       "total_decisions": 6000,
       "samples_mean": 18.866333333333333,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -1778,6 +2125,24 @@
       "total_decisions": 6000,
       "samples_mean": 24.529333333333334,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -1869,6 +2234,24 @@
       "total_decisions": 6000,
       "samples_mean": 37.526500000000006,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -1960,6 +2343,24 @@
       "total_decisions": 6000,
       "samples_mean": 61.091666666666676,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -2051,6 +2452,24 @@
       "total_decisions": 6000,
       "samples_mean": 119.89500000000001,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -2142,6 +2561,24 @@
       "total_decisions": 6000,
       "samples_mean": 298.75216666666665,
       "variants": {
+        "legacy": {
+          "blocks_total": 6000,
+          "decisions_total": 6000,
+          "fpr_pooled": 1.0,
+          "fpr_run_mean": 1.0,
+          "fpr_run_ci95_t": [
+            1.0,
+            1.0
+          ],
+          "fpr_cluster_bootstrap_ci95": [
+            1.0,
+            1.0
+          ],
+          "fpr_clopper_pearson_ci95": [
+            0.9993853757165824,
+            1.0
+          ]
+        },
         "combined": {
           "blocks_total": 0,
           "decisions_total": 6000,
@@ -2225,6 +2662,336 @@
         0.052575029950044844,
         0.05482744149537361
       ]
+    }
+  ],
+  "high_load": [
+    {
+      "level": 600,
+      "samples_mean": 591.5598333333332,
+      "entropy_mean": 8.940042454377668,
+      "unique_ratio_mean": 0.8707482570445226,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "level": 1200,
+      "samples_mean": 1188.9508333333333,
+      "entropy_mean": 9.700456592793602,
+      "unique_ratio_mean": 0.7590949006745078,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "level": 1400,
+      "samples_mean": 1399.2756666666667,
+      "entropy_mean": 9.852994259982959,
+      "unique_ratio_mean": 0.7242785395434744,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "level": 1600,
+      "samples_mean": 1598.2345,
+      "entropy_mean": 9.969985550975613,
+      "unique_ratio_mean": 0.6931936640481628,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 0.2991666666666667,
+        "ci95": [
+          0.1014778542668765,
+          0.4968554790664569
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 0.2991666666666667,
+        "ci95": [
+          0.1014778542668765,
+          0.4968554790664569
+        ]
+      }
+    },
+    {
+      "level": 1800,
+      "samples_mean": 1802.0280000000002,
+      "entropy_mean": 10.068102013708758,
+      "unique_ratio_mean": 0.6639649171404067,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "level": 2000,
+      "samples_mean": 2000.1043333333334,
+      "entropy_mean": 10.161908667155064,
+      "unique_ratio_mean": 0.6411476912572445,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "level": 3000,
+      "samples_mean": 3017.5273333333334,
+      "entropy_mean": 10.43571687068938,
+      "unique_ratio_mean": 0.5244863455512088,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "level": 6000,
+      "samples_mean": 5987.730333333332,
+      "entropy_mean": 10.728347045153011,
+      "unique_ratio_mean": 0.3237364525111279,
+      "legacy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "combined": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "volume": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "entropy": {
+        "fpr_run_mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unique": {
+        "fpr_run_mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      }
     }
   ]
 }

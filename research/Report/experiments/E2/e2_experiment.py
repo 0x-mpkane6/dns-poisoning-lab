@@ -89,10 +89,16 @@ FIXED_IPID = 777            # attacker FIXED_IPID default
 
 # E2: matched-volume levels (outline recommends around {24, 60, 120, 200}).
 LEVELS = [24, 60, 120, 200]
-VARIANTS = ["combined", "volume", "entropy", "unique"]
+# legacy = Rℓ2 gốc (chặn mọi fragment); combined = Rℓ2 cải tiến của nhóm (3 tham số).
+VARIANTS = ["legacy", "combined", "volume", "entropy", "unique"]
 PRIMARY_VARIANT = "combined"
 WARMUP_MULT = 3.0
 EXPERIMENT_SEED = 20260805
+
+# Burst model for attack_bursty: square wave, coefficients sum to 2.0 so the mean
+# arrival rate equals the other conditions' rate (volume stays matched).
+BURST_HIGH, BURST_LOW = 1.75, 0.25
+BURST_HALF_PERIOD = 1.5      # seconds; full cycle 3.0 s (not a divisor of the 2.0 s window)
 
 # Conditions: one benign (negative class) + four attack models (positive class).
 CONDITIONS = {
@@ -101,6 +107,12 @@ CONDITIONS = {
     "attack_random": {"is_attack": True,  "label": "Attack random spoof (continuous, ~ giống benign)"},
     "attack_fixed":  {"is_attack": True,  "label": "Attack fixed IPID=777 (adaptive / low-entropy evasion)"},
     "attack_bursty": {"is_attack": True,  "label": "Attack sweep, bursty arrival"},
+    # Evasion discovered from E1's high-load result: the AND gate also closes when
+    # unique_ratio falls back under its threshold. Sending every IPID TWICE keeps 100%
+    # coverage of the 2048-value space (poisoning certainty unchanged) while pushing
+    # unique_ratio to ~0.5 < 0.70 -> the improved rule stops blocking. Cost: 2x packets.
+    "attack_dup_sweep": {"is_attack": True,
+                         "label": "Attack sweep lặp đôi (mỗi IPID gửi 2 lần) -- né unique_ratio"},
 }
 ATTACK_CONDITIONS = [c for c in CONDITIONS if CONDITIONS[c]["is_attack"]]
 
@@ -117,6 +129,18 @@ def attacker_ipid(condition: str, rng: random.Random) -> Callable[[], int]:
         return lambda: rng.randint(0, IPID_SPACE - 1)
     if condition == "attack_fixed":
         return lambda: FIXED_IPID
+    if condition == "attack_dup_sweep":
+        # 0,0,1,1,2,2,... -> full 2048 coverage but unique_ratio ~ 0.5
+        ctr = {"v": rng.randint(0, IPID_SPACE - 1), "rep": 0}
+
+        def _dup():
+            val = ctr["v"] % IPID_SPACE
+            ctr["rep"] += 1
+            if ctr["rep"] >= 2:
+                ctr["rep"] = 0
+                ctr["v"] += 1
+            return val
+        return _dup
     if condition in ("attack_sweep", "attack_bursty"):
         # spoof_r2entropy.py sends range(IPID_SPACE) each round -> cycling sweep.
         ctr = {"v": rng.randint(0, IPID_SPACE - 1)}
@@ -133,7 +157,7 @@ def attacker_ipid(condition: str, rng: random.Random) -> Callable[[], int]:
 # 2. One run of a condition at a matched samples/window level.                 #
 # --------------------------------------------------------------------------- #
 def simulate_run(condition: str, level: int, seed: int, n_windows: int,
-                 benign_frac: float) -> Dict[str, object]:
+                 benign_frac: float, rate_scale: float = 1.0) -> Dict[str, object]:
     """Return per-window arrays for one independent run.
 
     Arrivals are Poisson(lambda=level/WINDOW). For attack conditions each arrival
@@ -145,11 +169,15 @@ def simulate_run(condition: str, level: int, seed: int, n_windows: int,
     is_attack = CONDITIONS[condition]["is_attack"]
     b_ipid = benign_ipid(rng)
     a_ipid = attacker_ipid(condition, rng) if is_attack else None
-    lam = level / WINDOW_SECONDS
+    lam = (level / WINDOW_SECONDS) * rate_scale
     warmup_until = WARMUP_MULT * WINDOW_SECONDS
 
-    # Bursty: alternate high/low intensity every ~1s but keep the mean rate = lam.
+    # Bursty: square wave with mean rate = lam. The phase offset is randomised PER RUN
+    # so the K runs average over burst phase; without it every run starts at the same
+    # point of the cycle (warm-up ends at exactly 6.0 s = 4 x 1.5 s) and the run-level
+    # CI would understate phase uncertainty.
     bursty = condition == "attack_bursty"
+    burst_phase_offset = rng.random() * (2 * BURST_HALF_PERIOD) if bursty else 0.0
 
     window: List[Tuple[float, int]] = []
     t = 0.0
@@ -163,16 +191,17 @@ def simulate_run(condition: str, level: int, seed: int, n_windows: int,
             break
         rate = lam
         if bursty:
-            # square-wave burstiness: 2x rate for 1s, then 0.5x for 1s (mean ~ lam).
-            phase = int(t) % 2
-            rate = lam * (2.0 if phase == 0 else 0.5)
+            # Square-wave burstiness with the SAME mean rate as the other conditions,
+            # so volume stays matched: the two phase coefficients must sum to 2.0
+            # (mean = lam). The half-period is deliberately NOT a divisor of the 2.0s
+            # window, so successive windows see different burst/quiet mixes.
+            phase = int((t + burst_phase_offset) / BURST_HALF_PERIOD) % 2
+            rate = lam * (BURST_HIGH if phase == 0 else BURST_LOW)
         gap = rng.expovariate(rate) if rate > 0 else 1.0
         t += gap
 
-        if is_attack and rng.random() >= benign_frac:
-            ipid = a_ipid()          # attacker fragment
-        else:
-            ipid = b_ipid()          # benign fragment (baseline or the benign-frac mix)
+        atk = is_attack and (rng.random() >= benign_frac)
+        ipid = a_ipid() if atk else b_ipid()
         window.append((t, ipid))
         cutoff = t - WINDOW_SECONDS
         while window and window[0][0] < cutoff:
@@ -265,6 +294,62 @@ def cell_seed(condition: str, level: int, run_idx: int) -> int:
     return EXPERIMENT_SEED + level * 100003 + cidx * 10007 + run_idx
 
 
+def measure_occupancy(condition: str, level: int, n_runs: int, n_windows: int,
+                      benign_frac: float, rate_scale: float) -> float:
+    """Mean realized samples/window over EXACTLY the runs that will be reported.
+
+    Two subtleties force this design:
+      * a run stops after a fixed number of DECISIONS, and for bursty arrivals
+        decisions cluster inside bursts, so realized occupancy depends on the run
+        configuration -- the calibration must use the same n_windows;
+      * calibrating on separate pilot seeds leaves a few-percent residual mismatch,
+        because each cell's realized occupancy is itself a random variable. Using the
+        reported seeds removes that residual.
+    Calibration only tunes the arrival RATE (a nuisance/design factor that E2 wants
+    held constant across conditions); it never touches the detector or the metric.
+    """
+    vals = []
+    for r in range(n_runs):
+        res = simulate_run(condition, level, cell_seed(condition, level, r), n_windows,
+                           benign_frac, rate_scale=rate_scale)
+        if res["samples"]:
+            vals.append(float(np.mean(res["samples"])))
+    return float(np.mean(vals)) if vals else 0.0
+
+
+def calibrate_rate_scales(levels, n_runs: int, n_windows: int, benign_frac: float
+                          ) -> Dict[Tuple[str, int], float]:
+    """Make the matched-volume claim literally true for the reported runs.
+
+    For a rate-modulated (bursty) arrival process the occupancy observed AT DECISION
+    EPOCHS is not mean_rate*window: decisions cluster inside bursts, so matching the
+    mean arrival rate does NOT match the realized samples/window. Each attack
+    condition's arrival rate is therefore calibrated until its realized occupancy
+    equals the BENIGN condition's realized occupancy at that level (benign is the
+    uncalibrated reference, so E1 and E2 stay mutually consistent).
+    """
+    scales: Dict[Tuple[str, int], float] = {}
+    for lvl in levels:
+        ref = measure_occupancy("benign", lvl, n_runs, n_windows, 0.0, 1.0)
+        scales[("benign", lvl)] = 1.0
+        for cond in ATTACK_CONDITIONS:
+            scale = 1.0
+            for _ in range(8):                      # fixed-point iteration
+                got = measure_occupancy(cond, lvl, n_runs, n_windows, benign_frac, scale)
+                if got <= 0:
+                    break
+                new_scale = scale * (ref / got)
+                converged = abs(new_scale - scale) / max(scale, 1e-9) < 0.001
+                scale = new_scale
+                if converged:
+                    break
+            scales[(cond, lvl)] = scale
+        print(f"  [calib] level={lvl}: benign occupancy ref={ref:.1f}; "
+              + ", ".join(f"{c.replace('attack_','')}x{scales[(c, lvl)]:.3f}"
+                          for c in ATTACK_CONDITIONS))
+    return scales
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="E2 -- volume-matched benign vs attack")
     ap.add_argument("--runs", type=int, default=20)
@@ -287,6 +372,11 @@ def main() -> None:
     print("Ý nghĩa: benign block=FPR; attack block=TPR. Nếu B5 không hơn B2 -> entropy vô ích.")
     print("=" * 80)
 
+    # Calibrate arrival rates so every condition realizes the SAME samples/window as
+    # benign at that level (true volume matching -- see calibrate_rate_scales docstring).
+    print("[calib] hiệu chuẩn tốc độ để khớp volume thực đo (trên chính các seed báo cáo):")
+    rate_scales = calibrate_rate_scales(LEVELS, args.runs, args.windows, args.benign_frac)
+
     # Randomized execution order (E4/E2 protocol).
     cells = [(cond, lvl, r) for cond in CONDITIONS for lvl in LEVELS
              for r in range(args.runs)]
@@ -296,7 +386,8 @@ def main() -> None:
     t0 = time.time()
     for i, (cond, lvl, r) in enumerate(cells, 1):
         runs.append(simulate_run(cond, lvl, cell_seed(cond, lvl, r), args.windows,
-                                 args.benign_frac))
+                                 args.benign_frac,
+                                 rate_scale=rate_scales.get((cond, lvl), 1.0)))
         if i % 80 == 0 or i == len(cells):
             print(f"  [{i}/{len(cells)}] cells done ({time.time() - t0:.1f}s)")
 
@@ -310,7 +401,8 @@ def main() -> None:
         w = csv.writer(f)
         w.writerow(["condition", "level", "seed", "window_idx", "samples",
                     "entropy", "unique_ratio",
-                    "block_combined", "block_volume", "block_entropy", "block_unique"])
+                    "block_legacy", "block_combined", "block_volume",
+                    "block_entropy", "block_unique"])
         for x in runs:
             for j in range(len(x["samples"])):
                 # per-window block indicators recomputed from stored signals
@@ -340,6 +432,8 @@ def main() -> None:
         "runs_per_cell": args.runs, "windows_per_run": args.windows,
         "benign_frac_in_attack": args.benign_frac,
         "experiment_seed": EXPERIMENT_SEED,
+        "rate_scales_for_volume_matching": {f"{c}@{l}": round(s, 4)
+                                            for (c, l), s in sorted(rate_scales.items())},
         "note": ("Controlled-emulation testbed: real resolver.py detector primitives, "
                  "Poisson sliding window, attacker IPID models from spoof_r2entropy.py. "
                  "No Docker / real IP fragmentation (E5)."),
@@ -398,7 +492,7 @@ def main() -> None:
                 "fpr_at_tpr95_entropy": fpr_at_tpr(neg_ent, pos_ent, 0.95, True),
                 "fpr_at_tpr95_volume": fpr_at_tpr(neg_vol, pos_vol, 0.95, True),
             }
-            # paired B5 vs B2 : per-seed (TPR_attack - FPR_benign) discrimination margin
+            # per-seed discrimination margin (TPR_attack - FPR_benign): B5 vs B2
             b5_margin, b2_margin = [], []
             for xb, xa in zip(sorted(benr, key=lambda z: z["seed"]),
                               sorted(atkr, key=lambda z: z["seed"])):

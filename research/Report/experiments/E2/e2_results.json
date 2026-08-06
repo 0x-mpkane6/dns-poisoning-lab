@@ -1,9 +1,9 @@
 {
   "meta": {
     "experiment": "E2 -- volume-matched benign vs attack",
-    "run_id": "20260805_191309",
-    "generated_utc": "2026-08-05T12:13:12Z",
-    "code_git_commit": "1c32ef1",
+    "run_id": "20260806_220159",
+    "generated_utc": "2026-08-06T15:02:06Z",
+    "code_git_commit": "5086e45",
     "python": "3.10.11",
     "platform": "Windows-10-10.0.26200-SP0",
     "detector_source": "D:/ATM/Project/Code/labs/r2entropy/resolver/resolver.py",
@@ -24,9 +24,11 @@
       "attack_sweep": "Attack sweep (continuous, IPID 0..2047) -- real default",
       "attack_random": "Attack random spoof (continuous, ~ gi\u1ed1ng benign)",
       "attack_fixed": "Attack fixed IPID=777 (adaptive / low-entropy evasion)",
-      "attack_bursty": "Attack sweep, bursty arrival"
+      "attack_bursty": "Attack sweep, bursty arrival",
+      "attack_dup_sweep": "Attack sweep l\u1eb7p \u0111\u00f4i (m\u1ed7i IPID g\u1eedi 2 l\u1ea7n) -- n\u00e9 unique_ratio"
     },
     "variants": [
+      "legacy",
       "combined",
       "volume",
       "entropy",
@@ -37,6 +39,32 @@
     "windows_per_run": 150,
     "benign_frac_in_attack": 0.1,
     "experiment_seed": 20260805,
+    "rate_scales_for_volume_matching": {
+      "attack_bursty@24": 1.2342,
+      "attack_bursty@60": 1.1677,
+      "attack_bursty@120": 1.1629,
+      "attack_bursty@200": 1.316,
+      "attack_dup_sweep@24": 0.9807,
+      "attack_dup_sweep@60": 0.9955,
+      "attack_dup_sweep@120": 0.9501,
+      "attack_dup_sweep@200": 0.9816,
+      "attack_fixed@24": 1.0104,
+      "attack_fixed@60": 0.9781,
+      "attack_fixed@120": 0.9551,
+      "attack_fixed@200": 1.006,
+      "attack_random@24": 1.0079,
+      "attack_random@60": 0.9866,
+      "attack_random@120": 0.973,
+      "attack_random@200": 0.9839,
+      "attack_sweep@24": 1.001,
+      "attack_sweep@60": 0.98,
+      "attack_sweep@120": 0.957,
+      "attack_sweep@200": 0.9958,
+      "benign@24": 1.0,
+      "benign@60": 1.0,
+      "benign@120": 1.0,
+      "benign@200": 1.0
+    },
     "note": "Controlled-emulation testbed: real resolver.py detector primitives, Poisson sliding window, attacker IPID models from spoof_r2entropy.py. No Docker / real IP fragmentation (E5)."
   },
   "block_rates": [
@@ -48,6 +76,13 @@
       "entropy_mean": 4.592318702582551,
       "unique_ratio_mean": 0.9943603055723129,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 0.6106666666666667,
           "ci95": [
@@ -86,6 +121,13 @@
       "entropy_mean": 5.867994711422355,
       "unique_ratio_mean": 0.9856912023480751,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -121,9 +163,16 @@
       "level": 120,
       "is_attack": false,
       "samples_mean": 115.86500000000001,
-      "entropy_mean": 6.7986390016829885,
+      "entropy_mean": 6.79863900168299,
       "unique_ratio_mean": 0.9747143881494192,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -159,9 +208,16 @@
       "level": 200,
       "is_attack": false,
       "samples_mean": 197.91699999999997,
-      "entropy_mean": 7.531101677842796,
+      "entropy_mean": 7.531101677842797,
       "unique_ratio_mean": 0.9529085348757025,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -196,29 +252,36 @@
       "condition": "attack_sweep",
       "level": 24,
       "is_attack": true,
-      "samples_mean": 24.799666666666667,
-      "entropy_mean": 4.59538405165641,
+      "samples_mean": 24.830000000000002,
+      "entropy_mean": 4.597148258965319,
       "unique_ratio_mean": 0.9993423741745342,
       "variants": {
-        "combined": {
-          "block_rate_mean": 0.5866666666666666,
+        "legacy": {
+          "block_rate_mean": 1.0,
           "ci95": [
-            0.49772880561368105,
-            0.6756045277196521
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.5889999999999999,
+          "ci95": [
+            0.5004705211773371,
+            0.6775294788226626
           ]
         },
         "volume": {
-          "block_rate_mean": 0.5866666666666666,
+          "block_rate_mean": 0.5889999999999999,
           "ci95": [
-            0.49772880561368105,
-            0.6756045277196521
+            0.5004705211773371,
+            0.6775294788226626
           ]
         },
         "entropy": {
-          "block_rate_mean": 0.9616666666666667,
+          "block_rate_mean": 0.9623333333333333,
           "ci95": [
-            0.9390339405168685,
-            0.9842993928164648
+            0.9397822526364072,
+            0.9848844140302593
           ]
         },
         "unique": {
@@ -234,10 +297,17 @@
       "condition": "attack_sweep",
       "level": 60,
       "is_attack": true,
-      "samples_mean": 61.025666666666666,
-      "entropy_mean": 5.914485730098272,
-      "unique_ratio_mean": 0.9971099599149872,
+      "samples_mean": 59.93300000000001,
+      "entropy_mean": 5.888123227676166,
+      "unique_ratio_mean": 0.9970746922831479,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -272,10 +342,17 @@
       "condition": "attack_sweep",
       "level": 120,
       "is_attack": true,
-      "samples_mean": 121.21933333333331,
-      "entropy_mean": 6.90454630342837,
-      "unique_ratio_mean": 0.9942658617452194,
+      "samples_mean": 115.84666666666666,
+      "entropy_mean": 6.838855377895672,
+      "unique_ratio_mean": 0.9942172499465729,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -310,10 +387,17 @@
       "condition": "attack_sweep",
       "level": 200,
       "is_attack": true,
-      "samples_mean": 198.67933333333332,
-      "entropy_mean": 7.615342129621854,
-      "unique_ratio_mean": 0.9917102972296048,
+      "samples_mean": 197.92366666666666,
+      "entropy_mean": 7.609909626240087,
+      "unique_ratio_mean": 0.9917486431114115,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -348,29 +432,36 @@
       "condition": "attack_random",
       "level": 24,
       "is_attack": true,
-      "samples_mean": 24.61866666666667,
-      "entropy_mean": 4.578466349371327,
-      "unique_ratio_mean": 0.992790246288819,
+      "samples_mean": 24.827333333333335,
+      "entropy_mean": 4.590708300655157,
+      "unique_ratio_mean": 0.9927296333730198,
       "variants": {
-        "combined": {
-          "block_rate_mean": 0.5703333333333332,
+        "legacy": {
+          "block_rate_mean": 1.0,
           "ci95": [
-            0.49639800563492176,
-            0.6442686610317447
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.5853333333333335,
+          "ci95": [
+            0.5116539908181297,
+            0.6590126758485373
           ]
         },
         "volume": {
-          "block_rate_mean": 0.5703333333333332,
+          "block_rate_mean": 0.5853333333333335,
           "ci95": [
-            0.49639800563492176,
-            0.6442686610317447
+            0.5116539908181297,
+            0.6590126758485373
           ]
         },
         "entropy": {
-          "block_rate_mean": 0.9773333333333334,
+          "block_rate_mean": 0.9813333333333333,
           "ci95": [
-            0.9599348494367926,
-            0.9947318172298741
+            0.9653083829559969,
+            0.9973582837106697
           ]
         },
         "unique": {
@@ -386,10 +477,17 @@
       "condition": "attack_random",
       "level": 60,
       "is_attack": true,
-      "samples_mean": 60.71633333333333,
-      "entropy_mean": 5.879258825635175,
-      "unique_ratio_mean": 0.9837382972407724,
+      "samples_mean": 59.92766666666667,
+      "entropy_mean": 5.8608123979977,
+      "unique_ratio_mean": 0.9840037138021598,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -424,10 +522,17 @@
       "condition": "attack_random",
       "level": 120,
       "is_attack": true,
-      "samples_mean": 118.86999999999998,
-      "entropy_mean": 6.831910708828028,
-      "unique_ratio_mean": 0.9726707467198322,
+      "samples_mean": 115.86800000000001,
+      "entropy_mean": 6.797088383207142,
+      "unique_ratio_mean": 0.9737009902136631,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -462,10 +567,17 @@
       "condition": "attack_random",
       "level": 200,
       "is_attack": true,
-      "samples_mean": 200.97066666666666,
-      "entropy_mean": 7.544671932213386,
-      "unique_ratio_mean": 0.9502658528316548,
+      "samples_mean": 197.92,
+      "entropy_mean": 7.5237376197351455,
+      "unique_ratio_mean": 0.9508743667733812,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -500,10 +612,17 @@
       "condition": "attack_fixed",
       "level": 24,
       "is_attack": true,
-      "samples_mean": 24.589666666666666,
-      "entropy_mean": 0.5576504370235759,
-      "unique_ratio_mean": 0.13654706429560567,
+      "samples_mean": 24.827333333333332,
+      "entropy_mean": 0.5582563666380126,
+      "unique_ratio_mean": 0.13598255779668372,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 0.0,
           "ci95": [
@@ -512,10 +631,10 @@
           ]
         },
         "volume": {
-          "block_rate_mean": 0.587,
+          "block_rate_mean": 0.6056666666666667,
           "ci95": [
-            0.5060641971394894,
-            0.6679358028605106
+            0.5269204667665762,
+            0.6844128665667571
           ]
         },
         "entropy": {
@@ -538,10 +657,17 @@
       "condition": "attack_fixed",
       "level": 60,
       "is_attack": true,
-      "samples_mean": 61.27366666666667,
-      "entropy_mean": 0.6965723151520892,
-      "unique_ratio_mean": 0.11195209421784662,
+      "samples_mean": 59.93299999999999,
+      "entropy_mean": 0.6932127716039229,
+      "unique_ratio_mean": 0.11230436803186476,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 0.0,
           "ci95": [
@@ -576,10 +702,17 @@
       "condition": "attack_fixed",
       "level": 120,
       "is_attack": true,
-      "samples_mean": 121.08566666666665,
-      "entropy_mean": 0.7817477274298743,
-      "unique_ratio_mean": 0.10245652059685176,
+      "samples_mean": 115.85700000000001,
+      "entropy_mean": 0.7685151635413556,
+      "unique_ratio_mean": 0.10202885552257564,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 0.0,
           "ci95": [
@@ -614,10 +747,17 @@
       "condition": "attack_fixed",
       "level": 200,
       "is_attack": true,
-      "samples_mean": 196.65266666666668,
-      "entropy_mean": 0.9568770840840968,
-      "unique_ratio_mean": 0.11144949869362619,
+      "samples_mean": 197.93966666666668,
+      "entropy_mean": 0.9593194713122937,
+      "unique_ratio_mean": 0.11157821404459693,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 0.0,
           "ci95": [
@@ -652,29 +792,36 @@
       "condition": "attack_bursty",
       "level": 24,
       "is_attack": true,
-      "samples_mean": 29.260333333333328,
-      "entropy_mean": 4.831816198058172,
-      "unique_ratio_mean": 0.9988350858524901,
+      "samples_mean": 24.795,
+      "entropy_mean": 4.494164025423285,
+      "unique_ratio_mean": 0.999450462560141,
       "variants": {
-        "combined": {
-          "block_rate_mean": 0.8193333333333334,
+        "legacy": {
+          "block_rate_mean": 1.0,
           "ci95": [
-            0.7568829876700723,
-            0.8817836789965944
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.4993333333333334,
+          "ci95": [
+            0.44588369683819634,
+            0.5527829698284704
           ]
         },
         "volume": {
-          "block_rate_mean": 0.8193333333333334,
+          "block_rate_mean": 0.4993333333333334,
           "ci95": [
-            0.7568829876700723,
-            0.8817836789965944
+            0.44588369683819634,
+            0.5527829698284704
           ]
         },
         "entropy": {
-          "block_rate_mean": 0.984,
+          "block_rate_mean": 0.8253333333333334,
           "ci95": [
-            0.9709026363217335,
-            0.9970973636782665
+            0.7805103603002029,
+            0.8701563063664638
           ]
         },
         "unique": {
@@ -690,29 +837,36 @@
       "condition": "attack_bursty",
       "level": 60,
       "is_attack": true,
-      "samples_mean": 75.50466666666665,
-      "entropy_mean": 6.222888670388144,
-      "unique_ratio_mean": 0.9966786433828408,
+      "samples_mean": 60.977999999999994,
+      "entropy_mean": 5.840981804874444,
+      "unique_ratio_mean": 0.9976294862211039,
       "variants": {
-        "combined": {
+        "legacy": {
           "block_rate_mean": 1.0,
           "ci95": [
             1.0,
             1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.9896666666666667,
+          "ci95": [
+            0.9749805687610151,
+            1.0043527645723183
           ]
         },
         "volume": {
-          "block_rate_mean": 1.0,
+          "block_rate_mean": 0.9896666666666667,
           "ci95": [
-            1.0,
-            1.0
+            0.9749805687610151,
+            1.0043527645723183
           ]
         },
         "entropy": {
-          "block_rate_mean": 1.0,
+          "block_rate_mean": 0.999,
           "ci95": [
-            1.0,
-            1.0
+            0.9969069759455917,
+            1.0010930240544083
           ]
         },
         "unique": {
@@ -728,10 +882,17 @@
       "condition": "attack_bursty",
       "level": 120,
       "is_attack": true,
-      "samples_mean": 148.63799999999998,
-      "entropy_mean": 7.197669909072802,
-      "unique_ratio_mean": 0.9930940230171276,
+      "samples_mean": 115.75800000000001,
+      "entropy_mean": 6.7803565441696225,
+      "unique_ratio_mean": 0.9939916699329908,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -766,10 +927,17 @@
       "condition": "attack_bursty",
       "level": 200,
       "is_attack": true,
-      "samples_mean": 248.9333333333333,
-      "entropy_mean": 7.933032906367609,
-      "unique_ratio_mean": 0.9874245255928832,
+      "samples_mean": 197.91466666666668,
+      "entropy_mean": 7.546089780489465,
+      "unique_ratio_mean": 0.9897627890684028,
       "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
         "combined": {
           "block_rate_mean": 1.0,
           "ci95": [
@@ -796,6 +964,186 @@
           "ci95": [
             1.0,
             1.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_dup_sweep",
+      "level": 24,
+      "is_attack": true,
+      "samples_mean": 24.824333333333335,
+      "entropy_mean": 3.7416711492855255,
+      "unique_ratio_mean": 0.5664470287084014,
+      "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 0.5936666666666668,
+          "ci95": [
+            0.5248197763095488,
+            0.6625135570237848
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 0.18733333333333335,
+          "ci95": [
+            0.1333590416397894,
+            0.2413076250268773
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0006666666666666668,
+          "ci95": [
+            -0.0007286827029388419,
+            0.002062016036272175
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_dup_sweep",
+      "level": 60,
+      "is_attack": true,
+      "samples_mean": 59.93133333333333,
+      "entropy_mean": 5.003056514814681,
+      "unique_ratio_mean": 0.5549175524336293,
+      "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_dup_sweep",
+      "level": 120,
+      "is_attack": true,
+      "samples_mean": 115.86699999999999,
+      "entropy_mean": 5.950319300031954,
+      "unique_ratio_mean": 0.5514981852164517,
+      "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "condition": "attack_dup_sweep",
+      "level": 200,
+      "is_attack": true,
+      "samples_mean": 197.93666666666667,
+      "entropy_mean": 6.7181990437369326,
+      "unique_ratio_mean": 0.5483883001862756,
+      "variants": {
+        "legacy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "combined": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "volume": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "entropy": {
+          "block_rate_mean": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "unique": {
+          "block_rate_mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
           ]
         }
       }
@@ -806,13 +1154,13 @@
       "attack": "attack_sweep",
       "level": 24,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.5097972904142128,
-      "pr_auc_entropy": 0.522748832500515,
+      "pr_auc_volume": 0.5112522120637806,
+      "pr_auc_entropy": 0.5243027555813865,
       "pr_auc_unique": 0.5326365299114778,
       "fpr_at_tpr95_entropy": 0.9663333333333334,
       "fpr_at_tpr95_volume": 0.9706666666666667,
-      "b5_margin_mean": -0.024000000000000014,
-      "b2_margin_mean": -0.024000000000000014,
+      "b5_margin_mean": -0.021666666666666685,
+      "b2_margin_mean": -0.021666666666666685,
       "paired_b5_minus_b2_margin": {
         "mean": 0.0,
         "ci95": [
@@ -825,11 +1173,11 @@
       "attack": "attack_sweep",
       "level": 60,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.5530992353092977,
-      "pr_auc_entropy": 0.5920835005588759,
-      "pr_auc_unique": 0.6696559878971272,
-      "fpr_at_tpr95_entropy": 0.9273333333333333,
-      "fpr_at_tpr95_volume": 0.9526666666666667,
+      "pr_auc_volume": 0.5153938905655843,
+      "pr_auc_entropy": 0.55145787157813,
+      "pr_auc_unique": 0.6685983516099705,
+      "fpr_at_tpr95_entropy": 0.9636666666666667,
+      "fpr_at_tpr95_volume": 0.9686666666666667,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -844,11 +1192,11 @@
       "attack": "attack_sweep",
       "level": 120,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.6082972392714943,
-      "pr_auc_entropy": 0.6967513324110766,
-      "pr_auc_unique": 0.9142674672545817,
-      "fpr_at_tpr95_entropy": 0.7406666666666667,
-      "fpr_at_tpr95_volume": 0.8583333333333333,
+      "pr_auc_volume": 0.4913908353416544,
+      "pr_auc_entropy": 0.5675637136438545,
+      "pr_auc_unique": 0.9069141923755137,
+      "fpr_at_tpr95_entropy": 0.897,
+      "fpr_at_tpr95_volume": 0.9466666666666667,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -863,11 +1211,11 @@
       "attack": "attack_sweep",
       "level": 200,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.5087023010020834,
-      "pr_auc_entropy": 0.7814222492745467,
-      "pr_auc_unique": 0.9928933686174993,
-      "fpr_at_tpr95_entropy": 0.8253333333333334,
-      "fpr_at_tpr95_volume": 0.9616666666666667,
+      "pr_auc_volume": 0.4926149369214654,
+      "pr_auc_entropy": 0.7668815871426761,
+      "pr_auc_unique": 0.9928541871727782,
+      "fpr_at_tpr95_entropy": 0.8363333333333334,
+      "fpr_at_tpr95_volume": 0.9673333333333334,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -882,13 +1230,13 @@
       "attack": "attack_random",
       "level": 24,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.4899571063580377,
-      "pr_auc_entropy": 0.508522534999508,
-      "pr_auc_unique": 0.5185846854747056,
+      "pr_auc_volume": 0.49926273469068533,
+      "pr_auc_entropy": 0.5000280169411838,
+      "pr_auc_unique": 0.5185789199705335,
       "fpr_at_tpr95_entropy": 0.946,
       "fpr_at_tpr95_volume": 0.9523333333333334,
-      "b5_margin_mean": -0.04033333333333333,
-      "b2_margin_mean": -0.04033333333333333,
+      "b5_margin_mean": -0.02533333333333334,
+      "b2_margin_mean": -0.02533333333333334,
       "paired_b5_minus_b2_margin": {
         "mean": 0.0,
         "ci95": [
@@ -901,10 +1249,10 @@
       "attack": "attack_random",
       "level": 60,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.5473759522126042,
-      "pr_auc_entropy": 0.5433899149070219,
-      "pr_auc_unique": 0.5314824123826154,
-      "fpr_at_tpr95_entropy": 0.969,
+      "pr_auc_volume": 0.5225131113259629,
+      "pr_auc_entropy": 0.5362762630883174,
+      "pr_auc_unique": 0.5293241005430142,
+      "fpr_at_tpr95_entropy": 0.9766666666666667,
       "fpr_at_tpr95_volume": 0.982,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
@@ -920,11 +1268,11 @@
       "attack": "attack_random",
       "level": 120,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.5534784418202479,
-      "pr_auc_entropy": 0.5469885276902499,
-      "pr_auc_unique": 0.5374706278804713,
-      "fpr_at_tpr95_entropy": 0.9673333333333334,
-      "fpr_at_tpr95_volume": 0.9753333333333334,
+      "pr_auc_volume": 0.4939500820385665,
+      "pr_auc_entropy": 0.5065009398377155,
+      "pr_auc_unique": 0.5226415958252739,
+      "fpr_at_tpr95_entropy": 0.986,
+      "fpr_at_tpr95_volume": 0.9896666666666667,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -939,11 +1287,11 @@
       "attack": "attack_random",
       "level": 200,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.6134522462959686,
-      "pr_auc_entropy": 0.6043961750327744,
-      "pr_auc_unique": 0.5686102299382434,
-      "fpr_at_tpr95_entropy": 0.995,
-      "fpr_at_tpr95_volume": 0.998,
+      "pr_auc_volume": 0.5561429892090135,
+      "pr_auc_entropy": 0.555051342088756,
+      "pr_auc_unique": 0.5604902190116247,
+      "fpr_at_tpr95_entropy": 0.997,
+      "fpr_at_tpr95_volume": 1.0,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -958,30 +1306,30 @@
       "attack": "attack_fixed",
       "level": 24,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.48399076548273245,
-      "pr_auc_entropy": 1.0,
-      "pr_auc_unique": 0.9999999999999998,
-      "fpr_at_tpr95_entropy": 1.0,
-      "fpr_at_tpr95_volume": 0.9523333333333334,
-      "b5_margin_mean": -0.6106666666666667,
-      "b2_margin_mean": -0.023666666666666673,
-      "paired_b5_minus_b2_margin": {
-        "mean": -0.587,
-        "ci95": [
-          -0.6679358028605106,
-          -0.5060641971394894
-        ]
-      }
-    },
-    {
-      "attack": "attack_fixed",
-      "level": 60,
-      "prevalence": 0.5,
-      "pr_auc_volume": 0.555564525845837,
+      "pr_auc_volume": 0.49410686451807634,
       "pr_auc_entropy": 1.0,
       "pr_auc_unique": 0.9999999999999999,
       "fpr_at_tpr95_entropy": 1.0,
-      "fpr_at_tpr95_volume": 0.9686666666666667,
+      "fpr_at_tpr95_volume": 0.9523333333333334,
+      "b5_margin_mean": -0.6106666666666667,
+      "b2_margin_mean": -0.005000000000000016,
+      "paired_b5_minus_b2_margin": {
+        "mean": -0.6056666666666667,
+        "ci95": [
+          -0.6844128665667571,
+          -0.5269204667665762
+        ]
+      }
+    },
+    {
+      "attack": "attack_fixed",
+      "level": 60,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5100764884021762,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 1.0,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.982,
       "b5_margin_mean": -1.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -996,11 +1344,11 @@
       "attack": "attack_fixed",
       "level": 120,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.6020005723339761,
+      "pr_auc_volume": 0.4947723273235411,
       "pr_auc_entropy": 1.0,
       "pr_auc_unique": 1.0,
       "fpr_at_tpr95_entropy": 1.0,
-      "fpr_at_tpr95_volume": 0.8583333333333333,
+      "fpr_at_tpr95_volume": 0.9466666666666667,
       "b5_margin_mean": -1.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -1015,11 +1363,11 @@
       "attack": "attack_fixed",
       "level": 200,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.4849428589349142,
+      "pr_auc_volume": 0.5101653339281778,
       "pr_auc_entropy": 1.0,
       "pr_auc_unique": 1.0,
       "fpr_at_tpr95_entropy": 1.0,
-      "fpr_at_tpr95_volume": 0.9803333333333333,
+      "fpr_at_tpr95_volume": 0.9753333333333334,
       "b5_margin_mean": -1.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -1034,13 +1382,13 @@
       "attack": "attack_bursty",
       "level": 24,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.7232340081762472,
-      "pr_auc_entropy": 0.7356485363143372,
-      "pr_auc_unique": 0.5275209209999719,
-      "fpr_at_tpr95_entropy": 0.883,
-      "fpr_at_tpr95_volume": 0.8886666666666667,
-      "b5_margin_mean": 0.20866666666666664,
-      "b2_margin_mean": 0.20866666666666664,
+      "pr_auc_volume": 0.5938852875895932,
+      "pr_auc_entropy": 0.622699034447115,
+      "pr_auc_unique": 0.5327552726931918,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 1.0,
+      "b5_margin_mean": -0.11133333333333331,
+      "b2_margin_mean": -0.11133333333333331,
       "paired_b5_minus_b2_margin": {
         "mean": 0.0,
         "ci95": [
@@ -1053,13 +1401,13 @@
       "attack": "attack_bursty",
       "level": 60,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.926554641343838,
-      "pr_auc_entropy": 0.9404305330833267,
-      "pr_auc_unique": 0.6690964323819384,
-      "fpr_at_tpr95_entropy": 0.3393333333333333,
-      "fpr_at_tpr95_volume": 0.43133333333333335,
-      "b5_margin_mean": 0.0,
-      "b2_margin_mean": 0.0,
+      "pr_auc_volume": 0.6386439498021855,
+      "pr_auc_entropy": 0.6848663205047101,
+      "pr_auc_unique": 0.6840139029823337,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 1.0,
+      "b5_margin_mean": -0.010333333333333333,
+      "b2_margin_mean": -0.010333333333333333,
       "paired_b5_minus_b2_margin": {
         "mean": 0.0,
         "ci95": [
@@ -1072,11 +1420,11 @@
       "attack": "attack_bursty",
       "level": 120,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.9784140446537278,
-      "pr_auc_entropy": 0.9885161958978246,
-      "pr_auc_unique": 0.915293372568549,
-      "fpr_at_tpr95_entropy": 0.053,
-      "fpr_at_tpr95_volume": 0.10233333333333333,
+      "pr_auc_volume": 0.6221128329902665,
+      "pr_auc_entropy": 0.6925428742059827,
+      "pr_auc_unique": 0.9058884049254649,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 1.0,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -1091,11 +1439,11 @@
       "attack": "attack_bursty",
       "level": 200,
       "prevalence": 0.5,
-      "pr_auc_volume": 0.9999074537858915,
-      "pr_auc_entropy": 1.0,
-      "pr_auc_unique": 0.9806071049693786,
-      "fpr_at_tpr95_entropy": 0.0,
-      "fpr_at_tpr95_volume": 0.0,
+      "pr_auc_volume": 0.538839470343093,
+      "pr_auc_entropy": 0.7944170506967222,
+      "pr_auc_unique": 0.9843379932469166,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 1.0,
       "b5_margin_mean": 0.0,
       "b2_margin_mean": 0.0,
       "paired_b5_minus_b2_margin": {
@@ -1103,6 +1451,82 @@
         "ci95": [
           0.0,
           0.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_dup_sweep",
+      "level": 24,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.49160370678914306,
+      "pr_auc_entropy": 0.9738338392010529,
+      "pr_auc_unique": 0.9999999999999999,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.9523333333333334,
+      "b5_margin_mean": -0.6106666666666667,
+      "b2_margin_mean": -0.016999999999999994,
+      "paired_b5_minus_b2_margin": {
+        "mean": -0.5936666666666667,
+        "ci95": [
+          -0.6625135570237848,
+          -0.5248197763095486
+        ]
+      }
+    },
+    {
+      "attack": "attack_dup_sweep",
+      "level": 60,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5186012762700268,
+      "pr_auc_entropy": 0.9999195222840229,
+      "pr_auc_unique": 0.9999999999999999,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.982,
+      "b5_margin_mean": -1.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": -1.0,
+        "ci95": [
+          -1.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_dup_sweep",
+      "level": 120,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5113562396892266,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 1.0,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.965,
+      "b5_margin_mean": -1.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": -1.0,
+        "ci95": [
+          -1.0,
+          -1.0
+        ]
+      }
+    },
+    {
+      "attack": "attack_dup_sweep",
+      "level": 200,
+      "prevalence": 0.5,
+      "pr_auc_volume": 0.5324533280660775,
+      "pr_auc_entropy": 1.0,
+      "pr_auc_unique": 1.0,
+      "fpr_at_tpr95_entropy": 1.0,
+      "fpr_at_tpr95_volume": 0.9913333333333333,
+      "b5_margin_mean": -1.0,
+      "b2_margin_mean": 0.0,
+      "paired_b5_minus_b2_margin": {
+        "mean": -1.0,
+        "ci95": [
+          -1.0,
+          -1.0
         ]
       }
     }

@@ -100,10 +100,21 @@ UNIQUE_RATIO_THRESHOLD = R.R2_UNIQUE_RATIO_THRESHOLD
 # E1: target samples/window.
 SAMPLES_PER_WINDOW_LEVELS = [5, 12, 18, 24, 36, 60, 120, 300]
 
+# Extra levels beyond the outline's grid. They are required because the improved rule
+# turns out to be BAND-pass, not high-pass: once the window holds enough fragments that
+# IPID collisions become unavoidable (the space is only IPID_SPACE values), unique_ratio
+# falls back under its threshold and the AND gate re-opens. The real testbed attack runs
+# at ~2000 samples/window, i.e. inside this region, so it must be measured, not assumed.
+HIGH_LOAD_LEVELS = [600, 1200, 1400, 1600, 1800, 2000, 3000, 6000]
+
 # Detector variants scored per decision event. "combined" (B5) is the primary
 # operating point under test; the others (B2/B3/B4) are reference lines that
 # explain *why* B5 behaves as it does at high rate.
-VARIANTS = ["combined", "volume", "entropy", "unique"]
+# Các biến thể của luật Rℓ2:
+#   legacy   = Rℓ2 GỐC của paper POPS (Algorithm 3): chặn MỌI fragment.
+#   combined = Rℓ2 CẢI TIẾN của nhóm (entropy 3 tham số) -- detector under test.
+#   volume/entropy/unique = ablation từng tín hiệu.
+VARIANTS = ["legacy", "combined", "volume", "entropy", "unique"]
 PRIMARY_VARIANT = "combined"
 
 # E1: "tối thiểu ba kiểu IPID/source behavior". Each models a legitimate way a
@@ -345,14 +356,16 @@ def main() -> None:
         w = csv.writer(f)
         w.writerow(["level_samples_per_window", "behavior", "run_idx", "seed",
                     "decisions",
-                    "blocks_combined", "blocks_volume", "blocks_entropy", "blocks_unique",
-                    "fpr_combined", "fpr_volume", "fpr_entropy", "fpr_unique",
+                    "blocks_legacy", "blocks_combined", "blocks_volume",
+                    "blocks_entropy", "blocks_unique",
+                    "fpr_legacy", "fpr_combined", "fpr_volume", "fpr_entropy", "fpr_unique",
                     "entropy_mean", "entropy_p95", "samples_mean", "unique_ratio_mean"])
         for x in sorted(runs, key=lambda z: (z.level, z.behavior, z.run_idx)):
             w.writerow([x.level, x.behavior, x.run_idx, x.seed, x.decisions,
-                        x.blocks["combined"], x.blocks["volume"],
+                        x.blocks["legacy"], x.blocks["combined"], x.blocks["volume"],
                         x.blocks["entropy"], x.blocks["unique"],
-                        f"{x.fpr['combined']:.6f}", f"{x.fpr['volume']:.6f}",
+                        f"{x.fpr['legacy']:.6f}", f"{x.fpr['combined']:.6f}",
+                        f"{x.fpr['volume']:.6f}",
                         f"{x.fpr['entropy']:.6f}", f"{x.fpr['unique']:.6f}",
                         f"{x.entropy_mean:.4f}", f"{x.entropy_p95:.4f}",
                         f"{x.samples_mean:.3f}", f"{x.unique_ratio_mean:.4f}"])
@@ -378,6 +391,10 @@ def main() -> None:
                 "entropy_threshold": ENTROPY_THRESHOLD,
                 "unique_ratio_threshold": UNIQUE_RATIO_THRESHOLD,
                 "window_seconds": WINDOW_SECONDS,
+            },
+            "detectors": {
+                "legacy": "Rℓ2 gốc (paper POPS, Algorithm 3): chặn mọi fragment",
+                "combined": "Rℓ2 cải tiến của nhóm: samples>=24 AND entropy>=4.0 AND unique_ratio>=0.70",
             },
             "levels_samples_per_window": SAMPLES_PER_WINDOW_LEVELS,
             "behaviors": {k: v["label"] for k, v in IPID_BEHAVIORS.items()},
@@ -445,6 +462,24 @@ def main() -> None:
                     "fpr_cp_ci_lo", "fpr_cp_ci_hi"])
         w.writerows(levels_rows)
     print(f"[+] wrote {levels_csv}")
+
+    # ---- High-load extension: locate the upper edge of the blocking band ---- #
+    print("\n[high-load] FPR ngoài lưới chuẩn (kiểm tra vùng mù ở tải rất cao):")
+    results["high_load"] = []
+    for lvl in HIGH_LOAD_LEVELS:
+        cell = [simulate_run(lvl, "random2048", r, cell_seed(lvl, "random2048", r),
+                             args.decisions) for r in range(args.runs)]
+        row = {"level": lvl,
+               "samples_mean": float(np.mean([x.samples_mean for x in cell])),
+               "entropy_mean": float(np.mean([x.entropy_mean for x in cell])),
+               "unique_ratio_mean": float(np.mean([x.unique_ratio_mean for x in cell]))}
+        for v in VARIANTS:
+            m, lo, hi = mean_ci_t([x.fpr[v] for x in cell])
+            row[v] = {"fpr_run_mean": m, "ci95": [lo, hi]}
+        results["high_load"].append(row)
+        print(f"  s/win={lvl:>5}: FPR combined={row['combined']['fpr_run_mean']:.3f} "
+              f"volume={row['volume']['fpr_run_mean']:.3f} "
+              f"| entropy={row['entropy_mean']:.2f} uniq={row['unique_ratio_mean']:.3f}")
 
     results_json = out_dir / "e1_results.json"
     with open(results_json, "w", encoding="utf-8") as f:

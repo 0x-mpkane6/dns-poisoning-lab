@@ -36,9 +36,10 @@ META = RESULTS["meta"]
 LEVELS = META["levels"]
 
 COND_COLOR = {"attack_sweep": "#0072B2", "attack_random": "#D55E00",
-              "attack_fixed": "#CC0000", "attack_bursty": "#009E73"}
+              "attack_fixed": "#CC0000", "attack_bursty": "#009E73",
+              "attack_dup_sweep": "#7B3FBF"}
 COND_MARK = {"attack_sweep": "o", "attack_random": "s", "attack_fixed": "X",
-             "attack_bursty": "^"}
+             "attack_bursty": "^", "attack_dup_sweep": "P"}
 LEVEL_SIZE = {lvl: 60 + 22 * i for i, lvl in enumerate(LEVELS)}
 
 
@@ -66,26 +67,25 @@ def figure_1() -> None:
                        marker=COND_MARK[cond], edgecolor="white", lw=0.8, zorder=3)
         ax.plot(xs, ys, color=COND_COLOR[cond], lw=1.0, alpha=0.5, zorder=2,
                 label=cond)
-    # annotate levels on the sweep line
-    for lvl in LEVELS:
-        fpr = block_rate("benign", lvl, "combined")
-        tpr = block_rate("attack_sweep", lvl, "combined")
-        ax.annotate(f"{lvl}", (fpr, tpr), textcoords="offset points",
-                    xytext=(6, -10), fontsize=8, color="#333")
-    ax.set_xlim(-0.03, 1.03); ax.set_ylim(-0.03, 1.03)
-    ax.set_xlabel("FPR  = benign bị chặn  (cùng volume)")
-    ax.set_ylabel("TPR  = attack bị chặn")
-    ax.set_title("E2 — Detector B5 ở CÙNG volume: TPR vs FPR\n"
-                 "High-entropy attack nằm TRÊN đường chéo (không phân biệt);\n"
-                 "attack_fixed rơi xuống TPR=0 (B5 bị né). Kích thước điểm = samples/window",
-                 fontsize=10.5)
+    # Label only the lowest level: the higher levels all collapse onto (1,1) and
+    # their labels would overprint each other.
+    lvl0 = min(LEVELS)
+    ax.annotate(f"mức {lvl0}",
+                (block_rate("benign", lvl0, "combined"),
+                 block_rate("attack_sweep", lvl0, "combined")),
+                textcoords="offset points", xytext=(8, -4), fontsize=8, color="#333")
+    ax.annotate(f"mức ≥{sorted(LEVELS)[1]}", (1.0, 1.0), textcoords="offset points",
+                xytext=(-64, 4), fontsize=8, color="#333")
+    # Rℓ2 gốc (legacy): chặn mọi fragment -> mọi attack TPR=1 nhưng benign FPR=1 -> góc (1,1)
+    ax.scatter(1.0, 1.0, s=300, marker="D", color="#111111", edgecolor="white", lw=1.2,
+               zorder=5, label="Rℓ2 gốc")
+    ax.set_xlim(-0.03, 1.06); ax.set_ylim(-0.06, 1.08)
+    ax.set_xlabel("FPR (benign bị chặn)")
+    ax.set_ylabel("TPR (attack bị chặn)")
     ax.grid(True, ls=":", alpha=0.4)
-    ax.legend(loc="lower right", fontsize=8.5, framealpha=0.95)
-    # region labels
-    ax.text(0.5, 0.96, "vùng phân biệt tốt (TPR≫FPR)", fontsize=8.5,
-            color="#00694d", ha="center")
-    ax.text(0.62, 0.30, "attack_fixed: B5 miss hoàn toàn\n(entropy=0 < 4.0)",
-            fontsize=8.5, color="#CC0000", ha="center")
+    # upper-left is the empty half of the plane -> legend never covers the data
+    # (attack_fixed sits at TPR = 0, which a lower-right legend would hide).
+    ax.legend(loc="upper left", fontsize=8.5, framealpha=0.95)
     fig.tight_layout()
     fig.savefig(FIG_DIR / "Figure_1.png", dpi=160)
     plt.close(fig)
@@ -111,48 +111,48 @@ def figure_2() -> None:
     attacks = list(COND_COLOR)
     ent_auc = {a: [] for a in attacks}
     vol_auc = {a: [] for a in attacks}
+    uni_auc = {a: [] for a in attacks}
     for d in RESULTS["discrimination"]:
         ent_auc[d["attack"]].append(d["pr_auc_entropy"])
         vol_auc[d["attack"]].append(d["pr_auc_volume"])
+        uni_auc[d["attack"]].append(d["pr_auc_unique"])
     x = np.arange(len(attacks))
-    w = 0.36
-    ax1.bar(x - w / 2, [np.mean(ent_auc[a]) for a in attacks], w,
+    w = 0.27
+    ax1.bar(x - w, [np.mean(ent_auc[a]) for a in attacks], w,
             label="PR-AUC entropy", color="#0072B2")
-    ax1.bar(x + w / 2, [np.mean(vol_auc[a]) for a in attacks], w,
+    ax1.bar(x, [np.mean(uni_auc[a]) for a in attacks], w,
+            label="PR-AUC unique_ratio", color="#009E73")
+    ax1.bar(x + w, [np.mean(vol_auc[a]) for a in attacks], w,
             label="PR-AUC volume", color="#E69F00")
-    ax1.axhline(0.5, color="#888", ls="--", lw=1.2)
-    ax1.text(len(attacks) - 0.5, 0.52, "chance = 0.5", fontsize=8.5, color="#555", ha="right")
-    ax1.set_xticks(x); ax1.set_xticklabels([a.replace("attack_", "") for a in attacks], fontsize=9)
-    ax1.set_ylabel("PR-AUC (attack=positive), trung bình theo level")
+    ax1.axhline(0.5, color="#888", ls="--", lw=1.2, label="mức ngẫu nhiên = 0.5")
+    ax1.set_xticks(x); ax1.set_xticklabels([a.replace("attack_", "").replace("dup_sweep","dup-sweep") for a in attacks], fontsize=8.5)
+    ax1.set_ylabel("PR-AUC (trung bình theo level)")
     ax1.set_ylim(0, 1.05)
-    ax1.set_title("(a) Sức phân biệt ở cùng volume: entropy vs volume\n"
-                  "(fixed: entropy tách hoàn toàn nhưng NGƯỢC chiều — xem panel b)", fontsize=9.5)
+    ax1.set_title("(a)", fontsize=10)
     ax1.legend(fontsize=8.5); ax1.grid(True, axis="y", ls=":", alpha=0.4)
 
     # (b) entropy distributions at a representative matched volume
     lvl = 120 if 120 in LEVELS else LEVELS[-1]
     ent = _load_entropy_by_cond(lvl)
-    order = ["benign", "attack_sweep", "attack_random", "attack_fixed", "attack_bursty"]
+    order = ["benign", "attack_sweep", "attack_random", "attack_fixed", "attack_bursty",
+             "attack_dup_sweep"]
     order = [c for c in order if c in ent]
     colors = {"benign": "#444444", "attack_sweep": "#0072B2", "attack_random": "#D55E00",
-              "attack_fixed": "#CC0000", "attack_bursty": "#009E73"}
+              "attack_fixed": "#CC0000", "attack_bursty": "#009E73",
+              "attack_dup_sweep": "#7B3FBF"}
     parts = ax2.violinplot([ent[c] for c in order], showmeans=True, showextrema=False)
     for pc, c in zip(parts["bodies"], order):
         pc.set_facecolor(colors[c]); pc.set_alpha(0.55)
-    ax2.axhline(META["operating_point"]["entropy_threshold"], color="#444", ls="--", lw=1.3)
-    ax2.text(0.6, META["operating_point"]["entropy_threshold"] + 0.15,
-             f"entropy gate = {META['operating_point']['entropy_threshold']}",
-             fontsize=8.5, color="#444")
+    ax2.axhline(META["operating_point"]["entropy_threshold"], color="#444", ls="--", lw=1.2,
+                label=f"ngưỡng entropy = {META['operating_point']['entropy_threshold']}")
     ax2.set_xticks(range(1, len(order) + 1))
-    ax2.set_xticklabels([c.replace("attack_", "") for c in order], fontsize=8.5, rotation=15)
-    ax2.set_ylabel("Per-window IPID entropy (bits)")
-    ax2.set_title(f"(b) Phân phối entropy tại samples/window = {lvl}\n"
-                  "benign ≈ sweep/random/bursty (chồng lấn) — fixed ~0 (dưới gate)", fontsize=9.5)
+    ax2.set_xticklabels([c.replace("attack_", "") for c in order], fontsize=8, rotation=20)
+    ax2.set_ylabel("entropy mỗi cửa sổ (bit)")
+    ax2.set_title(f"(b)  samples/window = {lvl}", fontsize=10)
+    ax2.legend(fontsize=8.5)
     ax2.grid(True, axis="y", ls=":", alpha=0.4)
 
-    fig.suptitle("E2 — Ở cùng volume, entropy KHÔNG tách benign khỏi high-entropy attack; "
-                 "và bị attack_fixed né (entropy=0)", fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.tight_layout()
     fig.savefig(FIG_DIR / "Figure_2.png", dpi=160)
     plt.close(fig)
     print(f"[+] wrote {FIG_DIR / 'Figure_2.png'}")
@@ -160,8 +160,6 @@ def figure_2() -> None:
 
 if __name__ == "__main__":
     print("Rendering E2 figures:")
-    print("  Fig 1: TPR-vs-FPR at matched volume (B5 on the no-discrimination diagonal).")
-    print("  Fig 2: PR-AUC entropy~volume + entropy-distribution overlap.")
     figure_1()
     figure_2()
     print("done.")
