@@ -1,9 +1,14 @@
-"""Generate a plain-Vietnamese E2 report from a validated confirmatory artifact."""
+"""Generate the canonical E2 report from a validated confirmatory artifact."""
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
+
+
+REPORT_TITLE = (
+    "E2 — Đánh giá giá trị bổ sung của entropy và tỷ lệ IPID khác nhau trong Rℓ2 cải tiến"
+)
 
 
 def fmt(value: float) -> str:
@@ -71,7 +76,7 @@ def failure_probe_table(rows: list[dict]) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Write an easy-to-read E2 report")
+    parser = argparse.ArgumentParser(description="Write the canonical E2 report")
     parser.add_argument("artifact_dir", type=Path)
     parser.add_argument("--out", type=Path, default=None)
     parser.add_argument("--overwrite", action="store_true")
@@ -85,12 +90,12 @@ def main() -> int:
     analysis = results["analysis"]
     effects = {item["attack_condition"]: item for item in analysis["macro_effects"]}
     rows = analysis["test_cells"]
-    output = (args.out or artifact_dir / "E2_BAO_CAO_CHINH_XAC_DE_HIEU.md").resolve()
+    output = (args.out or artifact_dir / "E2_report.md").resolve()
     if output.exists() and not args.overwrite:
         raise FileExistsError(output)
 
     lines = [
-        "# E2 — Kiểm tra B5 có hơn B2 khi cùng tải hay không",
+        f"# {REPORT_TITLE}",
         "",
         f"**Run ID:** `{meta['run_id']}`  ",
         f"**Trạng thái kiểm tra:** `{validation['status']}`  ",

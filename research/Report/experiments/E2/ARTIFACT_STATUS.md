@@ -9,7 +9,7 @@ The authoritative E2 result for its stated scope is:
 `runs/E2_confirmatory_20260813_165220_seed20260813/`
 
 Its raw-to-result validator passed **18/18** checks. The root report to use is
-[`E2_BAO_CAO_CHINH_XAC_DE_HIEU.md`](E2_BAO_CAO_CHINH_XAC_DE_HIEU.md).
+[`E2_report.md`](E2_report.md).
 
 The canonical run contains, without overwriting old data:
 

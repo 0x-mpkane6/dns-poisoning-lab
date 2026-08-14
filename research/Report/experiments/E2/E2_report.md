@@ -131,4 +131,4 @@ Số liệu được lấy từ lần chạy `E2_confirmatory_20260813_165220_se
 - [Kết quả tổng hợp](runs/E2_confirmatory_20260813_165220_seed20260813/e2_results.json)
 - [Bảng kết quả theo ô thí nghiệm](runs/E2_confirmatory_20260813_165220_seed20260813/e2_summary.csv)
 - [Kết quả kiểm tra dữ liệu: PASS](runs/E2_confirmatory_20260813_165220_seed20260813/validation.json)
-- [Báo cáo tự động của lần chạy](runs/E2_confirmatory_20260813_165220_seed20260813/E2_BAO_CAO_CHINH_XAC_DE_HIEU.md)
+- [Báo cáo tự động của lần chạy](runs/E2_confirmatory_20260813_165220_seed20260813/E2_report.md)
