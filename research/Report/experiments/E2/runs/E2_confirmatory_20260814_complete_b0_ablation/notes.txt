@@ -1,0 +1,11 @@
+E2 CONFIRMATORY — query-timed paired controlled emulation
+==================================================================
+Primary comparison: B5 combined versus B2 volume-only.
+Only test split is inferential; calibration is generator QA and validation locks diagnostics.
+Scope: detector decision behavior in synthetic traces; not real IP fragments, ASR, poisoning, latency, CPU, or deployment performance.
+
+Macro effects (registered):
+  attack_sweep_continuous: ΔJ=+0.0000, 95% CI [+0.0000, +0.0000], verdict=practical_equivalence_within_registered_margin
+  attack_sweep_bursty: ΔJ=+0.0000, 95% CI [+0.0000, +0.0000], verdict=practical_equivalence_within_registered_margin
+
+See e2_results.json, e2_summary.csv, e2_runs.csv, raw_runs/, and validation.json.
