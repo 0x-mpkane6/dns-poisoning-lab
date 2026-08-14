@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "audit_date": "2026-08-10",
+  "experiment": "E2",
+  "review_independence": "fresh_same_family",
+  "acceptance_status": "provisional_audit",
+  "verdict": "PROVISIONAL",
+  "authoritative": false,
+  "promoted_result_paths": [],
+  "provisional_snapshot": "D:\\ATM\\Project\\Code\\research\\Report\\experiments\\E2\\runs\\provisional\\E2_20260806_220159",
+  "counts_checked": {
+    "window_rows": 72000,
+    "expected_window_rows": 72000,
+    "run_groups": 480,
+    "unique_seeds": 480,
+    "windows_per_run": 150,
+    "summary_rows": 120,
+    "json_block_rate_cells": 24,
+    "json_discrimination_cells": 20,
+    "duplicate_primary_keys": 0,
+    "missing_cells": 0,
+    "block_rule_mismatches": 0,
+    "combined_equals_volume_named_rows": 48000,
+    "max_ap_recompute_difference": 0.000301,
+    "out_of_bounds_t_intervals": 4
+  },
+  "findings": [
+    {
+      "severity": "HIGH",
+      "id": "E2_DECISION_EPOCH_MISMATCH",
+      "detail": "The harness scores after FRAG2 arrivals, whereas the resolver scores on a later FRAG1/query-response event."
+    },
+    {
+      "severity": "HIGH",
+      "id": "E2_UNSUPPORTED_SECURITY_CLAIMS",
+      "detail": "No retained IPID, event-origin, poisoning-outcome, or ASR evidence supports full-space coverage or end-to-end security claims."
+    },
+    {
+      "severity": "HIGH",
+      "id": "E2_DEPENDENT_OBSERVATION_UNCERTAINTY",
+      "detail": "Overlapping windows are pooled without cluster uncertainty; four t-intervals extend outside [0,1]."
+    },
+    {
+      "severity": "MEDIUM",
+      "id": "E2_IN_SAMPLE_VOLUME_CALIBRATION",
+      "detail": "Calibration uses the reporting seeds and matches cell means instead of held-out paired windows."
+    },
+    {
+      "severity": "MEDIUM",
+      "id": "E2_MISSING_SENSITIVITY_PROVENANCE",
+      "detail": "The reported benign-fraction sensitivity runs are not retained."
+    },
+    {
+      "severity": "MEDIUM",
+      "id": "E2_INCOMPLETE_PROVENANCE",
+      "detail": "The snapshot lacks full source/config/environment and command provenance."
+    }
+  ]
+}

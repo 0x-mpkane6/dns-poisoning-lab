@@ -1,0 +1,103 @@
+{
+  "artifact_dir": "D:\\ATM\\Project\\Code\\research\\Report\\experiments\\E2\\runs\\E2_confirmatory_20260813_165220_seed20260813",
+  "checks": [
+    {
+      "detail": "missing=[]",
+      "name": "required_files",
+      "status": "PASS"
+    },
+    {
+      "detail": "registered-before-data-collection",
+      "name": "registered_before_collection",
+      "status": "PASS"
+    },
+    {
+      "detail": "protocol=E2_confirmatory_20260813_165220_seed20260813 results=E2_confirmatory_20260813_165220_seed20260813",
+      "name": "run_id_match",
+      "status": "PASS"
+    },
+    {
+      "detail": "pair_id (shared timestamp trace across matched conditions)",
+      "name": "independent_unit",
+      "status": "PASS"
+    },
+    {
+      "detail": "2026-08-13T09:53:09.725Z -> 2026-08-13T09:53:09.896Z -> 2026-08-13T09:53:12.967Z -> 2026-08-13T09:53:12.969Z -> 2026-08-13T09:53:22.965Z -> 2026-08-13T09:53:22.979Z -> 2026-08-13T09:53:22.981Z -> 2026-08-13T09:53:42.847Z",
+      "name": "protocol_split_timing",
+      "status": "PASS"
+    },
+    {
+      "detail": "all snapshots match",
+      "name": "source_snapshot_hashes",
+      "status": "PASS"
+    },
+    {
+      "detail": "observed=920 expected=920",
+      "name": "run_row_count",
+      "status": "PASS"
+    },
+    {
+      "detail": "unique=920 rows=920",
+      "name": "unique_run_keys",
+      "status": "PASS"
+    },
+    {
+      "detail": "queries/run=150",
+      "name": "complete_decisions",
+      "status": "PASS"
+    },
+    {
+      "detail": "calibration=160, test=320, validation=160",
+      "name": "disjoint_split_seed_namespaces",
+      "status": "PASS"
+    },
+    {
+      "detail": "runs_replayed=920/920",
+      "name": "event_level_raw_replay",
+      "status": "PASS"
+    },
+    {
+      "detail": "referenced=920 disk=920",
+      "name": "raw_inventory",
+      "status": "PASS"
+    },
+    {
+      "detail": "all decision CSV aggregates match raw",
+      "name": "raw_to_decision_csv",
+      "status": "PASS"
+    },
+    {
+      "detail": "shared timestamps/samples/B2 match per paired query",
+      "name": "exact_paired_occupancy",
+      "status": "PASS"
+    },
+    {
+      "detail": "all generator QA cells passed",
+      "name": "calibration_preflight",
+      "status": "PASS"
+    },
+    {
+      "detail": "thresholds recompute from validation only",
+      "name": "validation_threshold_lock",
+      "status": "PASS"
+    },
+    {
+      "detail": "test metrics and bootstrap recompute",
+      "name": "test_aggregation_and_bootstrap",
+      "status": "PASS"
+    },
+    {
+      "detail": "listed hashes match",
+      "name": "artifact_manifest_hashes",
+      "status": "PASS"
+    }
+  ],
+  "generated_utc": "2026-08-13T09:54:13.590Z",
+  "schema_version": 2,
+  "status": "PASS",
+  "warnings": [
+    "This validates controlled synthetic emulation, not real IP fragmentation.",
+    "Detector alert rates are not poisoning, ASR, BFrag coverage, latency, CPU, or deployment metrics.",
+    "The independent unit is a paired trace/run; overlapping query decisions are never resampled as IID."
+  ]
+}

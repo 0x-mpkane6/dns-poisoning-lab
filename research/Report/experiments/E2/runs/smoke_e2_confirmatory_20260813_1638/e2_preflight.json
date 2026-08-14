@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "level": 24,
+      "pass": true,
+      "profile": "bursty",
+      "runs": 10,
+      "samples_mean": 23.48,
+      "target_samples_per_window": 24,
+      "tolerance": 1.2000000000000002
+    },
+    {
+      "level": 60,
+      "pass": true,
+      "profile": "bursty",
+      "runs": 10,
+      "samples_mean": 58.30999999999999,
+      "target_samples_per_window": 60,
+      "tolerance": 3.0
+    },
+    {
+      "level": 120,
+      "pass": true,
+      "profile": "bursty",
+      "runs": 10,
+      "samples_mean": 121.52666666666667,
+      "target_samples_per_window": 120,
+      "tolerance": 6.0
+    },
+    {
+      "level": 200,
+      "pass": true,
+      "profile": "bursty",
+      "runs": 10,
+      "samples_mean": 201.88333333333333,
+      "target_samples_per_window": 200,
+      "tolerance": 10.0
+    },
+    {
+      "level": 24,
+      "pass": true,
+      "profile": "continuous",
+      "runs": 10,
+      "samples_mean": 23.223333333333336,
+      "target_samples_per_window": 24,
+      "tolerance": 1.2000000000000002
+    },
+    {
+      "level": 60,
+      "pass": true,
+      "profile": "continuous",
+      "runs": 10,
+      "samples_mean": 62.39000000000001,
+      "target_samples_per_window": 60,
+      "tolerance": 3.0
+    },
+    {
+      "level": 120,
+      "pass": true,
+      "profile": "continuous",
+      "runs": 10,
+      "samples_mean": 121.71,
+      "target_samples_per_window": 120,
+      "tolerance": 6.0
+    },
+    {
+      "level": 200,
+      "pass": true,
+      "profile": "continuous",
+      "runs": 10,
+      "samples_mean": 201.99666666666667,
+      "target_samples_per_window": 200,
+      "tolerance": 10.0
+    }
+  ],
+  "completed_utc": "2026-08-13T09:47:02.091Z",
+  "note": "No rate/threshold is fitted from this split.",
+  "schema_version": 1,
+  "started_utc": "2026-08-13T09:47:00.225Z",
+  "status": "PASS"
+}

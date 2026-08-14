@@ -1,0 +1,45 @@
+{
+  "audit_skill": "paper-claim-audit",
+  "verdict": "PASS",
+  "reason_code": "all_numbers_and_scope_claims_match",
+  "summary": "Fresh zero-context review found no actionable numeric mismatch, methodological mismatch, or scope overclaim in the E2 submission report.",
+  "audited_input_hashes": {
+    "E2_BAO_CAO_CHINH_XAC_DE_HIEU.md": "sha256:f54cbb23ceda14471f4a168b74c6e4d2d5c659246bd6e2206376214a31e0ae3a",
+    "runs/E2_confirmatory_20260813_165220_seed20260813/e2_results.json": "sha256:5ff8886502a139ff159316a9415e53b63b7fa330f7e12e00fe1e463b34b4a155",
+    "runs/E2_confirmatory_20260813_165220_seed20260813/e2_summary.csv": "sha256:4c89c40391d51da86808a8f7b47d6452bf8b34c0c1c419345700b8b898fdc5fd",
+    "runs/E2_confirmatory_20260813_165220_seed20260813/e2_runs.csv": "sha256:09ac21d696c5f3a829108a9c4f88c4f8ab49a2f76978be8173f59df2a26b6626",
+    "runs/E2_confirmatory_20260813_165220_seed20260813/e2_protocol.json": "sha256:0e988523d6257a48efd667ed1f4ff6b8f396dcbab884d1ca899627d37a842642",
+    "runs/E2_confirmatory_20260813_165220_seed20260813/e2_thresholds.json": "sha256:af87d35a1152463f2845879fee92feef61b7b215972d844e92bf0d6682b0381d",
+    "runs/E2_confirmatory_20260813_165220_seed20260813/validation.json": "sha256:35098524225065a7fe4ea5dedf69efaa5d7d65c42bab30546b9526cc043c00c0"
+  },
+  "trace_path": ".aris/traces/paper-claim-audit/2026-08-13_run01/",
+  "agent_id": "/root/e2_final_claim_audit",
+  "executor_model": "gpt-5.6-sol",
+  "executor_family": "openai",
+  "reviewer_model": "gpt-5.6-sol",
+  "reviewer_family": "openai",
+  "review_independence": "same-family",
+  "acceptance_status": "provisional",
+  "reviewer_reasoning": "ultra",
+  "generated_at": "2026-08-13T11:28:11Z",
+  "details": {
+    "mismatches": [],
+    "verified_categories": [
+      "four-rate B2/B5 tables",
+      "delta-J means and confidence intervals",
+      "AUPRC values and validation-locked diagnostic",
+      "run, decision, and raw-record counts",
+      "B5 subset implication",
+      "fixed/duplicate mechanism",
+      "scope limitations"
+    ],
+    "result_files": [
+      "e2_results.json",
+      "e2_summary.csv",
+      "e2_runs.csv",
+      "e2_protocol.json",
+      "e2_thresholds.json",
+      "validation.json"
+    ]
+  }
+}
