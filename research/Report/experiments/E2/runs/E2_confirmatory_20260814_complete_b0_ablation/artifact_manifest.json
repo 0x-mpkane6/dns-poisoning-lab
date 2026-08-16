@@ -1,5 +1,5 @@
 {
-  "file_count": 941,
+  "file_count": 944,
   "files": [
     {
       "path": "e2_decisions.csv.gz",
@@ -18,8 +18,8 @@
     },
     {
       "path": "E2_report.md",
-      "sha256": "0afb767055c73835fffdb50d0d1b5a8b095f43ac07ae05308775fd5c9b9c47b2",
-      "size_bytes": 10883
+      "sha256": "39eea9ca17fc008875f1e520c7e00eab8024cafbf6ef49c53ed6d5a9264ab340",
+      "size_bytes": 11457
     },
     {
       "path": "e2_results.json",
@@ -52,7 +52,22 @@
       "size_bytes": 78225
     },
     {
+      "path": "figures/Figure_3_feature_distributions.png",
+      "sha256": "5153b115931bbc13304a55ea7b593b3398dc8dd5c422c0e7f96fba903218601f",
+      "size_bytes": 108554
+    },
+    {
       "path": "figures/Figure_3_validation_locked_tpr_fpr.png",
+      "sha256": "3a6e2ce600cde8090e71b758c9c2d50ed0840588be235eb22b8184d4d3f5d53e",
+      "size_bytes": 128793
+    },
+    {
+      "path": "figures/Figure_4_feature_distributions.png",
+      "sha256": "f52c9b156d84b99b6c512ef59be369ed5670082297d527a869128508e5ee8169",
+      "size_bytes": 107041
+    },
+    {
+      "path": "figures/Figure_4_validation_locked_tpr_fpr.png",
       "sha256": "3a6e2ce600cde8090e71b758c9c2d50ed0840588be235eb22b8184d4d3f5d53e",
       "size_bytes": 128793
     },
@@ -4703,10 +4718,10 @@
     },
     {
       "path": "validation.json",
-      "sha256": "190a4933f4669125df5189752f09a92a4b58e5659de4e2a1ea4fa1969146cfd4",
+      "sha256": "740418f64954f8fd796639aaa166593612bdcecc92c6b77c946ed9eb2b11f3af",
       "size_bytes": 3058
     }
   ],
-  "generated_utc": "2026-08-14T16:27:00.691Z",
+  "generated_utc": "2026-08-15T23:35:36.026Z",
   "schema_version": 1
 }

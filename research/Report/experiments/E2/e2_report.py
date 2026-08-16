@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPORT_TITLE = (
-    "E2 — Đánh giá giá trị bổ sung của entropy và tỷ lệ IPID khác nhau trong Rℓ2 cải tiến"
+    "E2 — Volume-matched benign vs attack của rule Rℓ2 ba biến"
 )
 VARIANT_LABELS = {
     "no_defense": "B0 — Không phòng vệ",
@@ -30,7 +30,7 @@ def effect_sentence(effect: dict) -> str:
     meanings = {
         "meaningful_added_discrimination": "B5 có thêm ích lợi rõ ràng theo cổng đã đăng ký trước.",
         "practical_equivalence_within_registered_margin": (
-            "Trong dữ liệu này, B5 và B2 gần như tương đương trong biên ±0,05 đã đăng ký trước."
+            "Trong phép ablation B5–B2 này, hai rule gần như tương đương trong biên ±0,05 đã đăng ký trước."
         ),
         "meaningful_degradation": "B5 kém hơn B2 rõ ràng theo cổng đã đăng ký trước.",
         "inconclusive": "Chưa đủ bằng chứng để kết luận B5 tốt hơn, tương đương hay kém hơn B2.",
@@ -213,9 +213,12 @@ def main() -> int:
         "",
         "## Mục tiêu",
         "",
-        "B2 chỉ nhìn vào **số fragment** trong 2 giây. B5 chỉ bật khi đồng thời đủ số fragment, entropy cao "
-        "và tỉ lệ IPID khác nhau cao. E2 hỏi rất đơn giản: nếu benign và condition stress có đúng cùng lịch "
-        "timestamp, hai dấu hiệu entropy/unique ratio có giúp B5 phân biệt tốt hơn B2 không?",
+        "Rule đề xuất B5 block khi đồng thời đạt ba điều kiện trong cửa sổ 2 giây: số FRAG2, entropy Shannon "
+        "của IPID và tỉ lệ IPID khác nhau. B1 là POPS/Rℓ2 gốc; B2, B3 và B4 lần lượt là ablation volume-only, "
+        "entropy-only và unique-only.",
+        "",
+        "E2 đánh giá khả năng phân biệt của các cấu hình này khi benign và attack có cùng volume. Phân tích chính "
+        "so sánh B5 với B2; các so sánh B5 với B1–B4 được báo cáo kèm khoảng tin cậy ghép cặp.",
         "",
         "## Thiết kế volume-matched benign vs attack",
         "",
@@ -223,6 +226,7 @@ def main() -> int:
         f"{meta['queries_per_run']} lần chấm điểm.",
         "- Mỗi benign/attack pair dùng chung hoàn toàn thời điểm FRAG2 và thời điểm query. Vì vậy số mẫu trong "
         "từng cửa sổ là như nhau; khác biệt nếu có chỉ đến từ IPID/origin chứ không phải tải.",
+        "- B0 là cấu hình không phòng vệ; B1 là rule POPS/Rℓ2 gốc; B2–B4 là các ablation; B5 là rule ba biến.",
         "- Trước test có một split kiểm tra generator và một split validation riêng. Test không được dùng để chọn "
         "ngưỡng hay chỉnh tốc độ.",
         "- Mỗi run giữ raw JSONL: event FRAG2, IPID, origin, timestamp, feature và các quyết định của biến thể rule. Validator "
@@ -234,6 +238,7 @@ def main() -> int:
         "## Cách đọc số",
         "",
         "- **Benign bị bật**: rule bật trên traffic benign control. Số thấp hơn là tốt hơn về mặt tránh TC/TCP không cần thiết.",
+        "- **B1** là baseline POPS/Rℓ2 gốc; **B5** là rule ba biến; **B2–B4** là các ablation một biến.",
         "- **Condition attack bị bật**: rule bật trong condition stress tổng hợp. Đây chỉ là detector alert rate, **không phải** "
         "tỉ lệ ngăn poisoning thành công.",
         "- **J** = condition attack bị bật − benign bị bật. J càng cao thì rule càng tách được hai condition trong mô phỏng này.",
@@ -241,7 +246,7 @@ def main() -> int:
         "- **Synthetic TPR/FNR/FPR** mô tả detector trên cặp condition tổng hợp, không phải poisoning/ASR. Precision là giá trị dưới tỷ lệ lớp 50:50 của thiết kế ghép cặp.",
         "- Bảng score-level chọn ngưỡng trên validation để đạt TPR mục tiêu 0,95, sau đó báo cáo TPR/FPR/precision và PR-AUC trên test duy nhất.",
         "",
-        "## Kết quả: volume-matched benign vs attack",
+        "## Kết quả",
         "",
         "### Sweep IPID liên tục",
         "",
@@ -260,6 +265,16 @@ def main() -> int:
         effect_sentence(effects["attack_sweep_bursty"]),
         "",
         *table_for(rows, "attack_sweep_bursty"),
+        "",
+        "### Phân phối entropy và unique ratio",
+        "",
+        "Phân phối được tổng hợp trên toàn bộ decision event của held-out test, theo profile và mức volume.",
+        "",
+        *image_markdown(
+            artifact_dir,
+            "Figure_3_feature_distributions.png",
+            "Hình 3. Phân phối entropy và unique ratio trên test volume-matched",
+        ),
         "",
         "### Baseline/ablation B0–B5 ở ngưỡng đã đăng ký",
         "",
@@ -284,8 +299,8 @@ def main() -> int:
         "",
         *image_markdown(
             artifact_dir,
-            "Figure_3_validation_locked_tpr_fpr.png",
-            "Hình 3. FPR tại TPR mục tiêu của các score đơn biến",
+            "Figure_4_validation_locked_tpr_fpr.png",
+            "Hình 4. FPR tại TPR mục tiêu của các score đơn biến",
         ),
         "",
         "### Kết quả âm: IPID cố định và IPID lặp",
@@ -296,8 +311,8 @@ def main() -> int:
         "",
         *failure_probe_table(rows),
         "",
-        "Trong hai probe này B5 không bật, còn B2 vẫn bật. Đây là kết quả âm quan trọng: B5 có thể kém B2 rõ rệt "
-        "về detector alert separation khi entropy/unique ratio không qua ngưỡng.",
+        "Trong hai probe này B5 không bật, còn B2 vẫn bật; \u0394J của B5 âm tại mọi mức volume. Kết quả này được "
+        "báo cáo như failure case của operating point `24/4,0/0,70`.",
         "",
         *image_markdown(
             artifact_dir,
@@ -309,13 +324,14 @@ def main() -> int:
         "",
         *feature_auprc_table(rows),
         "",
-        "Ở sweep liên tục tải 200, tỷ lệ IPID khác nhau đạt AUPRC cao trong khi B2/B5 vẫn đồng nhất. "
-        "Điều này cho thấy tín hiệu có thông tin, nhưng phép AND với ngưỡng cố định hiện tại chưa khai thác được nó.",
+        "Ở sweep liên tục tải 200, unique ratio đạt AUPRC cao trong khi B2 và B5 vẫn có cùng quyết định. Operating "
+        "point `24/4,0/0,70` vì vậy chưa khai thác được khoảng cách score này.",
         "",
         "## Điều E2 chưa thể kết luận",
         "",
-        "E2 chưa chứng minh rule mới cải thiện hiệu năng hệ thống hoặc vẫn giữ nguyên độ an toàn của POPS Rℓ2. Muốn "
-        "kết luận như vậy cần E5: IP fragmentation thật, resolver thật, TC→TCP đầy đủ, và đo attack outcome/latency/CPU.",
+        "E2 không cho thấy B5 vượt B2 ở operating point `24/4,0/0,70` trên hai sweep chính. Kết luận về hiệu quả "
+        "end-to-end so với POPS/Rℓ2 gốc cần E1/E5 với IP fragmentation thật, resolver thật, TC→TCP đầy đủ, và "
+        "các metric ASR/latency/CPU.",
         "",
         "## File để kiểm tra lại",
         "",

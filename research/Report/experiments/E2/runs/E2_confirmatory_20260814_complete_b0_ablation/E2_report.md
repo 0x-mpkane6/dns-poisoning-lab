@@ -1,4 +1,4 @@
-# E2 — Đánh giá giá trị bổ sung của entropy và tỷ lệ IPID khác nhau trong Rℓ2 cải tiến
+# E2 — Volume-matched benign vs attack của rule Rℓ2 ba biến
 
 **Run ID:** `E2_confirmatory_20260814_complete_b0_ablation`  
 **Trạng thái kiểm tra:** `PASS`  
@@ -6,12 +6,15 @@
 
 ## Mục tiêu
 
-B2 chỉ nhìn vào **số fragment** trong 2 giây. B5 chỉ bật khi đồng thời đủ số fragment, entropy cao và tỉ lệ IPID khác nhau cao. E2 hỏi rất đơn giản: nếu benign và condition stress có đúng cùng lịch timestamp, hai dấu hiệu entropy/unique ratio có giúp B5 phân biệt tốt hơn B2 không?
+Rule đề xuất B5 block khi đồng thời đạt ba điều kiện trong cửa sổ 2 giây: số FRAG2, entropy Shannon của IPID và tỉ lệ IPID khác nhau. B1 là POPS/Rℓ2 gốc; B2, B3 và B4 lần lượt là ablation volume-only, entropy-only và unique-only.
+
+E2 đánh giá khả năng phân biệt của các cấu hình này khi benign và attack có cùng volume. Phân tích chính so sánh B5 với B2; các so sánh B5 với B1–B4 được báo cáo kèm khoảng tin cậy ghép cặp.
 
 ## Thiết kế volume-matched benign vs attack
 
 - Có 20 lần chạy độc lập cho mỗi ô kết quả chính (test), mỗi lần 150 lần chấm điểm.
 - Mỗi benign/attack pair dùng chung hoàn toàn thời điểm FRAG2 và thời điểm query. Vì vậy số mẫu trong từng cửa sổ là như nhau; khác biệt nếu có chỉ đến từ IPID/origin chứ không phải tải.
+- B0 là cấu hình không phòng vệ; B1 là rule POPS/Rℓ2 gốc; B2–B4 là các ablation; B5 là rule ba biến.
 - Trước test có một split kiểm tra generator và một split validation riêng. Test không được dùng để chọn ngưỡng hay chỉnh tốc độ.
 - Mỗi run giữ raw JSONL: event FRAG2, IPID, origin, timestamp, feature và các quyết định của biến thể rule. Validator đã đọc lại toàn bộ raw và tính lại các số trong bảng.
 - Hai mẫu so sánh chính là sweep IPID liên tục và sweep IPID theo đợt; IPID random là đối chứng. Fixed và duplicate là failure probe độ đa dạng IPID thấp, không phải kết quả poisoning/ASR.
@@ -20,17 +23,18 @@ B2 chỉ nhìn vào **số fragment** trong 2 giây. B5 chỉ bật khi đồng 
 ## Cách đọc số
 
 - **Benign bị bật**: rule bật trên traffic benign control. Số thấp hơn là tốt hơn về mặt tránh TC/TCP không cần thiết.
+- **B1** là baseline POPS/Rℓ2 gốc; **B5** là rule ba biến; **B2–B4** là các ablation một biến.
 - **Condition attack bị bật**: rule bật trong condition stress tổng hợp. Đây chỉ là detector alert rate, **không phải** tỉ lệ ngăn poisoning thành công.
 - **J** = condition attack bị bật − benign bị bật. J càng cao thì rule càng tách được hai condition trong mô phỏng này.
 - **ΔJ (B5−baseline)** dương nghĩa là B5 tách tốt hơn baseline; âm nghĩa là kém hơn. Khoảng 95% được bootstrap theo run pair.
 - **Synthetic TPR/FNR/FPR** mô tả detector trên cặp condition tổng hợp, không phải poisoning/ASR. Precision là giá trị dưới tỷ lệ lớp 50:50 của thiết kế ghép cặp.
 - Bảng score-level chọn ngưỡng trên validation để đạt TPR mục tiêu 0,95, sau đó báo cáo TPR/FPR/precision và PR-AUC trên test duy nhất.
 
-## Kết quả: volume-matched benign vs attack
+## Kết quả
 
 ### Sweep IPID liên tục
 
-ΔJ trung bình = +0.000, CI 95% [+0.000, +0.000]. Trong dữ liệu này, B5 và B2 gần như tương đương trong biên ±0,05 đã đăng ký trước.
+ΔJ trung bình = +0.000, CI 95% [+0.000, +0.000]. Trong phép ablation B5–B2 này, hai rule gần như tương đương trong biên ±0,05 đã đăng ký trước.
 
 | Tải | B2: benign bị bật | B2: condition attack bị bật | B5: benign bị bật | B5: condition attack bị bật | ΔJ (B5−B2), 95% CI |
 |---:|---:|---:|---:|---:|---:|
@@ -43,7 +47,7 @@ B2 chỉ nhìn vào **số fragment** trong 2 giây. B5 chỉ bật khi đồng 
 
 ### Sweep IPID theo đợt
 
-ΔJ trung bình = +0.000, CI 95% [+0.000, +0.000]. Trong dữ liệu này, B5 và B2 gần như tương đương trong biên ±0,05 đã đăng ký trước.
+ΔJ trung bình = +0.000, CI 95% [+0.000, +0.000]. Trong phép ablation B5–B2 này, hai rule gần như tương đương trong biên ±0,05 đã đăng ký trước.
 
 | Tải | B2: benign bị bật | B2: condition attack bị bật | B5: benign bị bật | B5: condition attack bị bật | ΔJ (B5−B2), 95% CI |
 |---:|---:|---:|---:|---:|---:|
@@ -51,6 +55,12 @@ B2 chỉ nhìn vào **số fragment** trong 2 giây. B5 chỉ bật khi đồng 
 | 60 | 0.999 | 0.999 | 0.999 | 0.999 | 0.000 [0.000, 0.000] |
 | 120 | 1.000 | 1.000 | 1.000 | 1.000 | 0.000 [0.000, 0.000] |
 | 200 | 1.000 | 1.000 | 1.000 | 1.000 | 0.000 [0.000, 0.000] |
+
+### Phân phối entropy và unique ratio
+
+Phân phối được tổng hợp trên toàn bộ decision event của held-out test, theo profile và mức volume.
+
+![Hình 3. Phân phối entropy và unique ratio trên test volume-matched](figures/Figure_3_feature_distributions.png)
 
 ### Baseline/ablation B0–B5 ở ngưỡng đã đăng ký
 
@@ -120,7 +130,7 @@ Các ngưỡng scalar bên dưới được khóa trên validation để đạt 
 | 200 | Entropy | 7.447 | 0.726 | 0.958 | 0.851 | 0.530 |
 | 200 | Unique ratio | 0.976 | 0.992 | 0.980 | 0.053 | 0.950 |
 
-![Hình 3. FPR tại TPR mục tiêu của các score đơn biến](figures/Figure_3_validation_locked_tpr_fpr.png)
+![Hình 4. FPR tại TPR mục tiêu của các score đơn biến](figures/Figure_4_validation_locked_tpr_fpr.png)
 
 ### Kết quả âm: IPID cố định và IPID lặp
 
@@ -134,7 +144,7 @@ Các ngưỡng scalar bên dưới được khóa trên validation để đạt 
 | 120 | 1.000 | 0.000 | -1.000 [-1.000, -1.000] | -1.000 [-1.000, -1.000] |
 | 200 | 1.000 | 0.000 | -1.000 [-1.000, -1.000] | -1.000 [-1.000, -1.000] |
 
-Trong hai probe này B5 không bật, còn B2 vẫn bật. Đây là kết quả âm quan trọng: B5 có thể kém B2 rõ rệt về detector alert separation khi entropy/unique ratio không qua ngưỡng.
+Trong hai probe này B5 không bật, còn B2 vẫn bật; ΔJ của B5 âm tại mọi mức volume. Kết quả này được báo cáo như failure case của operating point `24/4,0/0,70`.
 
 ![Hình 2. Hiệu ứng bổ sung của B5 so với B2](figures/Figure_2_delta_B5_minus_B2.png)
 
@@ -147,11 +157,11 @@ Trong hai probe này B5 không bật, còn B2 vẫn bật. Đây là kết quả
 | 120 | 0.500 | 0.618 | 0.888 |
 | 200 | 0.500 | 0.726 | 0.992 |
 
-Ở sweep liên tục tải 200, tỷ lệ IPID khác nhau đạt AUPRC cao trong khi B2/B5 vẫn đồng nhất. Điều này cho thấy tín hiệu có thông tin, nhưng phép AND với ngưỡng cố định hiện tại chưa khai thác được nó.
+Ở sweep liên tục tải 200, unique ratio đạt AUPRC cao trong khi B2 và B5 vẫn có cùng quyết định. Operating point `24/4,0/0,70` vì vậy chưa khai thác được khoảng cách score này.
 
 ## Điều E2 chưa thể kết luận
 
-E2 chưa chứng minh rule mới cải thiện hiệu năng hệ thống hoặc vẫn giữ nguyên độ an toàn của POPS Rℓ2. Muốn kết luận như vậy cần E5: IP fragmentation thật, resolver thật, TC→TCP đầy đủ, và đo attack outcome/latency/CPU.
+E2 không cho thấy B5 vượt B2 ở operating point `24/4,0/0,70` trên hai sweep chính. Kết luận về hiệu quả end-to-end so với POPS/Rℓ2 gốc cần E1/E5 với IP fragmentation thật, resolver thật, TC→TCP đầy đủ, và các metric ASR/latency/CPU.
 
 ## File để kiểm tra lại
 

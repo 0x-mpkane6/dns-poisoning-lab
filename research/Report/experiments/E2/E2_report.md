@@ -1,53 +1,59 @@
-# E2 — Đánh giá giá trị bổ sung của entropy và tỷ lệ IPID khác nhau trong Rℓ2 cải tiến
+# E2 — Volume-matched benign vs attack của rule Rℓ2 ba biến
 
-## 1. Câu hỏi nghiên cứu
+## 1. Mục tiêu
 
-Trong thiết kế hiện tại, biến thể B2 kích hoạt cơ chế bảo vệ khi cửa sổ 2 giây có ít nhất 24 mảnh IP (fragment):
-
-\[
-B2 = [n \ge 24].
-\]
-
-Biến thể B5 bổ sung hai điều kiện về phân phối IPID:
+Rule đề xuất B5 block khi đồng thời đạt ba điều kiện trong cửa sổ 2 giây:
 
 \[
 B5 = [n \ge 24] \land [H \ge 4{,}0] \land [U \ge 0{,}70],
 \]
 
-trong đó \(n\) là số mảnh IP trong cửa sổ, \(H\) là entropy Shannon và \(U\) là tỷ lệ IPID khác nhau. E2 kiểm tra **giá trị bổ sung chung** của hai điều kiện IPID: khi số mảnh IP đã được giữ giống nhau, B5 có phân biệt lưu lượng hợp lệ với các mẫu kiểm tra tổng hợp tốt hơn B2 hay không?
+trong đó \(n\) là số FRAG2, \(H\) là entropy Shannon của IPID và \(U\) là tỷ lệ IPID khác nhau. B1 là POPS/Rℓ2 gốc. B2, B3 và B4 lần lượt là ablation volume-only, entropy-only và unique-only; B0 là cấu hình không phòng vệ.
 
-Nếu B5 chỉ lặp lại quyết định của B2 thì hai điều kiện mới chưa tạo thêm giá trị tại bộ ngưỡng đang xét. Nếu B5 loại bỏ các cảnh báo trên mẫu kiểm tra nhưng vẫn giữ cảnh báo trên lưu lượng hợp lệ, khả năng phân biệt còn có thể giảm.
+E2 đánh giá khả năng phân biệt của các cấu hình B2–B5 khi benign và attack có cùng volume. Phân tích chính là \(\Delta J = J_{B5}-J_{B2}\); B5 cũng được so sánh ghép cặp với B1, B3 và B4.
 
 ## 2. Thiết kế thí nghiệm
 
-E2 sử dụng thiết kế ghép cặp theo thời gian. Trong mỗi cặp chạy, luồng hợp lệ và luồng kiểm tra dùng đúng cùng lịch xuất hiện mảnh IP và cùng thời điểm truy vấn; chỉ cách sinh IPID được thay đổi. Số mảnh IP tại từng lần chấm điểm vì thế giống nhau hoàn toàn giữa hai phía (`max_abs_paired_samples_difference = 0`). Thiết kế này giữ cố định ảnh hưởng của lịch mảnh IP; phần chênh lệch quan sát được gắn với cách sinh IPID và các đặc trưng được tính từ nó.
+E2 dùng thiết kế ghép cặp theo thời gian. Mỗi benign/attack pair có cùng lịch FRAG2, lịch query, cửa sổ 2 giây, burstiness và thời lượng đo; chỉ mô hình sinh IPID thay đổi. `max_abs_paired_samples_difference = 0` cho toàn bộ pair trên test.
 
-Theo khung *volume-matched benign vs attack*, E2 dùng bốn mức tải 24, 60, 120 và 200 `samples/window`. Hai mẫu so sánh chính đã đăng ký trước là sweep IPID liên tục và sweep IPID theo đợt; IPID ngẫu nhiên là đối chứng. Hai probe IPID cố định và IPID lặp được bổ sung để kiểm tra xem B5 có bỏ cảnh báo khi độ đa dạng IPID thấp hay không. E2 chưa có biến thể tấn công thích nghi/high-entropy; vì vậy kết quả không được diễn giải như một phép thử khả năng né detector của đối thủ thật.
+**Bảng 1. Thiết kế E2.**
 
-Phần kiểm định cuối gồm bốn mức tải 24, 60, 120 và 200 mảnh IP/cửa sổ. Mỗi trường hợp được lặp lại 20 lần độc lập, mỗi lần có 150 quyết định. Tập kiểm định có 560 lượt chạy và 84.000 quyết định. Hai tập dùng để kiểm tra bộ sinh dữ liệu và khóa ngưỡng có hạt giống ngẫu nhiên (seed) riêng; kết quả kiểm định không được dùng để chỉnh lại luật.
+| Hạng mục | Thiết kế |
+| --- | --- |
+| Mức volume | 24, 60, 120 và 200 samples/window |
+| Profile lưu lượng | Poisson liên tục; NHPP theo đợt |
+| Nguồn/đích | Không biến thiên trong controlled emulation |
+| Attack chính | Sweep-IPID liên tục; sweep-IPID theo đợt |
+| Đối chứng/probe | Random-IPID; fixed-IPID; duplicate-sweep IPID |
+| Cửa sổ và warm-up | 2 giây; 6 giây |
+| Đơn vị độc lập | Một pair dùng chung timestamp trace |
+| Test | 20 pair/ô, 150 decision/run; 560 condition-run, 84.000 decision |
+| Split | Calibration 10 run/ô; validation 10 run/ô; test held-out 20 run/ô |
 
-Chỉ số so sánh chính là:
+E2 không có biến thể adaptive/high-entropy. Đây là biến thể khuyến nghị trong outline, không phải điều kiện bắt buộc của E2.
+
+Chỉ số phân tách trong E2 là:
 
 \[
 J = \text{tỷ lệ kích hoạt trên mẫu kiểm tra}
   - \text{tỷ lệ kích hoạt trên lưu lượng hợp lệ}.
 \]
 
-Giá trị \(J\) càng lớn thì luật càng tách được hai nhóm. Hiệu ứng bổ sung của B5 được tính bằng \(\Delta J = J_{B5} - J_{B2}\). Khoảng tin cậy được ước lượng bằng 5.000 lần bootstrap trên 20 cặp chạy độc lập. Các cửa sổ chồng lấn trong cùng một lượt chạy không bị coi là những mẫu độc lập.
+Giá trị \(J\) càng lớn thì luật càng tách được hai nhóm. Khoảng tin cậy được ước lượng bằng 5.000 lần bootstrap trên 20 pair; các cửa sổ chồng lấn trong một run không được coi là mẫu độc lập.
 
-Phân tích chính báo cáo tỷ lệ kích hoạt trên benign và condition attack, cùng \(\Delta J\) ghép cặp với CI 95%. Phần score-level khóa một ngưỡng riêng trên split validation để mỗi tín hiệu đạt TPR mục tiêu 0,95, rồi chỉ đo PR-AUC, TPR, FPR và precision trên test. Đây là phép so sánh FPR tại cùng **mục tiêu** TPR cho các tín hiệu liên tục; nó không thay đổi các ngưỡng rule B0–B5 đã đăng ký.
+Phân tích báo cáo TPR, FNR, FPR, precision, PR-AUC và \(\Delta J\) ghép cặp với CI 95%. Với các score liên tục, ngưỡng được khóa trên validation tại TPR mục tiêu 0,95 rồi đánh giá một lần trên held-out test.
 
 ## 3. Kết quả chính
 
 ### 3.1. Các mẫu IPID đa dạng
 
-E2 dùng ba mẫu IPID đa dạng: quét tuần tự liên tục, quét tuần tự theo đợt và IPID ngẫu nhiên. Bảng 1 ghi riêng tỷ lệ kích hoạt trên lưu lượng hợp lệ và trên mẫu kiểm tra để có thể tính lại \(J\).
+E2 dùng ba mẫu IPID đa dạng: quét tuần tự liên tục, quét tuần tự theo đợt và IPID ngẫu nhiên. Bảng 2 ghi riêng tỷ lệ kích hoạt trên benign và attack để tính \(J\).
 
 ![Hình 1. Chênh lệch tỷ lệ kích hoạt giữa condition attack và benign của B2 và B5 trên hai sweep chính; mọi điểm đều bằng 0 trong sai số số học.](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_1_net_separation.png)
 
-*Hình 1. Khi benign và attack được ghép cùng volume/timestamp trace, B2 và B5 có cùng \(J\) trên cả sweep liên tục và sweep theo đợt. Điểm và thanh lỗi là trung bình và CI bootstrap 95% theo cặp chạy.*
+*Hình 1. \(J\) của B2 và B5 trên hai sweep chính; điểm là trung bình, thanh lỗi là CI bootstrap 95% theo pair.*
 
-**Bảng 1. Kết quả của B2 và B5 trên các mẫu IPID đa dạng.**
+**Bảng 2. Kết quả B2 và B5 trên các mẫu IPID đa dạng.**
 
 | Mẫu kiểm tra | Tải | Hợp lệ — B2 | Kiểm tra — B2 | Hợp lệ — B5 | Kiểm tra — B5 | \(\Delta J\), CI 95% |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -59,15 +65,13 @@ E2 dùng ba mẫu IPID đa dạng: quét tuần tự liên tục, quét tuần t
 | IPID ngẫu nhiên | 24 | 0,510 | 0,510 | 0,510 | 0,510 | 0,000 [0,000; 0,000] |
 | IPID ngẫu nhiên | 60–200 | 1,000 | 1,000 | 1,000 | 1,000 | 0,000 [0,000; 0,000] |
 
-Với hai mẫu sweep đã đăng ký làm phép so sánh chính, \(\Delta J\) trung bình qua bốn mức tải bằng 0,000 và CI 95% là [0,000; 0,000]. Mẫu IPID ngẫu nhiên dùng làm đối chứng cũng cho \(\Delta J=0\) ở mọi mức tải. Như vậy, tại bộ ngưỡng `24/4,0/0,70`, B5 không cải thiện khả năng phân biệt của B2 trên các mẫu IPID đa dạng đã kiểm tra.
-
-Kết quả bằng nhau xuất phát từ cấu trúc của B5. Trong các mẫu IPID đa dạng đã kiểm tra, mỗi khi số mảnh IP đạt ngưỡng và B2 kích hoạt thì cả hai điều kiện IPID cũng đạt ngưỡng. B5 vì thế không lọc bớt quyết định nào và có cùng đầu ra với B2.
+Trên hai sweep chính, \(\Delta J\) trung bình của B5 so với B2 bằng 0,000, CI 95% [0,000; 0,000]. Random-IPID cũng cho \(\Delta J=0\) ở mọi mức tải. Do đó, E2 không cung cấp bằng chứng rằng entropy và unique ratio cải thiện khả năng phân biệt độc lập với volume tại operating point `24/4,0/0,70`.
 
 ### 3.2. Các phép thử IPID cố định và lặp
 
 E2 còn có hai phép thử giới hạn: một mẫu dùng IPID cố định và một mẫu lặp lại các IPID. Chúng được dùng để kiểm tra hành vi của luật khi độ đa dạng IPID thấp; chúng không đại diện trực tiếp cho kết quả tấn công đầu-cuối.
 
-**Bảng 2. Kết quả của B2 và B5 khi IPID có độ đa dạng thấp.**
+**Bảng 3. Kết quả B2 và B5 khi IPID có độ đa dạng thấp.**
 
 | Mẫu kiểm tra | Tải | Hợp lệ — B2 | Kiểm tra — B2 | Hợp lệ — B5 | Kiểm tra — B5 | \(\Delta J\), CI 95% |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -78,15 +82,15 @@ E2 còn có hai phép thử giới hạn: một mẫu dùng IPID cố định v�
 
 ![Hình 2. Hiệu ứng bổ sung của B5 so với B2](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_2_delta_B5_minus_B2.png)
 
-*Hình 2. Trên sweep liên tục, sweep theo đợt và IPID ngẫu nhiên, \(\Delta J\) bằng 0. Với IPID cố định hoặc lặp, \(\Delta J\) âm: B5 bỏ cảnh báo trên mẫu kiểm tra trong khi B2 vẫn kích hoạt.*
+*Hình 2. \(\Delta J=J_{B5}-J_{B2}\) theo condition và mức volume; thanh lỗi là CI bootstrap 95% theo pair.*
 
-Ở các lượt thử này, B2 vẫn kích hoạt khi đủ số mảnh IP, còn B5 không phát cảnh báo trên mẫu kiểm tra vì entropy hoặc tỷ lệ IPID khác nhau không đạt ngưỡng. Trong khi đó, B5 vẫn kích hoạt trên lưu lượng hợp lệ ghép cặp. Vì vậy \(J_{B5}\) giảm 0,510 ở tải 24 và giảm 1,000 từ tải 60 trở lên so với B2.
+Ở fixed-IPID và duplicate-sweep, \(J_{B5}\) thấp hơn B2: −0,510 tại tải 24 và −1,000 từ tải 60 trở lên. Đây là failure case của operating point `24/4,0/0,70`.
 
 ### 3.3. Baseline/ablation B0–B5 và hiệu ứng ghép cặp của B5
 
-Để khớp đầy đủ baseline/ablation, cùng một test split được tổng hợp cho B0 (không phòng vệ, không cảnh báo), B1 (Rℓ2 gốc, luôn bật trong emulation), B2 (volume-only), B3 (entropy-only), B4 (unique-only) và B5 (AND của ba điều kiện). Ở sweep liên tục, bảng dưới cho các tỷ lệ tại ngưỡng rule đã đăng ký; TPR/FNR/FPR ở đây là chỉ số trên hai condition tổng hợp, không phải attack outcome thực tế.
+Để khớp đầy đủ baseline/ablation, cùng một test split được tổng hợp cho B0 (không phòng vệ), B1 (POPS/Rℓ2 gốc, luôn block trong emulation), B2/B3/B4 (ba ablation một biến), và B5 (rule ba biến đề xuất). Ở sweep liên tục, bảng dưới cho các tỷ lệ tại ngưỡng rule đã đăng ký; TPR/FNR/FPR ở đây là chỉ số trên hai condition tổng hợp, không phải attack outcome thực tế.
 
-**Bảng 3. Baseline/ablation B0–B5 trên sweep liên tục.**
+**Bảng 4. Baseline/ablation B0–B5 trên sweep liên tục.**
 
 | Tải | Biến thể | TPR tổng hợp | FNR tổng hợp | FPR tổng hợp | Precision 50:50 | \(J\) |
 | ---: | --- | ---: | ---: | ---: | ---: | ---: |
@@ -99,9 +103,9 @@ E2 còn có hai phép thử giới hạn: một mẫu dùng IPID cố định v�
 | 60–200 | B0 — Không phòng vệ | 0,000 | 1,000 | 0,000 | 0,000 | 0,000 |
 | 60–200 | B1, B2, B3, B4 hoặc B5 | 1,000 | 0,000 | 1,000 | 0,500 | 0,000 |
 
-Ở sweep theo đợt, kết luận tương tự: B2 và B5 cùng \(J=0\) tại mọi tải; B3 chỉ có khác biệt rất nhỏ ở tải 24 (\(J\) xấp xỉ 0,002). Bảng đầy đủ từng tải/từng variant nằm trong báo cáo tự động của artifact.
+Ở sweep theo đợt, B2 và B5 cùng \(J=0\) tại mọi tải; B3 có \(J\) xấp xỉ 0,002 tại tải 24. Bảng đầy đủ từng tải và từng variant nằm trong artifact.
 
-**Bảng 4. \(\Delta J\) ghép cặp của B5 so với từng baseline, trung bình bốn mức tải.**
+**Bảng 5. \(\Delta J\) ghép cặp của B5 so với từng baseline, trung bình bốn mức tải.**
 
 | Mẫu kiểm tra | B5 so với | \(\Delta J\), CI 95% | Kết luận theo biên ±0,05 đã đăng ký |
 | --- | --- | ---: | --- |
@@ -114,13 +118,19 @@ E2 còn có hai phép thử giới hạn: một mẫu dùng IPID cố định v�
 | Sweep theo đợt | B3 | −0,001 [−0,002; −0,001] | Tương đương thực tiễn |
 | Sweep theo đợt | B4 | 0,000 [0,000; 0,000] | Tương đương thực tiễn |
 
-Vì mọi CI 90% tương ứng đều nằm trong biên \(\pm0{,}05\), B5 không tạo được cải thiện thực tiễn so với bất cứ baseline B1–B4 nào ở hai sweep chính trong phạm vi mô phỏng này.
+Mọi CI 90% nằm trong biên \(\pm0{,}05\). E2 không ghi nhận B5 vượt B1–B4 về \(J\) trên hai sweep chính.
 
-### 3.4. Phân tích phụ với tín hiệu liên tục
+### 3.4. Phân phối entropy và unique ratio
 
-So sánh B5–B2 ở trên đánh giá hai điều kiện IPID sau khi chúng đã được chuyển thành ngưỡng đúng/sai. Để xem bản thân các giá trị liên tục có chứa thông tin hay không, E2 tính thêm diện tích dưới đường cong precision–recall (AUPRC) cho sweep liên tục. Mẫu sweep là lớp dương và giá trị cao được quy ước là đáng ngờ hơn. AUPRC được tính trong từng cặp chạy rồi lấy trung bình trên 20 cặp.
+Hình 3 trình bày phân phối entropy và unique ratio trên held-out test của hai attack chính và benign tương ứng, tại từng mức volume.
 
-**Bảng 5. Khả năng xếp hạng của từng tín hiệu trên sweep liên tục.**
+![Hình 3. Phân phối entropy và unique ratio trên held-out test volume-matched.](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_3_feature_distributions.png)
+
+### 3.5. PR-AUC và FPR tại TPR mục tiêu
+
+PR-AUC được tính theo từng pair cho các score liên tục. Ngưỡng của từng score được khóa trên validation tại TPR mục tiêu 0,95 và chỉ đánh giá một lần trên held-out test.
+
+**Bảng 6. PR-AUC của từng tín hiệu trên sweep liên tục.**
 
 | Tải | Số mảnh IP | Entropy | Tỷ lệ IPID khác nhau |
 | ---: | ---: | ---: | ---: |
@@ -129,7 +139,7 @@ So sánh B5–B2 ở trên đánh giá hai điều kiện IPID sau khi chúng đ
 | 120 | 0,500 | 0,618 | 0,888 |
 | 200 | 0,500 | 0,726 | 0,992 |
 
-**Bảng 6. FPR trên test ở ngưỡng khóa validation với TPR mục tiêu 0,95.**
+**Bảng 7. FPR trên test ở ngưỡng khóa validation với TPR mục tiêu 0,95.**
 
 | Tải | Score | PR-AUC | TPR test | FPR test | Precision 50:50 |
 | ---: | --- | ---: | ---: | ---: | ---: |
@@ -146,27 +156,23 @@ So sánh B5–B2 ở trên đánh giá hai điều kiện IPID sau khi chúng đ
 | 200 | Entropy | 0,726 | 0,958 | 0,851 | 0,530 |
 | 200 | Unique ratio | 0,992 | 0,980 | 0,053 | 0,950 |
 
-![Hình 3. FPR trên test sau khi khóa ngưỡng đạt TPR mục tiêu trên validation](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_3_validation_locked_tpr_fpr.png)
+![Hình 4. FPR trên test sau khi khóa ngưỡng đạt TPR mục tiêu trên validation](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_4_validation_locked_tpr_fpr.png)
 
-Do hai lớp được cân bằng, 0,5 là mức kỳ vọng của một bộ xếp hạng ngẫu nhiên. Ở tải 200, tỷ lệ IPID khác nhau đạt AUPRC 0,992, CI 95% [0,990; 0,995], trong khi số mảnh IP vẫn ở mức 0,5 vì hai phía có cùng lịch tải. Một ngưỡng phụ được khóa trước trên tập chọn ngưỡng cho tỷ lệ kích hoạt 0,980 trên sweep và 0,053 trên lưu lượng hợp lệ ở tải 200. Đây chỉ là phân tích chẩn đoán cho trường hợp sweep; nó chưa xác lập một ngưỡng chung để triển khai.
+Ở tải 200, unique ratio đạt PR-AUC 0,992, TPR 0,980 và FPR 0,053. TPR trên test dao động do ngưỡng đã được khóa trước trên validation; Bảng 7 vì vậy là FPR tại cùng **mục tiêu validation** TPR, không phải FPR tại TPR test được ép bằng nhau.
 
-Kết quả phụ này cho thấy tỷ lệ IPID khác nhau có khả năng xếp hạng hai nhóm trong mẫu sweep tải cao, nhưng ngưỡng 0,70 của B5 không khai thác được khoảng cách đó vì cả hai nhóm đều đã vượt ngưỡng. Chiều “giá trị cao là đáng ngờ” cũng không phù hợp với các phép thử cố định và lặp: IPID cố định không đạt cả ngưỡng entropy lẫn tỷ lệ IPID khác nhau, còn IPID lặp bị loại chủ yếu do tỷ lệ IPID khác nhau thấp.
+## 4. Diễn giải
 
-## 4. Diễn giải từ cấu trúc của B5
+E2 cho ba kết quả chính:
 
-Do B5 là phép AND giữa B2 và hai điều kiện IPID, tập cảnh báo của B5 luôn là tập con của tập cảnh báo B2:
+1. B5 không vượt B2 trên hai sweep chính tại operating point `24/4,0/0,70`.
+2. B5 kém B2 trên fixed-IPID và duplicate-sweep.
+3. Unique ratio có khả năng xếp hạng cao ở volume 200, nhưng ngưỡng cố định của B5 chưa chuyển khoảng cách score này thành cải thiện \(J\).
 
-\[
-\{\text{cảnh báo B5}\} \subseteq \{\text{cảnh báo B2}\}.
-\]
-
-B5 không thể bổ sung một cảnh báo mà B2 đã bỏ qua; nó chỉ có thể giữ lại hoặc loại bớt cảnh báo của B2. Muốn \(J\) tăng, các cảnh báo bị loại phải xuất hiện trên lưu lượng hợp lệ nhiều hơn trên mẫu kiểm tra. Trong các mẫu sweep và ngẫu nhiên, B5 không loại cảnh báo nào nên \(\Delta J=0\). Trong các phép thử cố định và lặp, B5 chỉ loại cảnh báo trên mẫu kiểm tra nên \(\Delta J<0\).
-
-Đây là giới hạn của **cách ghép điều kiện hiện tại**, không phải bằng chứng rằng entropy hoặc tỷ lệ IPID khác nhau luôn vô ích. E2 đã có ablation B3 (entropy-only) và B4 (unique-only), nhưng chưa khảo sát riêng hai biến thể tương tác `B2 + entropy` và `B2 + tỷ lệ IPID`; kết luận chính chỉ áp dụng cho cổng AND B5 ở bộ ngưỡng đang dùng.
+Theo tiêu chí trong outline, E2 chưa bảo vệ claim rằng entropy/unique ratio tạo thêm sức phân biệt độc lập với volume ở operating point hiện tại. E3 cần chọn lại operating point trên validation và xác nhận một lần trên held-out test. E1 và E5 dùng để đánh giá false positive và hiệu quả end-to-end của B5 so với B1.
 
 ## 5. Giới hạn của thí nghiệm
 
-E2 là mô phỏng có kiểm soát tại thời điểm truy vấn. Thí nghiệm dùng các chuỗi IPID tổng hợp và chỉ đánh giá quyết định của bộ phát hiện. Nó không tạo phân mảnh IP thật, không chạy toàn bộ quá trình xử lý của trình phân giải DNS và không đo kết quả đầu-cuối. Vì vậy, các số liệu trên không cho phép kết luận về xác suất đầu độc bộ nhớ đệm, tỷ lệ tấn công thành công, khả năng bao phủ các biến thể tấn công, độ trễ, CPU, bộ nhớ hoặc thông lượng hệ thống.
+E2 là mô phỏng có kiểm soát tại thời điểm truy vấn. Thí nghiệm dùng các chuỗi IPID tổng hợp, giữ topology nguồn/đích cố định và chỉ đánh giá quyết định của bộ phát hiện. Nó không tạo phân mảnh IP thật, không chạy toàn bộ quá trình xử lý của trình phân giải DNS và không đo kết quả đầu-cuối. Vì vậy, các số liệu trên không cho phép kết luận về xác suất đầu độc bộ nhớ đệm, tỷ lệ tấn công thành công, khả năng bao phủ các biến thể tấn công, độ trễ, CPU, bộ nhớ hoặc thông lượng hệ thống.
 
 Ngoài ra, các phép thử IPID cố định và lặp chỉ cho thấy B5 không bảo toàn cảnh báo trong hai trường hợp tổng hợp này. Cần dữ liệu gói tin và tấn công thật trước khi khẳng định chúng tương ứng với một lỗ hổng an ninh có thể khai thác.
 
@@ -182,9 +188,9 @@ E3 cần so sánh các phương án này trên tập chọn ngưỡng và tập 
 
 ## 7. Kết luận
 
-Trong phạm vi mô phỏng của E2, hai điều kiện `entropy ≥ 4,0` và `tỷ lệ IPID khác nhau ≥ 0,70` không tạo thêm khả năng phân biệt cho B5 so với B2 trên các mẫu IPID đa dạng đã kiểm tra. Với IPID cố định và lặp, B5 không phát cảnh báo trong các lượt thử mặc dù B2 vẫn kích hoạt.
+E2 đánh giá B5, rule Rℓ2 kết hợp volume, entropy và unique ratio, với B1 là baseline POPS/Rℓ2 gốc và B2–B4 là ablation. Kết quả không cho thấy B5 cải thiện sức phân biệt so với B2 khi benign và attack được volume-matched; đồng thời B5 có failure case trên fixed-IPID và duplicate-sweep.
 
-Kết quả này chưa ủng hộ việc dùng B5 ở bộ ngưỡng `24/4,0/0,70` như một thay thế tổng quát cho luật chỉ đếm số lượng. Phân tích phụ vẫn cho thấy tỷ lệ IPID khác nhau có thông tin trong sweep tải cao; phần cần thay đổi trước hết là cách chuyển tín hiệu này thành quyết định, sau đó phải kiểm tra lại bằng dữ liệu và hệ thống thật.
+Unique ratio vẫn cho PR-AUC 0,992 và FPR 0,053 tại TPR 0,980 ở sweep tải 200. Kết quả này định hướng E3 hiệu chỉnh operating point, E1 kiểm tra false positive theo tải benign, và E5 xác nhận bằng resolver cùng IP fragmentation thật.
 
 ## 8. Dữ liệu và kiểm chứng
 
