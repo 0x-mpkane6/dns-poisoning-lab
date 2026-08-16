@@ -21,7 +21,7 @@ E2 dùng thiết kế ghép cặp theo thời gian. Mỗi benign/attack pair có
 | Hạng mục | Thiết kế |
 | --- | --- |
 | Mức volume | 24, 60, 120 và 200 samples/window |
-| Profile lưu lượng | Poisson liên tục; NHPP theo đợt |
+| Profile lưu lượng | Poisson liên tục; Non-Homogeneous Poisson Process |
 | Nguồn/đích | Không biến thiên trong controlled emulation |
 | Attack chính | Sweep-IPID liên tục; sweep-IPID theo đợt |
 | Đối chứng/probe | Random-IPID; fixed-IPID; duplicate-sweep IPID |
@@ -36,7 +36,8 @@ Chỉ số phân tách trong E2 là:
 
 \[
 J = \text{tỷ lệ kích hoạt trên mẫu kiểm tra}
-  - \text{tỷ lệ kích hoạt trên lưu lượng hợp lệ}.
+
+- \text{tỷ lệ kích hoạt trên lưu lượng hợp lệ}.
 \]
 
 Giá trị \(J\) càng lớn thì luật càng tách được hai nhóm. Khoảng tin cậy được ước lượng bằng 5.000 lần bootstrap trên 20 pair; các cửa sổ chồng lấn trong một run không được coi là mẫu độc lập.
@@ -52,6 +53,12 @@ E2 dùng ba mẫu IPID đa dạng: quét tuần tự liên tục, quét tuần t
 ![Hình 1. Chênh lệch tỷ lệ kích hoạt giữa condition attack và benign của B2 và B5 trên hai sweep chính; mọi điểm đều bằng 0 trong sai số số học.](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_1_net_separation.png)
 
 *Hình 1. \(J\) của B2 và B5 trên hai sweep chính; điểm là trung bình, thanh lỗi là CI bootstrap 95% theo pair.*
+
+**Cách đọc và ý nghĩa Hình 1.**
+
+- Mỗi nửa hình là một profile attack: sweep liên tục ở bên trái và sweep theo đợt ở bên phải; trục ngang là mức tải, trục dọc là chênh lệch tỷ lệ cảnh báo attack trừ benign \(J\). \(J>0\) mới biểu thị có phân biệt được attack với lưu lượng hợp lệ.
+- Hai đường B2 và B5 chồng khít tại \(J=0\) ở cả bốn mức tải. Nghĩa là trong từng cặp volume-matched, hai rule kích hoạt với cùng tỷ lệ trên benign và attack; thanh lỗi bằng 0 vì kết quả này lặp lại nhất quán trên các pair.
+- Vì B5 không dịch đường lên phía trên B2, việc thêm entropy và unique ratio chưa tạo lợi ích phân biệt ở operating point `24/4,0/0,70`.
 
 **Bảng 2. Kết quả B2 và B5 trên các mẫu IPID đa dạng.**
 
@@ -83,6 +90,12 @@ E2 còn có hai phép thử giới hạn: một mẫu dùng IPID cố định v�
 ![Hình 2. Hiệu ứng bổ sung của B5 so với B2](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_2_delta_B5_minus_B2.png)
 
 *Hình 2. \(\Delta J=J_{B5}-J_{B2}\) theo condition và mức volume; thanh lỗi là CI bootstrap 95% theo pair.*
+
+**Cách đọc và ý nghĩa Hình 2.**
+
+- Đường ngang tại 0 là mốc B5 và B2 cho cùng khả năng phân biệt; vùng xám \(\pm0{,}05\) là biên tương đương thực tiễn đã đăng ký trước. Điểm nằm phía trên 0 mới là bằng chứng B5 tốt hơn B2.
+- Hai sweep chính và random-IPID đều nằm đúng tại 0, trong vùng tương đương, ở mọi mức tải. Do đó không có bằng chứng B5 được lợi từ hai biến IPID trên các condition này.
+- Hai probe IPID cố định và lặp nằm ở \(-0{,}510\) tại tải 24, rồi \(-1{,}000\) từ tải 60 trở lên: điều kiện entropy/unique khiến B5 không cảnh báo, trong khi B2 vẫn cảnh báo. Đây là failure case tổng hợp cần được giữ làm ràng buộc khi chọn lại ngưỡng, không phải kết luận trực tiếp về tấn công đầu-cuối.
 
 Ở fixed-IPID và duplicate-sweep, \(J_{B5}\) thấp hơn B2: −0,510 tại tải 24 và −1,000 từ tải 60 trở lên. Đây là failure case của operating point `24/4,0/0,70`.
 
@@ -126,6 +139,13 @@ Hình 3 trình bày phân phối entropy và unique ratio trên held-out test c�
 
 ![Hình 3. Phân phối entropy và unique ratio trên held-out test volume-matched.](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_3_feature_distributions.png)
 
+**Cách đọc và ý nghĩa Hình 3.**
+
+- Màu xám là benign và màu xanh là sweep-IPID; hàng trên là entropy, hàng dưới là unique ratio; cột trái là liên tục và cột phải là theo đợt. Đường trong hộp là trung vị, hộp biểu thị 50% quan sát ở giữa, còn râu biểu thị độ phân tán của số liệu.
+- Entropy tăng theo volume ở cả benign lẫn attack và hai phân phối chồng lấn nhiều. Vì vậy entropy đơn lẻ chỉ có tín hiệu yếu trong E2, phù hợp với PR-AUC chỉ tăng từ 0,514 lên 0,726 trên sweep liên tục.
+- Unique ratio tách rõ hơn khi tải tăng: ở tải 120 và 200, benign có trung vị thấp hơn và phân tán rộng hơn, còn sweep-IPID tập trung gần 1. Đây là lý do PR-AUC của unique ratio đạt 0,888 và 0,992 tương ứng.
+- Tuy vậy, ngưỡng cố định \(U\ge0{,}70\) của B5 quá thấp so với cả hai phân phối nên hầu như benign và attack đều vượt ngưỡng. Khoảng cách score nhìn thấy trong hình vì thế chưa làm \(J\) của B5 tốt hơn B2.
+
 ### 3.5. PR-AUC và FPR tại TPR mục tiêu
 
 PR-AUC được tính theo từng pair cho các score liên tục. Ngưỡng của từng score được khóa trên validation tại TPR mục tiêu 0,95 và chỉ đánh giá một lần trên held-out test.
@@ -157,6 +177,13 @@ PR-AUC được tính theo từng pair cho các score liên tục. Ngưỡng c�
 | 200 | Unique ratio | 0,992 | 0,980 | 0,053 | 0,950 |
 
 ![Hình 4. FPR trên test sau khi khóa ngưỡng đạt TPR mục tiêu trên validation](runs/E2_confirmatory_20260814_complete_b0_ablation/figures/Figure_4_validation_locked_tpr_fpr.png)
+
+**Cách đọc và ý nghĩa Hình 4.**
+
+- Hai panel lần lượt là sweep liên tục và theo đợt; mỗi điểm là FPR trên held-out test, thanh lỗi là CI bootstrap 95% theo pair. Ngưỡng được chọn độc lập trên validation cho từng profile, mức tải và score để đạt TPR mục tiêu ít nhất 0,95.
+- Volume có FPR gần 1 ở mọi mức tải, còn entropy chỉ giảm nhẹ. Điều này cho thấy khi phải giữ TPR validation cao, hai score này gần như vẫn kích hoạt trên cả benign lẫn attack.
+- Unique ratio giảm FPR rất mạnh khi volume tăng ở cả hai profile; trên sweep liên tục, FPR giảm từ 0,863 ở tải 24 xuống 0,053 ở tải 200, trong khi TPR test vẫn là 0,980.
+- Hình này chứng minh tiềm năng của **unique ratio dưới ngưỡng được hiệu chỉnh**, chứ chưa chứng minh B5 tốt hơn B2: B5 đang dùng phép hội ngưỡng cố định khác với các ngưỡng validation-locked trong hình.
 
 Ở tải 200, unique ratio đạt PR-AUC 0,992, TPR 0,980 và FPR 0,053. TPR trên test dao động do ngưỡng đã được khóa trước trên validation; Bảng 7 vì vậy là FPR tại cùng **mục tiêu validation** TPR, không phải FPR tại TPR test được ép bằng nhau.
 
