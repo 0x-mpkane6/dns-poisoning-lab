@@ -1,0 +1,65 @@
+{
+  "analysis": {
+    "any_event_interval": "exact binomial 95%",
+    "bootstrap_replicates": 5000,
+    "negative_results": "retain and report, never an integrity failure",
+    "unit": "run"
+  },
+  "case_ids": [
+    "C0_attack_flood_b0",
+    "C1_benign_low",
+    "C2_benign_boundary",
+    "C3_attack_matched",
+    "C4_attack_flood"
+  ],
+  "changes_from_original": [
+    "single rate sender",
+    "monotonic serialized detector",
+    "verified firewall command status",
+    "measurement-only summaries"
+  ],
+  "do_not_pool_with": [
+    "E5-unbound-20260828-s20260828",
+    "E5-runtime-20260828-instrumented-s20260828",
+    "E5-runtime-20260827-corrected-s20260827",
+    "E5-runtime-20260827-s20260827"
+  ],
+  "experiment_seed": 202608281,
+  "independent_unit": "one recreated resolver/auth stack plus restarted attacker",
+  "k_runs_per_case": 20,
+  "locked_operating_point": {
+    "entropy_threshold": 6.0,
+    "min_samples": 8,
+    "unique_ratio_threshold": 0.9
+  },
+  "measurement": {
+    "client_clock": "/proc/uptime; 10 ms resolution",
+    "decision_selection": "measurement_start <= mono_s <= measurement_end",
+    "detector_clock": "time.monotonic",
+    "event_weighted_trigger_rate": "reported decision-event fraction",
+    "tick_trigger_rate": "fixed-cadence summary from existing log"
+  },
+  "prohibited_claims": [
+    "off-path guessing success",
+    "production-ready",
+    "tc_block proves dropped packet",
+    "pooled estimate with previous E5 campaigns"
+  ],
+  "randomization": "seeded shuffled complete blocks by rep",
+  "rounds_per_run": 50,
+  "run_id": "E5-unbound-supplement-20260828-s202608281",
+  "sanity": {
+    "included_in_confirmatory": false,
+    "occupancy_relative_difference_max": 0.15,
+    "runs_per_case": 1
+  },
+  "sanity_stop_conditions": [
+    "B0 poison path absent",
+    "missing or inconsistent raw evidence",
+    "threshold mismatch",
+    "firewall command error",
+    "C2/C3 occupancy mismatch"
+  ],
+  "schema_version": 1,
+  "window_seconds": 2.0
+}

@@ -5,3 +5,6 @@
 *.yaml text eol=lf
 *.csv text eol=lf
 
+# Preserve byte-exact E5 outputs and source-snapshot hashes.
+research/Report/experiments/E5/output/** -text
+

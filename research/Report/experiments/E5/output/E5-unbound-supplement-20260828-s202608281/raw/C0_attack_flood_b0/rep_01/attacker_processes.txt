@@ -1,0 +1,3 @@
+SERVICE   #   UID   PID    PPID   C   STIME  TTY  TIME      CMD
+attacker  1   root  67726  67703  0   10:46  ?    00:00:00  sleep infinity
+attacker  1   root  68052  67703  7   10:46  ?    00:00:00  python3 /app/sender.py --role notify-poison

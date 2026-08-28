@@ -8,3 +8,6 @@ Report/logs/
 labs/r2entropy/localtest/runs/
 research/doc/
 research/Report/framework/artifacts/
+
+# E5: keep the large local Unbound source out of Git.
+/research/Report/experiments/E5/tools/unbound/

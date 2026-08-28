@@ -1,0 +1,402 @@
+[
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 1
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 1
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 1
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 1
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 1
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 2
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 2
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 2
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 2
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 2
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 3
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 3
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 3
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 3
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 3
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 4
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 4
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 4
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 4
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 4
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 5
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 5
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 5
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 5
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 5
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 6
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 6
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 6
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 6
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 6
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 7
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 7
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 7
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 7
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 7
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 8
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 8
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 8
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 8
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 8
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 9
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 9
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 9
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 9
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 9
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 10
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 10
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 10
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 10
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 10
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 11
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 11
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 11
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 11
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 11
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 12
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 12
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 12
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 12
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 12
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 13
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 13
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 13
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 13
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 13
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 14
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 14
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 14
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 14
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 14
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 15
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 15
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 15
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 15
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 15
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 16
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 16
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 16
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 16
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 16
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 17
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 17
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 17
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 17
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 17
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 18
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 18
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 18
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 18
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 18
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 19
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 19
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 19
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 19
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 19
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 20
+  },
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 20
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 20
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 20
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 20
+  }
+]

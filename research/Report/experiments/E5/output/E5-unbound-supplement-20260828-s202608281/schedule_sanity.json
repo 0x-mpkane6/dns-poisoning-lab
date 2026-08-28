@@ -1,0 +1,22 @@
+[
+  {
+    "case_id": "C0_attack_flood_b0",
+    "rep": 0
+  },
+  {
+    "case_id": "C1_benign_low",
+    "rep": 0
+  },
+  {
+    "case_id": "C2_benign_boundary",
+    "rep": 0
+  },
+  {
+    "case_id": "C3_attack_matched",
+    "rep": 0
+  },
+  {
+    "case_id": "C4_attack_flood",
+    "rep": 0
+  }
+]
