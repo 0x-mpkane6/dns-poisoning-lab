@@ -1,0 +1,192 @@
+{
+  "artifact_hashes": {
+    "manifest": "a6e5770b25bebc665360c2e96e35cc26c7dab5240f3549f692bec0c40b8e976a",
+    "protocol": "4f0855a8ca1d76ead2a4b756768eaa07aee5696463e0a6d97d7a6f691f440ede"
+  },
+  "checks": [
+    {
+      "details": {
+        "manifest_protocol_sha256": "4f0855a8ca1d76ead2a4b756768eaa07aee5696463e0a6d97d7a6f691f440ede",
+        "protocol_sha256": "4f0855a8ca1d76ead2a4b756768eaa07aee5696463e0a6d97d7a6f691f440ede",
+        "protocol_status": "registered-before-aggregation"
+      },
+      "name": "protocol_is_registered_and_manifest_binds_its_hash",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "manifest_status": "frozen_inputs_inventory_complete",
+        "raw_data_access": "none",
+        "selection_or_threshold_modification": false
+      },
+      "name": "manifest_scope_and_mutation_policy",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "dependency": "E3 is a 60/20/20 repartition of the canonical E2 decision dataset. E2 and E3 may be compared descriptively but must not be pooled or treated as independent replications."
+      },
+      "name": "E2_E3_non_independence_policy_is_preserved",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "expected_counts": {
+          "E1": 4,
+          "E2": 4,
+          "E3": 9
+        },
+        "observed_counts": {
+          "E1": 4,
+          "E2": 4,
+          "E3": 9
+        },
+        "registered_inventory": {
+          "E1": {
+            "manifest_artifacts": [
+              "e1_protocol.json",
+              "e1_results.json",
+              "e1_runs.csv",
+              "validation.json"
+            ],
+            "manifest_root": "research/Report/experiments/E1/runs/E1_confirmatory_20260810_seed20260810_raw_v2",
+            "registered_artifacts": [
+              "e1_protocol.json",
+              "e1_results.json",
+              "e1_runs.csv",
+              "validation.json"
+            ],
+            "registered_root": "research/Report/experiments/E1/runs/E1_confirmatory_20260810_seed20260810_raw_v2"
+          },
+          "E2": {
+            "manifest_artifacts": [
+              "e2_protocol.json",
+              "e2_results.json",
+              "e2_summary.csv",
+              "validation.json"
+            ],
+            "manifest_root": "research/Report/experiments/E2/runs/E2_confirmatory_20260814_complete_b0_ablation",
+            "registered_artifacts": [
+              "e2_protocol.json",
+              "e2_results.json",
+              "e2_summary.csv",
+              "validation.json"
+            ],
+            "registered_root": "research/Report/experiments/E2/runs/E2_confirmatory_20260814_complete_b0_ablation"
+          },
+          "E3": {
+            "manifest_artifacts": [
+              "datasets/splits_60_20_20/split_manifest.json",
+              "e3_lock_validation.json",
+              "e3_locked_threshold.json",
+              "e3_protocol.json",
+              "e3_summary.csv",
+              "e3_test_results.csv",
+              "e3_test_results.json",
+              "e3_validation.json",
+              "e3_validation_grid.json"
+            ],
+            "manifest_root": "research/Report/experiments/E3",
+            "registered_artifacts": [
+              "datasets/splits_60_20_20/split_manifest.json",
+              "e3_lock_validation.json",
+              "e3_locked_threshold.json",
+              "e3_protocol.json",
+              "e3_summary.csv",
+              "e3_test_results.csv",
+              "e3_test_results.json",
+              "e3_validation.json",
+              "e3_validation_grid.json"
+            ],
+            "registered_root": "research/Report/experiments/E3"
+          }
+        }
+      },
+      "name": "registered_artifact_hashes_match_manifest",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "raw_or_invalid_paths": []
+      },
+      "name": "manifest_contains_no_raw_decision_input",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "E1/validation.json": {
+          "check_count": 18,
+          "expected_check_count": 18,
+          "status": "PASS"
+        },
+        "E2/validation.json": {
+          "check_count": 18,
+          "expected_check_count": 18,
+          "status": "PASS"
+        },
+        "E3/e3_lock_validation.json": {
+          "check_count": 9,
+          "expected_check_count": 9,
+          "status": "PASS"
+        },
+        "E3/e3_validation.json": {
+          "check_count": 12,
+          "expected_check_count": 12,
+          "status": "PASS"
+        }
+      },
+      "name": "upstream_validators_pass_with_expected_check_counts",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "allowed_EOL_equivalents": [
+          "summary_csv",
+          "test_csv"
+        ],
+        "verification_modes": {
+          "held_out_test": "pass_byte_exact",
+          "lock": "pass_byte_exact",
+          "lock_validation": "pass_byte_exact",
+          "protocol": "pass_byte_exact",
+          "split_manifest": "pass_byte_exact",
+          "summary_csv": "pass_git_lf_checkout_equivalent",
+          "test_csv": "pass_git_lf_checkout_equivalent",
+          "test_results": "pass_byte_exact",
+          "validation_grid": "pass_byte_exact"
+        }
+      },
+      "name": "E3_final_validator_frozen_artifacts_are_byte_exact_or_registered_EOL_equivalent",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "E1_runs_per_cell": 20,
+        "E2_test_runs_per_cell": 20,
+        "E3_primary_n_pairs": [
+          6
+        ]
+      },
+      "name": "registered_independent_unit_counts_match_frozen_artifacts",
+      "status": "PASS"
+    },
+    {
+      "details": {
+        "existing_aggregation_outputs": [],
+        "protocol_status": "not_started"
+      },
+      "name": "aggregation_has_not_started",
+      "status": "PASS"
+    }
+  ],
+  "critical_failures": [],
+  "data_access": "protocol, input manifest, and frozen registered artifacts only; no raw decision data opened",
+  "experiment": "E4 preflight",
+  "generated_utc": "2026-08-29T08:04:13.099925Z",
+  "schema_version": 1,
+  "status": "PASS",
+  "summary": {
+    "checks_passed": 9,
+    "checks_total": 9
+  }
+}
