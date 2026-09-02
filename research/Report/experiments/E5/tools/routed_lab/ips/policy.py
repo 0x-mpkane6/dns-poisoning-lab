@@ -7,6 +7,7 @@ import json
 import hashlib
 import os
 import re
+import signal
 import subprocess
 import threading
 import time
@@ -61,6 +62,7 @@ class RoutedPolicy:
         self.raw_observer_started = threading.Event()
         self.raw_observer_error = False
         self.events_handle = None
+        self.event_count = 0
         self.ready = False
         self.last_active = False
 
@@ -70,7 +72,9 @@ class RoutedPolicy:
         with self.event_lock:
             if path == self.events_path and self.events_handle is not None:
                 self.events_handle.write(encoded)
-                self.events_handle.flush()
+                self.event_count += 1
+                if self.event_count % 64 == 0:
+                    self.events_handle.flush()
             else:
                 with path.open("a", encoding="utf-8") as handle:
                     handle.write(encoded)
@@ -426,6 +430,9 @@ class RoutedPolicy:
         self.event("ips_start", auth_ip=AUTH_IP, resolver_ip=RESOLVER_IP, inside_ip=INSIDE_IP, queue_num=QUEUE_NUM)
         self.write_state("startup")
         queue = NetfilterQueue()
+        self.queue = queue
+        signal.signal(signal.SIGTERM, self._handle_signal)
+        signal.signal(signal.SIGINT, self._handle_signal)
         queue.bind(QUEUE_NUM, self.handle)
         interfaces = [
             os.environ.get("OUTSIDE_IFACE", ""),
@@ -476,7 +483,15 @@ class RoutedPolicy:
         finally:
             self.ready = False
             queue.unbind()
+            if self.events_handle is not None:
+                self.events_handle.flush()
             self.event("ips_stop")
+            if self.events_handle is not None:
+                self.events_handle.flush()
+
+    def _handle_signal(self, signum, _frame) -> None:  # noqa: ANN001
+        self.ready = False
+        raise SystemExit(128 + int(signum))
 
 
 if __name__ == "__main__":
