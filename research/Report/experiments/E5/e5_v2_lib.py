@@ -74,7 +74,10 @@ def build_trial_qname(run_id: str, rep: int, trial: int, nonce: int) -> str:
     safe_run = "".join(char.lower() if char.isalnum() else "-" for char in run_id).strip("-")
     if not safe_run:
         raise ValueError("run_id must contain at least one alphanumeric character")
-    label = f"{safe_run[:45]}-r{rep:02d}-t{trial:03d}-{nonce:08x}"
+    # Keep the wire-format name independent of the campaign identifier.  The
+    # latter belongs in the event envelope; using it as a label makes the
+    # qname parser and the registered protocol needlessly coupled to a run ID.
+    label = f"r{rep:02d}-t{trial:03d}-{nonce:08x}"
     qname = f"{label}.bank.com."
     if len(qname.rstrip(".")) > 253:
         raise ValueError("generated qname exceeds the DNS name length limit")

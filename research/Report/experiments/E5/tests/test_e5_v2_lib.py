@@ -43,6 +43,7 @@ def test_trial_qnames_are_unique_and_dns_safe() -> None:
     }
     assert len(names) == 20
     assert all(name.endswith(".bank.com.") for name in names)
+    assert all(name.startswith("r02-t017-") for name in names)
     assert all(len(name.rstrip(".")) <= 253 for name in names)
 
 
