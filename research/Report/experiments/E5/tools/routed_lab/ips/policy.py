@@ -57,7 +57,7 @@ class RoutedPolicy:
         self.event_lock = threading.Lock()
         self.raw_condition = threading.Condition(self.state_lock)
         self.raw_fragment_keys: set[tuple[str, str, int]] = set()
-        self.raw_fragment_content_hashes: set[str] = set()
+        self.raw_fragment_content_seen: dict[str, float] = {}
         self.raw_observer_started = threading.Event()
         self.raw_observer_error = False
         self.ready = False
@@ -195,10 +195,16 @@ class RoutedPolicy:
         # interfaces, with TTL/checksum rewritten on the forwarded copy.
         # Deduplicate invariant fragment payload content for B5 while keeping
         # the full packet hash for packet-path correlation and both PCAPs.
+        now = time.monotonic()
+        content_key = f"{src}|{dst}|{int(ip.id)}|{offset}|{content_sha256}"
         with self.state_lock:
-            if content_sha256 in self.raw_fragment_content_hashes:
+            previous = self.raw_fragment_content_seen.get(content_key)
+            if previous is not None and now - previous < 0.05:
                 return
-            self.raw_fragment_content_hashes.add(content_sha256)
+            self.raw_fragment_content_seen[content_key] = now
+            stale = [key for key, seen in self.raw_fragment_content_seen.items() if now - seen >= 2.0]
+            for key in stale:
+                self.raw_fragment_content_seen.pop(key, None)
         self.observe_fragment(
             src=src,
             dst=dst,
