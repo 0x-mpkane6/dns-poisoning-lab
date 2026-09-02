@@ -346,7 +346,7 @@ def _container_stats(command: list[str]) -> str:
     if not ids:
         return ""
     stats = run_command(["docker", "stats", "--no-stream", "--format", "{{json .}}", *ids], check=False)
-    return (stats.stdout or "") + (stats.stderr or "")
+    return stats.stdout or ""
 
 
 def _stop_stack(command: list[str]) -> None:

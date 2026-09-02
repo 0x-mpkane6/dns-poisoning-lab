@@ -188,7 +188,11 @@ class RoutedPolicy:
             meta = parse_packet(raw, auth_ip=AUTH_IP, resolver_ip=RESOLVER_IP, query_map=self.query_map)
         except Exception as exc:
             self.event("packet_parse_error", error=repr(exc), payload_len=len(raw))
-            nfq_packet.accept()
+            # Fail closed on an unparseable queued packet.  Accepting here
+            # would create an implicit fail-open path outside the registered
+            # B0/B1/B5/RFC policy semantics.
+            self.event("packet_verdict", verdict="drop", reason="parse_error", payload_sha256=payload_sha256)
+            nfq_packet.drop()
             return
 
         if meta.is_query:

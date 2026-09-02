@@ -148,6 +148,7 @@
       "firewall_after.rules",
       "ips_inside.pcapng",
       "ips_outside.pcapng",
+      "resource_samples.jsonl",
       "metrics.json",
       "validation.json"
     ],

@@ -25,6 +25,7 @@ REQUIRED_LOGS = (
     "ips_inside.pcapng",
     "ips_outside.pcapng",
     "metrics.json",
+    "resource_samples.jsonl",
 )
 
 
@@ -84,7 +85,10 @@ def _has_nonzero_nfqueue_counter(text: str) -> bool:
 
 def _pcapng(path: Path) -> bool:
     try:
-        return path.read_bytes()[:4] == b"\x0a\x0d\x0d\x0a"
+        payload = path.read_bytes()
+        # Section + interface headers alone are not evidence of a capture;
+        # require room for at least one packet block as well.
+        return payload[:4] == b"\x0a\x0d\x0d\x0a" and len(payload) > 128
     except OSError:
         return False
 
@@ -168,6 +172,8 @@ def validate_run(
         for pcap in (run_dir / "ips_inside.pcapng", run_dir / "ips_outside.pcapng"):
             if pcap.exists() and not _pcapng(pcap):
                 errors.append(f"{pcap.name} is not a PCAPNG artifact")
+    if (run_dir / "resource_samples.jsonl").exists() and not (run_dir / "resource_samples.jsonl").read_text(encoding="utf-8", errors="replace").strip():
+        errors.append("runtime CPU/memory sample artifact is empty")
     if not (run_dir / "resolver_local_poisoner.present").exists():
         pass
     else:

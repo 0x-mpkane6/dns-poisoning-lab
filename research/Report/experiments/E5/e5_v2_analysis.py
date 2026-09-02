@@ -46,6 +46,21 @@ def _quantile(values: list[float], probability: float) -> float | None:
     return ordered[low] + (ordered[high] - ordered[low]) * fraction
 
 
+def _stats_percentages(rows: list[dict[str, Any]], field: str) -> list[float]:
+    values: list[float] = []
+    for row in rows:
+        value = row.get(field)
+        if isinstance(value, str):
+            value = value.strip().rstrip("%")
+        try:
+            parsed = float(value)
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(parsed):
+            values.append(parsed)
+    return values
+
+
 def _trial_events(rows: list[dict[str, Any]], trial: dict[str, Any]) -> list[dict[str, Any]]:
     qname = trial.get("qname")
     trial_id = trial.get("trial_id")
@@ -124,6 +139,7 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
     auth = read_jsonl(run_dir / "auth_events.jsonl")
     attacker = read_jsonl(run_dir / "attacker_events.jsonl")
     cache = read_jsonl(run_dir / "cache_events.jsonl")
+    resource_rows = read_jsonl(run_dir / "resource_samples.jsonl")
     if expected_trials is not None and len(trials) != expected_trials:
         raise ValueError(f"expected {expected_trials} trial rows, found {len(trials)}")
     if not trials:
@@ -146,6 +162,7 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
     legit_trials = 0
     noanswer_trials = 0
     latencies: list[float] = []
+    query_latencies: list[float] = []
     per_trial: list[dict[str, Any]] = []
     root_causes: Counter[str] = Counter()
 
@@ -223,6 +240,9 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
         latency = trial.get("client_latency_ms", trial.get("latency_ms"))
         if latency is not None and math.isfinite(float(latency)):
             latencies.append(float(latency))
+        query_latency = trial.get("latency_ms")
+        if query_latency is not None and math.isfinite(float(query_latency)):
+            query_latencies.append(float(query_latency))
         cause = classify_outcome(
             poisoned=poisoned,
             trigger_before=trigger_before,
@@ -291,6 +311,13 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
         "latency_median_ms": statistics.median(latencies) if latencies else None,
         "latency_p95_ms": _quantile(latencies, 0.95),
         "latency_p99_ms": _quantile(latencies, 0.99),
+        "query_latency_median_ms": statistics.median(query_latencies) if query_latencies else None,
+        "query_latency_p95_ms": _quantile(query_latencies, 0.95),
+        "query_latency_p99_ms": _quantile(query_latencies, 0.99),
+        "cpu_percent_median": statistics.median(cpu_values) if (cpu_values := _stats_percentages(resource_rows, "CPUPerc")) else None,
+        "cpu_percent_p95": _quantile(cpu_values, 0.95) if cpu_values else None,
+        "memory_percent_median": statistics.median(memory_values) if (memory_values := _stats_percentages(resource_rows, "MemPerc")) else None,
+        "memory_percent_p95": _quantile(memory_values, 0.95) if memory_values else None,
         "status_counts": dict(Counter(str(row.get("status")) for row in trials)),
         "root_cause_counts": dict(root_causes),
         "per_trial": per_trial,
