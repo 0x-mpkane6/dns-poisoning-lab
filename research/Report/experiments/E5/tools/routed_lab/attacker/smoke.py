@@ -4,7 +4,7 @@
 import os
 import subprocess
 
-from scapy.all import send  # type: ignore
+from scapy.all import conf, send  # type: ignore
 
 from wire import fragment_udp_payload
 
@@ -19,6 +19,7 @@ subprocess.run(
     ],
     check=True,
 )
+conf.route.resync()
 packets = fragment_udp_payload(
     src=os.environ.get("ATTACKER_IP", "10.82.0.200"),
     dst=os.environ.get("RESOLVER_IP", "10.81.0.53"),
