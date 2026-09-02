@@ -183,33 +183,43 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
             for packet_hash in row.get("packet_sha256", [])
             if isinstance(packet_hash, str)
         }
+        forged_body_hashes = {
+            row["dns_body_sha256"]
+            for row in forged_sends
+            if isinstance(row.get("dns_body_sha256"), str)
+        }
+        raw_fragment_events = [row for row in ips if row.get("event") == "fragment_observed"]
         packet_events = [row for row in events if row.get("event") in {"packet_ingress", "packet_verdict"}]
-        if forged_hashes:
+        if forged_hashes or forged_body_hashes:
             forged_ingress = any(
+                row.get("payload_sha256") in forged_hashes
+                for row in raw_fragment_events
+            ) or any(
                 row.get("event") == "packet_ingress"
-                and int(row.get("offset", 0)) > 0
-                and row.get("payload_sha256") in forged_hashes
+                and (row.get("payload_sha256") in forged_hashes or row.get("dns_body_sha256") in forged_body_hashes)
                 for row in packet_events
             )
             forged_drop = any(
                 row.get("event") == "packet_verdict"
                 and row.get("verdict") == "drop"
-                and int(row.get("offset", 0)) > 0
-                and row.get("payload_sha256") in forged_hashes
+                and (row.get("payload_sha256") in forged_hashes or row.get("dns_body_sha256") in forged_body_hashes)
+                and (int(row.get("offset", 0)) > 0 or bool(row.get("reassembled")))
                 for row in packet_events
             )
         elif candidate_ipids:
             forged_ingress = any(
+                int(row.get("ipid", -1)) in candidate_ipids
+                for row in raw_fragment_events
+            ) or any(
                 row.get("event") == "packet_ingress"
-                and int(row.get("offset", 0)) > 0
                 and int(row.get("ipid", -1)) in candidate_ipids
                 for row in packet_events
             )
             forged_drop = any(
                 row.get("event") == "packet_verdict"
                 and row.get("verdict") == "drop"
-                and int(row.get("offset", 0)) > 0
                 and int(row.get("ipid", -1)) in candidate_ipids
+                and (int(row.get("offset", 0)) > 0 or bool(row.get("reassembled")))
                 for row in packet_events
             )
         else:

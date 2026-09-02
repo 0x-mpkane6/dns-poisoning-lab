@@ -117,6 +117,8 @@ def validate_run(
             errors.extend(f"{name}: {error}" for error in _event_identity_errors(rows, expected))
         if not any(row.get("event") == "fragment_observed" for row in log_rows["ips_events.jsonl"]):
             errors.append("IPS raw fragment observation log is empty")
+        if not any(row.get("event") == "raw_observer_ready" for row in log_rows["ips_events.jsonl"]):
+            errors.append("IPS AF_PACKET raw observer did not report readiness")
         trial_ids = {row.get("trial_id") for row in trial_rows}
         for trial_id in trial_ids:
             if not trial_id:
@@ -149,6 +151,8 @@ def validate_run(
             for key, value in (("min_samples", 8), ("entropy_threshold", 6.0), ("unique_ratio_threshold", 0.90), ("window_seconds", 2.0)):
                 if ready.get(key) != value:
                     errors.append(f"IPS ready record has unlocked/mismatched {key}")
+            if ready.get("raw_observer") != "AF_PACKET":
+                errors.append("IPS ready record lacks the AF_PACKET pre-defragmentation observer")
         else:
             errors.append("missing IPS ready record")
         for firewall_name in ("firewall_before.rules", "firewall_after.rules"):
@@ -159,8 +163,6 @@ def validate_run(
                 errors.append(f"{firewall_name} contains forbidden NFQUEUE fallback")
             if firewall_name.endswith("after.rules") and not _has_nonzero_nfqueue_counter(firewall):
                 errors.append("NFQUEUE/firewall counters did not increase")
-            if "raw" not in firewall.lower() or "PREROUTING" not in firewall:
-                errors.append(f"{firewall_name} does not preserve raw pre-defragmentation visibility")
         version_text = (run_dir / "unbound_version.txt").read_text(encoding="utf-8", errors="replace")
         if "1.26.1" not in version_text:
             errors.append("resolver is not the registered Unbound 1.26.1 build")

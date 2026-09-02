@@ -131,6 +131,7 @@ class ExternalAttacker:
                     dns_len=len(body),
                     fragment_count=len(tails),
                     packet_sha256=[hashlib.sha256(bytes(fragment)).hexdigest() for fragment in tails],
+                    dns_body_sha256=hashlib.sha256(body).hexdigest(),
                 )
             except Exception as exc:
                 self.log.write("forged_tail_error", error=repr(exc))

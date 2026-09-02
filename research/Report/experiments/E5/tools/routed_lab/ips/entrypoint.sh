@@ -24,13 +24,11 @@ fi
 
 # The only forwarding decision point is NFQUEUE.  There is intentionally no
 # --queue-bypass option: a missing policy process must not silently forward.
-iptables -t raw -F PREROUTING
 iptables -F FORWARD
 iptables -P FORWARD DROP
 # Linux defragments IPv4 before the normal FORWARD hook on this kernel.  The
-# raw hook preserves fragment visibility for the detector; the routed packet
-# still traverses the registered FORWARD NFQUEUE below.
-iptables -t raw -A PREROUTING -p udp -j NFQUEUE --queue-num "$QUEUE_NUM"
+# policy process therefore observes raw fragments with AF_PACKET while the
+# routed enforcement decision remains at the registered FORWARD NFQUEUE.
 iptables -A FORWARD -j NFQUEUE --queue-num "$QUEUE_NUM"
 iptables -A FORWARD -j ACCEPT
 

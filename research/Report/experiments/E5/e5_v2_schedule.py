@@ -93,6 +93,7 @@ def build_replay_schedule(
                 "nonce": nonce,
                 "auth_ipid": _auth_ipid(spec, trial, trial_rng),
                 "tail_delay_s": 0.25,
+                "attack_tail": bool(spec["attack_tail"]),
             }
         )
 

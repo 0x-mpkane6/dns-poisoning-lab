@@ -14,7 +14,7 @@ from collections import deque
 from pathlib import Path
 
 from netfilterqueue import NetfilterQueue  # type: ignore
-from scapy.all import IP, send  # type: ignore
+from scapy.all import IP, UDP, send, sniff  # type: ignore
 
 from e5_v2_lib import Policy, policy_decision, raw_shannon_entropy
 from ips.packet_logic import PacketMeta, build_tc_response, parse_packet
@@ -34,6 +34,7 @@ INSIDE_IP = os.environ.get("IPS_INSIDE_IP", "10.81.0.1")
 LOG_DIR = Path(os.environ.get("LOG_DIR", "/app/log"))
 WORKLOAD = os.environ.get("WORKLOAD", "unregistered")
 TRIAL_RE = re.compile(r"(?:^|\.)r(?P<rep>\d+)-t(?P<trial>\d+)-(?P<nonce>[0-9a-f]+)\.bank\.com\.?$")
+RAW_OBSERVER_WAIT_SECONDS = 0.15
 
 
 class RoutedPolicy:
@@ -53,6 +54,10 @@ class RoutedPolicy:
         self.datagram_last_seen: dict[tuple[str, str, int], float] = {}
         self.events: deque[tuple[float, int]] = deque()
         self.state_lock = threading.Lock()
+        self.raw_condition = threading.Condition(self.state_lock)
+        self.raw_fragment_keys: set[tuple[str, str, int]] = set()
+        self.raw_observer_started = threading.Event()
+        self.raw_observer_error = False
         self.ready = False
         self.last_active = False
 
@@ -132,20 +137,96 @@ class RoutedPolicy:
         self.last_active = active
         return active
 
-    def observe_noninitial(self, meta: PacketMeta, payload_sha256: str) -> bool:
+    def observe_fragment(
+        self,
+        *,
+        src: str,
+        dst: str,
+        ipid: int,
+        offset: int,
+        more_fragments: bool,
+        payload_sha256: str,
+        capture_source: str,
+        capture_iface: str | None = None,
+    ) -> bool:
         with self.state_lock:
-            self.events.append((time.monotonic(), meta.ipid))
+            self.events.append((time.monotonic(), ipid))
+            self.raw_fragment_keys.add((src, dst, ipid))
+            self.raw_condition.notify_all()
         self.event(
             "fragment_observed",
+            src=src,
+            dst=dst,
+            ipid=ipid,
+            offset=offset,
+            more_fragments=more_fragments,
+            payload_sha256=payload_sha256,
+            capture_source=capture_source,
+            capture_iface=capture_iface,
+        )
+        return self.write_state("noninitial_fragment")
+
+    def observe_noninitial(self, meta: PacketMeta, payload_sha256: str) -> bool:
+        return self.observe_fragment(
             src=meta.src,
             dst=meta.dst,
             ipid=meta.ipid,
             offset=meta.offset,
             more_fragments=meta.more_fragments,
-            qname=meta.qname,
             payload_sha256=payload_sha256,
+            capture_source="nfqueue",
         )
-        return self.write_state("noninitial_fragment")
+
+    def raw_capture_packet(self, packet) -> None:  # noqa: ANN001
+        if IP not in packet:
+            return
+        ip = packet[IP]
+        src, dst = str(ip.src), str(ip.dst)
+        if src not in {AUTH_IP, os.environ.get("ATTACKER_IP", "10.82.0.200")} or dst != RESOLVER_IP:
+            return
+        offset = int(ip.frag) * 8
+        if offset <= 0:
+            return
+        payload_sha256 = hashlib.sha256(bytes(ip)).hexdigest()
+        self.observe_fragment(
+            src=src,
+            dst=dst,
+            ipid=int(ip.id),
+            offset=offset,
+            more_fragments=bool(int(ip.flags) & 0x1),
+            payload_sha256=payload_sha256,
+            capture_source="af_packet",
+            capture_iface=str(getattr(packet, "sniffed_on", "unknown")),
+        )
+
+    def raw_capture_loop(self, interfaces: list[str]) -> None:
+        try:
+            self.raw_observer_started.set()
+            self.event("raw_observer_ready", interfaces=interfaces)
+            sniff(iface=interfaces, store=False, prn=self.raw_capture_packet, filter="ip")
+        except Exception as exc:  # pragma: no cover - exercised in Docker preflight
+            self.raw_observer_error = True
+            self.event("raw_observer_error", error=repr(exc), interfaces=interfaces)
+
+    def wait_for_raw_tail(self, key: tuple[str, str, int]) -> bool:
+        deadline = time.monotonic() + RAW_OBSERVER_WAIT_SECONDS
+        with self.raw_condition:
+            while key not in self.raw_fragment_keys:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    break
+                self.raw_condition.wait(timeout=remaining)
+            return key in self.raw_fragment_keys
+
+    @staticmethod
+    def dns_body_sha256(payload: bytes) -> str | None:
+        try:
+            packet = IP(payload)
+            if UDP in packet and int(packet.frag) == 0:
+                return hashlib.sha256(bytes(packet[UDP].payload)).hexdigest()
+        except Exception:
+            return None
+        return None
 
     def inside_iface(self) -> str:
         configured = os.environ.get("INSIDE_IFACE")
@@ -206,6 +287,9 @@ class RoutedPolicy:
 
         key = (meta.src, meta.dst, meta.ipid)
         qname = meta.qname or self.datagram_map.get(key)
+        reassembled_dns_response = meta.is_dns_response and meta.offset == 0 and not meta.more_fragments
+        raw_tail_seen = self.wait_for_raw_tail(key) if reassembled_dns_response else False
+        dns_body_sha256 = self.dns_body_sha256(raw)
         if meta.is_dns_response:
             self.event(
                 "packet_ingress",
@@ -218,6 +302,9 @@ class RoutedPolicy:
                 txid=meta.txid,
                 dst_port=meta.dst_port,
                 payload_sha256=payload_sha256,
+                dns_body_sha256=dns_body_sha256,
+                reassembled=reassembled_dns_response,
+                raw_tail_seen=raw_tail_seen,
             )
             self.datagram_last_seen[key] = time.monotonic()
             if meta.qname:
@@ -228,13 +315,25 @@ class RoutedPolicy:
         if meta.is_noninitial_fragment:
             b5_active = self.observe_noninitial(meta, payload_sha256)
 
-        if meta.is_dns_response and (meta.is_first_fragment or meta.is_noninitial_fragment):
-            action = policy_decision(
-                self.policy,
-                is_dns_fragment=True,
-                offset=meta.offset,
-                b5_active=b5_active,
-            )
+        if meta.is_dns_response and (meta.is_first_fragment or meta.is_noninitial_fragment or reassembled_dns_response):
+            if self.policy is Policy.PREARM_TAIL_DROP and reassembled_dns_response:
+                # The kernel has already reassembled the datagram before the
+                # FORWARD hook.  Drop the completed datagram once the raw
+                # observer has seen its non-initial tail; this is the routed
+                # equivalent of the pilot's tail-drop check.
+                action = policy_decision(
+                    self.policy,
+                    is_dns_fragment=True,
+                    offset=40 if raw_tail_seen else 0,
+                    b5_active=b5_active,
+                )
+            else:
+                action = policy_decision(
+                    self.policy,
+                    is_dns_fragment=True,
+                    offset=meta.offset,
+                    b5_active=b5_active,
+                )
             self.event(
                 "packet_decision",
                 qname=qname,
@@ -247,6 +346,9 @@ class RoutedPolicy:
                 reason=action.reason,
                 b5_active=b5_active,
                 payload_sha256=payload_sha256,
+                dns_body_sha256=dns_body_sha256,
+                reassembled=reassembled_dns_response,
+                raw_tail_seen=raw_tail_seen,
             )
             if action.verdict == "inject_tc_drop":
                 injected = self.inject_tc(meta, qname)
@@ -257,8 +359,11 @@ class RoutedPolicy:
                     injection_ok=injected,
                     offset=meta.offset,
                     payload_sha256=payload_sha256,
+                    dns_body_sha256=dns_body_sha256,
+                    reassembled=reassembled_dns_response,
+                    raw_tail_seen=raw_tail_seen,
                 )
-                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=injected, offset=meta.offset, payload_sha256=payload_sha256)
+                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=injected, offset=meta.offset, payload_sha256=payload_sha256, dns_body_sha256=dns_body_sha256, reassembled=reassembled_dns_response, raw_tail_seen=raw_tail_seen)
                 nfq_packet.drop()
                 return
             if action.verdict in {"drop_tail", "drop_fragment"}:
@@ -269,13 +374,16 @@ class RoutedPolicy:
                     injection_ok=False,
                     offset=meta.offset,
                     payload_sha256=payload_sha256,
+                    dns_body_sha256=dns_body_sha256,
+                    reassembled=reassembled_dns_response,
+                    raw_tail_seen=raw_tail_seen,
                 )
-                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=False, offset=meta.offset, payload_sha256=payload_sha256)
+                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=False, offset=meta.offset, payload_sha256=payload_sha256, dns_body_sha256=dns_body_sha256, reassembled=reassembled_dns_response, raw_tail_seen=raw_tail_seen)
                 nfq_packet.drop()
                 return
 
         if meta.is_dns_response or meta.is_noninitial_fragment:
-            self.event("packet_verdict", qname=qname, src=meta.src, dst=meta.dst, ipid=meta.ipid, offset=meta.offset, verdict="forward", payload_sha256=payload_sha256)
+            self.event("packet_verdict", qname=qname, src=meta.src, dst=meta.dst, ipid=meta.ipid, offset=meta.offset, verdict="forward", payload_sha256=payload_sha256, dns_body_sha256=dns_body_sha256, reassembled=reassembled_dns_response, raw_tail_seen=raw_tail_seen)
         nfq_packet.accept()
 
     def run(self) -> None:
@@ -286,6 +394,18 @@ class RoutedPolicy:
         self.write_state("startup")
         queue = NetfilterQueue()
         queue.bind(QUEUE_NUM, self.handle)
+        interfaces = [
+            os.environ.get("OUTSIDE_IFACE", ""),
+            os.environ.get("INSIDE_IFACE", ""),
+        ]
+        interfaces = [iface for iface in interfaces if iface]
+        if len(interfaces) != 2:
+            raise RuntimeError("raw fragment observer requires two IPS interfaces")
+        threading.Thread(target=self.raw_capture_loop, args=(interfaces,), daemon=True).start()
+        if not self.raw_observer_started.wait(timeout=5.0):
+            raise RuntimeError("raw fragment observer did not start")
+        if self.raw_observer_error:
+            raise RuntimeError("raw fragment observer failed during startup")
         self.ready = True
         self.ready_path.write_text(
             json.dumps(
@@ -300,6 +420,7 @@ class RoutedPolicy:
                     "min_samples": MIN_SAMPLES,
                     "entropy_threshold": ENTROPY_THRESHOLD,
                     "unique_ratio_threshold": UNIQUE_RATIO_THRESHOLD,
+                    "raw_observer": "AF_PACKET",
                 },
                 sort_keys=True,
             )

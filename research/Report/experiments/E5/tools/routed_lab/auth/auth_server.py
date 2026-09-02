@@ -152,6 +152,7 @@ class AuthoritativeServer:
             dns_len=len(body),
             fragment_count=len(fragments),
             packet_sha256=hashlib.sha256(bytes(fragments[0])).hexdigest(),
+            dns_body_sha256=hashlib.sha256(body).hexdigest(),
         )
         row = self.schedule_row(qname) or {}
         attack_tail = bool(row.get("attack_tail", False))
@@ -171,6 +172,7 @@ class AuthoritativeServer:
             fragment_count=max(0, len(fragments) - 1),
             delayed_s=delay,
             packet_sha256=[hashlib.sha256(bytes(fragment)).hexdigest() for fragment in fragments[1:]],
+            dns_body_sha256=hashlib.sha256(body).hexdigest(),
         )
 
     def respond_tcp(self, conn: socket.socket, source: tuple[str, int]) -> None:
