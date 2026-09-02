@@ -151,6 +151,7 @@ def run_trial(
     before: dict[str, Any],
     launch_epoch: float,
     client_events_path: Path,
+    honor_schedule: bool = True,
 ) -> dict[str, Any]:
     """Run one trial at its registered launch time.
 
@@ -159,18 +160,20 @@ def run_trial(
     drop baseline: a sequential client would let Unbound mark the sole stub
     server unavailable after the first few deliberately dropped responses,
     preventing later registered qnames from reaching the authoritative
-    server.  The independent unit remains the recreated stack run, and the
-    same launch schedule is used for every policy.
+    server.  The independent unit remains the recreated stack run; RFC
+    cells use the registered launch schedule, while TC cells retain
+    sequential resolver-query rounds.
     """
 
     trial_id = str(row["trial_id"])
     qname = str(row["qname"])
-    target = launch_epoch + float(row.get("query_at_s", int(row.get("trial", 0)) * 0.01))
-    while True:
-        remaining = target - time.monotonic()
-        if remaining <= 0:
-            break
-        time.sleep(min(remaining, 0.01))
+    if honor_schedule:
+        target = launch_epoch + float(row.get("query_at_s", int(row.get("trial", 0)) * 0.01))
+        while True:
+            remaining = target - time.monotonic()
+            if remaining <= 0:
+                break
+            time.sleep(min(remaining, 0.01))
 
     query_start = time.monotonic_ns()
     append(client_events_path, envelope("client_query_send", trial_id=trial_id, qname=qname))
@@ -224,15 +227,35 @@ def main() -> int:
         before_by_trial[trial_id] = before
         append(client_events_path, envelope("cache_before_reply", trial_id=trial_id, qname=qname, **before))
 
-    launch_epoch = time.monotonic()
     records: list[dict[str, Any]] = []
-    with ThreadPoolExecutor(max_workers=max(1, len(trials))) as executor:
-        futures = {
-            executor.submit(run_trial, row, before_by_trial[str(row["trial_id"])], launch_epoch, client_events_path): row
-            for row in trials
-        }
-        for future in as_completed(futures):
-            records.append(future.result())
+    if POLICY == "RFC_DROP_NATIVE":
+        # A sequential native-drop replay makes Unbound's single stub server
+        # enter its upstream-failure circuit after a few timeouts.  The
+        # registered RFC cells therefore launch the same qname schedule in a
+        # deterministic 10-ms stagger, while each query is allowed to remain
+        # in flight.  This preserves 50 fully observable trials without
+        # changing B1's TC fallback timing behavior.
+        launch_epoch = time.monotonic()
+        with ThreadPoolExecutor(max_workers=max(1, len(trials))) as executor:
+            futures = {
+                executor.submit(run_trial, row, before_by_trial[str(row["trial_id"])], launch_epoch, client_events_path): row
+                for row in trials
+            }
+            for future in as_completed(futures):
+                records.append(future.result())
+    else:
+        # TC-based paths are intentionally replayed as resolver query rounds:
+        # Unbound's TC fallback is validated with one active round at a time.
+        for row in trials:
+            records.append(
+                run_trial(
+                    row,
+                    before_by_trial[str(row["trial_id"])],
+                    time.monotonic(),
+                    client_events_path,
+                    honor_schedule=False,
+                )
+            )
 
     for record in sorted(records, key=lambda value: int(value.get("trial", 0))):
         append(trials_path, record)

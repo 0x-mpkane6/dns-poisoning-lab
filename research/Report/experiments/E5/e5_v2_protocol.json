@@ -97,9 +97,10 @@
     "trials_per_run": 50,
     "qname_template": "r<rep>-t<trial>-<nonce>.bank.com.",
     "query_launch": {
-      "mode": "deterministic_staggered_concurrent",
+      "mode": "deterministic_staggered_concurrent_for_rfc_native_drop; sequential_tc_rounds_otherwise",
       "spacing_seconds": 0.01,
-      "same_schedule_across_policies": true
+      "same_qname_schedule_across_policies": true,
+      "rfc_reason": "sequential_native_drops cause Unbound stub-server circuit breaking before all registered qnames are sent"
     }
   },
   "stages": {
