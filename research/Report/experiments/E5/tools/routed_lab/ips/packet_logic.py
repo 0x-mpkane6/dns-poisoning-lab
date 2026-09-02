@@ -69,13 +69,18 @@ def parse_packet(
         udp_payload = bytes(udp.payload)
         if len(udp_payload) >= 2:
             txid = int.from_bytes(udp_payload[:2], "big")
+        raw_txid = txid
         try:
             dns = packet[DNS]
             txid = int(dns.id)
             qname = _qname(dns.qd.qname if dns.qd else None)
             is_query = int(dns.qr) == 0
         except Exception:
-            txid = None
+            # A short first fragment can make Scapy's DNS dissector reject
+            # the partial question.  The two-byte transaction ID is still
+            # present immediately after the UDP header and is sufficient for
+            # query_map correlation.
+            txid = raw_txid
     is_dns_response = src == auth_ip and dst == resolver_ip and protocol == 17
     if is_dns_response and dst_port is not None and txid is not None and query_map:
         mapped_qname = query_map.get((dst_port, txid))

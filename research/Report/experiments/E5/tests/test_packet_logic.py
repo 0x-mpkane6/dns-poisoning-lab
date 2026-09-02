@@ -9,6 +9,7 @@ E5_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(E5_ROOT / "tools" / "routed_lab"))
 
 from ips.packet_logic import build_tc_response, parse_packet  # noqa: E402
+from wire import udp_payload  # noqa: E402
 
 
 AUTH = "10.82.0.100"
@@ -55,6 +56,15 @@ def test_parse_query_and_response_qname_fallback() -> None:
     )
     assert parsed_response.is_dns_response
     assert parsed_response.qname == QNAME
+
+
+def test_truncated_first_fragment_keeps_raw_transaction_id_for_mapping() -> None:
+    dns_body = bytes(DNS(id=9876, qr=1, qd=DNSQR(qname=QNAME, qtype="A")))
+    datagram = udp_payload(33333, dns_body + (b"x" * 40))
+    first = IP(src=AUTH, dst=RESOLVER, id=13, flags=1, frag=0, proto=17) / Raw(datagram[:18])
+    parsed = parse_packet(bytes(first), auth_ip=AUTH, resolver_ip=RESOLVER, query_map={(33333, 9876): QNAME})
+    assert parsed.txid == 9876
+    assert parsed.qname == QNAME
 
 
 def test_build_tc_response_preserves_dns_matching_fields() -> None:

@@ -132,6 +132,7 @@ networks:
     ipam:
       config:
         - subnet: 10.81.0.0/24
+          gateway: 10.81.0.254
   upnet:
     driver: bridge
     driver_opts:
@@ -139,3 +140,4 @@ networks:
     ipam:
       config:
         - subnet: 10.82.0.0/24
+          gateway: 10.82.0.254

@@ -14,6 +14,8 @@
   "network": {
     "frontnet": "10.81.0.0/24",
     "upnet": "10.82.0.0/24",
+    "frontnet_docker_gateway": "10.81.0.254",
+    "upnet_docker_gateway": "10.82.0.254",
     "client_ip": "10.81.0.10",
     "resolver_ip": "10.81.0.53",
     "ips_inside_ip": "10.81.0.1",

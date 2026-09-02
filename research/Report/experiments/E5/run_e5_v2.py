@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import shutil
 import subprocess
 import sys
@@ -236,8 +235,6 @@ def build_stage_jobs(stage: str, protocol: dict[str, Any]) -> list[dict[str, Any
     """Return pilot/sanity/confirmatory jobs in their registered order."""
 
     seed = int(protocol.get("experiment_seed", protocol.get("schedule", {}).get("experiment_seed", 20260902)))
-    policies = protocol_policies(protocol)
-    workloads = protocol_workloads(protocol)
     if stage == "pilot":
         stage_config = protocol.get("stages", {}).get("pilot", {})
         cells = stage_config.get("cells", protocol.get("pilot", []))
