@@ -165,12 +165,14 @@ class RoutedPolicy:
         capture_source: str,
         capture_iface: str | None = None,
     ) -> bool:
+        observed_mono_ns = time.monotonic_ns()
         with self.state_lock:
-            self.events.append((time.monotonic(), ipid))
+            self.events.append((observed_mono_ns / 1_000_000_000.0, ipid))
             self.raw_fragment_keys.add((src, dst, ipid))
             self.raw_condition.notify_all()
         self.event(
             "fragment_observed",
+            mono_ns=observed_mono_ns,
             src=src,
             dst=dst,
             ipid=ipid,
