@@ -42,6 +42,19 @@ def test_b5_window_reconstruction_uses_raw_fragment_events() -> None:
     assert any(row["triggered"] for row in states)
 
 
+def test_b5_window_reconstruction_tracks_state_transitions_after_expiry() -> None:
+    rows = [
+        {"event": "fragment_observed", "mono_ns": index * 1_000_000, "ipid": index}
+        for index in range(64)
+    ]
+    rows.extend(
+        {"event": "fragment_observed", "mono_ns": 2_100_000_000 + index * 1_000_000, "ipid": 10_000 + index}
+        for index in range(64)
+    )
+    states = reconstruct_b5_windows(rows)
+    assert sum(row["triggered"] for row in states) == 2
+
+
 def test_run_metrics_reconstructs_attack_mechanism(tmp_path: Path) -> None:
     qname = "r01-t000-abcdef01.bank.com."
     base = {

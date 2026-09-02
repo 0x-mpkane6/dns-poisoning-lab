@@ -103,15 +103,12 @@ def reconstruct_b5_windows(
     states: list[dict[str, Any]] = []
     state: deque[tuple[int, int]] = deque()
     window_ns = int(window_seconds * 1_000_000_000)
+    previous_active = False
     for row in observations:
         timestamp = int(row["mono_ns"])
         cutoff = timestamp - window_ns
         while state and state[0][0] < cutoff:
             state.popleft()
-        previous_n = len(state)
-        previous_entropy = raw_shannon_entropy([ipid for _, ipid in state])
-        previous_ratio = len({ipid for _, ipid in state}) / previous_n if previous_n else 0.0
-        previous_active = previous_n >= min_samples and previous_entropy >= entropy_threshold and previous_ratio >= unique_ratio_threshold
         state.append((timestamp, int(row["ipid"])))
         ipids = [ipid for _, ipid in state]
         n = len(ipids)
@@ -128,6 +125,12 @@ def reconstruct_b5_windows(
                 "unique_ratio": unique_ratio,
             }
         )
+        # The runtime detector carries the last Boolean state between packet
+        # callbacks.  Reusing that state here mirrors the live transition
+        # semantics, including a window expiry that occurs between two
+        # observations; recomputing a separate "pre-append" predicate can
+        # disagree at an exact U=0.90 boundary.
+        previous_active = active
     return states
 
 
