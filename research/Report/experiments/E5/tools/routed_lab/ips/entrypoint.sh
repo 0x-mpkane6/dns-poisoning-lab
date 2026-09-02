@@ -16,6 +16,10 @@ if [[ -z "$inside_if" || -z "$outside_if" || "$inside_if" == "$outside_if" ]]; t
 fi
 
 sysctl -w net.ipv4.ip_forward=1 >/dev/null
+if [[ "$(cat /proc/sys/net/ipv4/ip_forward)" != "1" ]]; then
+    echo "IPv4 forwarding could not be enabled" >&2
+    exit 32
+fi
 /app/preflight.sh
 
 # The only forwarding decision point is NFQUEUE.  There is intentionally no
