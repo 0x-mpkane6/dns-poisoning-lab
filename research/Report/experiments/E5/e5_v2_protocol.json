@@ -4,6 +4,11 @@
   "purpose": "Routed-IPS root-cause and confirmatory resolver-level validation",
   "scope": "diagnostic_negative",
   "legacy_e5": "preserved_and_not_pooled",
+  "resolver": {
+    "software": "Unbound",
+    "version": "1.26.1",
+    "version_source": "tools/unbound/configure.ac"
+  },
   "e3_operating_point": {
     "min_samples": 8,
     "entropy_threshold_bits": 6.0,
@@ -22,6 +27,7 @@
     "ips_outside_ip": "10.82.0.1",
     "auth_ip": "10.82.0.100",
     "attacker_ip": "10.82.0.200",
+    "legitimate_tail_delay_seconds": 0.25,
     "nfqueue_num": 5,
     "nfqueue_hook": "FORWARD",
     "nfqueue_fallback": false
@@ -119,6 +125,12 @@
       "client_deadline_seconds": 2.0,
       "execution": "sequential_no_parallelism"
     }
+  },
+  "precision_note": {
+    "runs_per_cell": 20,
+    "zero_of_twenty_two_sided_exact_cp_upper_95": 0.168433,
+    "formal_power_claim": false,
+    "rationale": "consistency with E1-E5 and run-level precision"
   },
   "evidence": {
     "event_time_fields": ["mono_ns", "wall_ns"],

@@ -39,7 +39,7 @@ RUN_ID = os.environ.get("RUN_ID", "unregistered")
 REP = int(os.environ.get("REP", "0"))
 POLICY = os.environ.get("POLICY_MODE", "unregistered")
 WORKLOAD = os.environ.get("WORKLOAD", "unregistered")
-TAIL_DELAY = float(os.environ.get("AUTH_TAIL_DELAY_SECONDS", "0.03"))
+TAIL_DELAY = float(os.environ.get("AUTH_TAIL_DELAY_SECONDS", "0.25"))
 
 
 def normalize_qname(value: str) -> str:

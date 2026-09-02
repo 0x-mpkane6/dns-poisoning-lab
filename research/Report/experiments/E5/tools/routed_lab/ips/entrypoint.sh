@@ -50,8 +50,17 @@ cleanup() {
     wait "$inside_cap" "$outside_cap" 2>/dev/null || true
     /app/snapshot.sh after
 }
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
 
 export INSIDE_IFACE="$inside_if"
 export OUTSIDE_IFACE="$outside_if"
-python3 /app/policy.py
+python3 /app/policy.py &
+policy_pid=$!
+on_signal() {
+    set +e
+    kill "$policy_pid" 2>/dev/null || true
+    wait "$policy_pid" 2>/dev/null || true
+    exit 143
+}
+trap on_signal INT TERM
+wait "$policy_pid"

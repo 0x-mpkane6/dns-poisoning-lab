@@ -242,10 +242,26 @@ class RoutedPolicy:
             )
             if action.verdict == "inject_tc_drop":
                 injected = self.inject_tc(meta, qname)
+                self.event(
+                    "enforcement_action",
+                    qname=qname,
+                    action="tc_inject_and_drop",
+                    injection_ok=injected,
+                    offset=meta.offset,
+                    payload_sha256=payload_sha256,
+                )
                 self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=injected, offset=meta.offset, payload_sha256=payload_sha256)
                 nfq_packet.drop()
                 return
             if action.verdict in {"drop_tail", "drop_fragment"}:
+                self.event(
+                    "enforcement_action",
+                    qname=qname,
+                    action=action.verdict,
+                    injection_ok=False,
+                    offset=meta.offset,
+                    payload_sha256=payload_sha256,
+                )
                 self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=False, offset=meta.offset, payload_sha256=payload_sha256)
                 nfq_packet.drop()
                 return

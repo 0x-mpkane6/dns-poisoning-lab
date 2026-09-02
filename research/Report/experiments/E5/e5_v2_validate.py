@@ -19,6 +19,7 @@ REQUIRED_LOGS = (
     "ips_events.jsonl",
     "unbound_events.jsonl",
     "cache_events.jsonl",
+    "unbound_version.txt",
     "firewall_before.rules",
     "firewall_after.rules",
     "ips_inside.pcapng",
@@ -117,6 +118,13 @@ def validate_run(
             for name in ("auth_events.jsonl", "ips_events.jsonl", "cache_events.jsonl"):
                 if not any(row.get("trial_id") == trial_id for row in log_rows[name]):
                     errors.append(f"{trial_id}: missing {name} event mapping")
+            for phase in ("before", "after"):
+                if not any(row.get("event") == f"cache_{phase}" and row.get("trial_id") == trial_id for row in log_rows["cache_events.jsonl"]):
+                    errors.append(f"{trial_id}: missing cache_{phase} event")
+            if not any(row.get("event") == "client_query_send" and row.get("trial_id") == trial_id for row in log_rows["client_events.jsonl"]):
+                errors.append(f"{trial_id}: missing client query event")
+            if not any(row.get("event") == "client_answer_receive" and row.get("trial_id") == trial_id for row in log_rows["client_events.jsonl"]):
+                errors.append(f"{trial_id}: missing client answer event")
             if not any(row.get("event") == "udp_receive" and row.get("trial_id") == trial_id for row in log_rows["auth_events.jsonl"]):
                 errors.append(f"{trial_id}: missing auth UDP receive")
             if not any(row.get("event") == "packet_ingress" and row.get("trial_id") == trial_id for row in log_rows["ips_events.jsonl"]):
@@ -145,6 +153,9 @@ def validate_run(
                 errors.append(f"{firewall_name} contains forbidden NFQUEUE fallback")
             if firewall_name.endswith("after.rules") and not _has_nonzero_nfqueue_counter(firewall):
                 errors.append("NFQUEUE/firewall counters did not increase")
+        version_text = (run_dir / "unbound_version.txt").read_text(encoding="utf-8", errors="replace")
+        if "1.26.1" not in version_text:
+            errors.append("resolver is not the registered Unbound 1.26.1 build")
     if require_pcap:
         for pcap in (run_dir / "ips_inside.pcapng", run_dir / "ips_outside.pcapng"):
             if pcap.exists() and not _pcapng(pcap):

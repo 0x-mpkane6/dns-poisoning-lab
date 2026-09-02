@@ -663,7 +663,11 @@ def main(argv: list[str] | None = None) -> int:
 
     for stage in stages:
         ensure_registered(root, protocol)
-        run_stage(root, protocol, stage)
+        try:
+            run_stage(root, protocol, stage)
+        except Exception as exc:
+            write_json(root / "ABORT.json", {"stage": stage, "error": repr(exc), "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+            raise
     write_json(root / "finished.json", {"run_id": run_id, "stages": stages, "finished_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
     print(f"[e5-v2] COMPLETE: {root}", flush=True)
     return 0

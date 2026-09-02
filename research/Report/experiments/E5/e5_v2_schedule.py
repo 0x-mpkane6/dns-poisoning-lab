@@ -92,7 +92,7 @@ def build_replay_schedule(
                 "qname": qname,
                 "nonce": nonce,
                 "auth_ipid": _auth_ipid(spec, trial, trial_rng),
-                "tail_delay_s": 0.03,
+                "tail_delay_s": 0.25,
             }
         )
 

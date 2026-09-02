@@ -81,6 +81,7 @@ def test_non_dns_occupancy_is_observed_but_not_mitigated_by_dns_policy() -> None
         ({"poisoned": True, "trigger_before": False, "drop_observed": False, "tcp_retry": False, "legitimate": False}, "detector_miss"),
         ({"poisoned": True, "trigger_before": True, "drop_observed": False, "tcp_retry": False, "legitimate": False}, "enforcement_miss"),
         ({"poisoned": True, "trigger_before": True, "drop_observed": True, "tcp_retry": False, "legitimate": False}, "transport_failure"),
+        ({"poisoned": False, "trigger_before": False, "drop_observed": True, "tcp_retry": False, "legitimate": False, "attack": True}, "transport_failure"),
         ({"poisoned": False, "trigger_before": True, "drop_observed": True, "tcp_retry": True, "legitimate": True}, "mitigated"),
         ({"poisoned": False, "trigger_before": False, "drop_observed": False, "tcp_retry": False, "legitimate": False}, "availability_failure"),
     ],

@@ -137,6 +137,7 @@ def classify_outcome(
     drop_observed: bool,
     tcp_retry: bool,
     legitimate: bool,
+    attack: bool = False,
 ) -> str:
     """Classify the causal outcome of one trial."""
 
@@ -148,6 +149,8 @@ def classify_outcome(
         return "transport_failure"
     if legitimate and drop_observed and tcp_retry:
         return "mitigated"
+    if attack and drop_observed and not legitimate:
+        return "transport_failure"
     if not legitimate:
         return "availability_failure"
     return "allowed"

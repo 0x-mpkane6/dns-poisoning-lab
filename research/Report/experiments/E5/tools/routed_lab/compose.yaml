@@ -71,7 +71,7 @@ services:
       SCHEDULE_FILE: /app/schedule.json
       LOG_DIR: /app/log
       FRAGSIZE: "40"
-      AUTH_TAIL_DELAY_SECONDS: "0.03"
+      AUTH_TAIL_DELAY_SECONDS: "0.25"
     networks:
       upnet:
         ipv4_address: 10.82.0.100

@@ -179,6 +179,7 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
             drop_observed=forged_drop or _has_drop(events),
             tcp_retry=tcp_retry,
             legitimate=legitimate,
+            attack=attack,
         )
         if attack:
             root_causes[cause] += 1
