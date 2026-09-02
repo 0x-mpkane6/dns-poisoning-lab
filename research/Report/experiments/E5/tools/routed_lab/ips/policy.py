@@ -54,6 +54,7 @@ class RoutedPolicy:
         self.datagram_last_seen: dict[tuple[str, str, int], float] = {}
         self.events: deque[tuple[float, int]] = deque()
         self.state_lock = threading.Lock()
+        self.event_lock = threading.Lock()
         self.raw_condition = threading.Condition(self.state_lock)
         self.raw_fragment_keys: set[tuple[str, str, int]] = set()
         self.raw_observer_started = threading.Event()
@@ -63,7 +64,7 @@ class RoutedPolicy:
 
     def append(self, path: Path, payload: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open("a", encoding="utf-8") as handle:
+        with self.event_lock, path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(payload, sort_keys=True, allow_nan=False) + "\n")
 
     def event(self, event: str, **fields: object) -> None:
