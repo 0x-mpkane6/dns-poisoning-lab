@@ -170,7 +170,11 @@ class RoutedPolicy:
             resolver_ip=RESOLVER_IP,
             ipid=meta.ipid,
         )
-        send(IP(payload), iface=self.inside_iface(), verbose=0)
+        try:
+            send(IP(payload), iface=self.inside_iface(), verbose=0)
+        except Exception as exc:
+            self.event("tc_injection_failed", reason="send_error", error=repr(exc), qname=qname, txid=meta.txid, dst_port=meta.dst_port)
+            return False
         self.event("tc_injected", qname=qname, txid=meta.txid, resolver_port=meta.dst_port, packet_len=len(payload))
         return True
 

@@ -600,10 +600,19 @@ def run_stage(root: Path, protocol: dict[str, Any], stage: str) -> list[dict[str
             raise RuntimeError("confirmatory campaign is locked behind a PASS sanity gate")
     jobs = build_stage_jobs(stage, protocol)
     rows: list[dict[str, Any]] = []
+    schedule_manifest: list[dict[str, Any]] = []
     partial_path = root / f"metrics_{stage}_partial.json"
     for index, job in enumerate(jobs, 1):
         print(f"[e5-v2] {stage} {index}/{len(jobs)}: {job}", flush=True)
         schedule, schedule_path = schedule_for_cell(root, protocol, job)
+        schedule_manifest.append(
+            {
+                **job,
+                "schedule_path": str(schedule_path.relative_to(root)).replace("\\", "/"),
+                "schedule_sha256": schedule_digest(schedule),
+            }
+        )
+        write_json(root / f"schedule_manifest_{stage}_partial.json", schedule_manifest)
         metrics, validation = run_cell(root, protocol, job, schedule, schedule_path)
         metrics["job_index"] = index
         rows.append(metrics)
@@ -616,6 +625,7 @@ def run_stage(root: Path, protocol: dict[str, Any], stage: str) -> list[dict[str
             if gate["status"] != "PASS":
                 raise RuntimeError(f"pilot engineering gate failed for {job}: {gate['errors']}")
     write_json(root / f"metrics_{stage}.json", rows)
+    write_json(root / f"schedule_manifest_{stage}.json", schedule_manifest)
     stage_validation = {
         "schema_version": 1,
         "stage": stage,
