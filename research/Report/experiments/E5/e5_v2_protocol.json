@@ -130,7 +130,8 @@
       "total_stack_runs": 320,
       "total_trials": 16000,
       "client_deadline_seconds": 2.0,
-      "execution": "sequential_no_parallelism"
+      "execution": "sequential_no_parallelism",
+      "post_client_evidence_drain": "bounded wait for udp_receive for every registered qname before stack teardown"
     }
   },
   "precision_note": {

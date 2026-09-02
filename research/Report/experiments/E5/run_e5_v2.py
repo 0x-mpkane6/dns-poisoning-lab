@@ -20,7 +20,7 @@ from statistics import fmean
 from typing import Any, Iterable
 
 from e5_v2_aggregate import exact_binomial_ci, paired_bootstrap_mean, paired_differences
-from e5_v2_analysis import compute_run_metrics
+from e5_v2_analysis import compute_run_metrics, read_jsonl
 from e5_v2_lib import CONFIRMATORY_POLICIES, WORKLOADS, make_complete_block
 from e5_v2_schedule import build_replay_schedule, schedule_digest
 from e5_v2_validate import pilot_gate, validate_run
@@ -349,6 +349,48 @@ def _container_stats(command: list[str]) -> str:
     return stats.stdout or ""
 
 
+def _wait_for_auth_drain(auth_dir: Path, expected_qnames: set[str], timeout_s: float) -> dict[str, Any]:
+    """Let the single authoritative worker finish queued trial requests.
+
+    RFC_DROP_NATIVE intentionally produces no usable response, so a client
+    deadline can expire while the authoritative UDP socket still contains
+    the later scheduled qnames.  Stopping the stack immediately would turn a
+    real runtime timeout into a missing-evidence artifact.  We wait only for
+    the registered qnames to reach auth, with a bounded timeout, and retain
+    the observed/expected counts for audit.
+    """
+
+    deadline = time.monotonic() + timeout_s
+    observed: set[str] = set()
+    auth_log = auth_dir / "auth_events.jsonl"
+    while True:
+        try:
+            rows = read_jsonl(auth_log)
+        except (OSError, ValueError):
+            rows = []
+        observed = {
+            str(row.get("qname"))
+            for row in rows
+            if row.get("event") == "udp_receive" and isinstance(row.get("qname"), str)
+        }
+        if expected_qnames.issubset(observed):
+            return {
+                "status": "PASS",
+                "expected_qnames": len(expected_qnames),
+                "observed_qnames": len(expected_qnames & observed),
+                "timeout_s": timeout_s,
+            }
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            return {
+                "status": "TIMEOUT",
+                "expected_qnames": len(expected_qnames),
+                "observed_qnames": len(expected_qnames & observed),
+                "timeout_s": timeout_s,
+            }
+        time.sleep(min(0.25, remaining))
+
+
 def _stop_stack(command: list[str]) -> None:
     run_command(command + ["exec", "-T", "ips", "/app/snapshot.sh", "before_stop"], check=False)
     run_command(command + ["logs", "--no-color"], check=False)
@@ -398,6 +440,20 @@ def run_cell(root: Path, protocol: dict[str, Any], job: dict[str, Any], schedule
             (cell_dir / "client_stderr.txt").write_text(client_proc.stderr or "", encoding="utf-8")
         if client_error:
             (cell_dir / "client_error.txt").write_text(client_error + "\n", encoding="utf-8")
+        if stack_started:
+            drain = _wait_for_auth_drain(
+                dirs["auth"],
+                {str(row["qname"]) for row in schedule["trials"]},
+                timeout_s=max(5.0, expected_trials * 0.4 + 2.0),
+            )
+        else:
+            drain = {
+                "status": "NOT_STARTED",
+                "expected_qnames": expected_trials,
+                "observed_qnames": 0,
+                "timeout_s": 0.0,
+            }
+        write_json(cell_dir / "auth_drain.json", drain)
         (cell_dir / "resource_samples.jsonl").write_text(_container_stats(command), encoding="utf-8")
         if stack_started:
             _stop_stack(command)
