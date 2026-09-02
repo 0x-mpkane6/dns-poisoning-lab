@@ -5,8 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY e5_v2_lib.py /app/e5_v2_lib.py
-COPY wire.py /app/wire.py
-COPY auth/auth_server.py /app/auth_server.py
-COPY auth/entrypoint.sh /app/entrypoint.sh
+COPY tools/routed_lab/wire.py /app/wire.py
+COPY tools/routed_lab/auth/auth_server.py /app/auth_server.py
+COPY tools/routed_lab/auth/entrypoint.sh /app/entrypoint.sh
 RUN sed -i 's/\r$//' /app/*.py /app/*.sh && chmod +x /app/entrypoint.sh
 CMD ["/app/entrypoint.sh"]

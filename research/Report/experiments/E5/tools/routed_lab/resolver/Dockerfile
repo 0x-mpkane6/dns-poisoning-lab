@@ -21,10 +21,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=build /opt/unbound-root/usr /usr
 RUN ldconfig && mkdir -p /etc/unbound /app /app/log && unbound -V
-COPY resolver/unbound.conf /etc/unbound/unbound.conf
-COPY resolver/e5mod.py /etc/unbound/e5mod.py
-COPY resolver/cache_probe.py /app/cache_probe.py
-COPY resolver/start.sh /app/start.sh
+COPY tools/routed_lab/resolver/unbound.conf /etc/unbound/unbound.conf
+COPY tools/routed_lab/resolver/e5mod.py /etc/unbound/e5mod.py
+COPY tools/routed_lab/resolver/cache_probe.py /app/cache_probe.py
+COPY tools/routed_lab/resolver/start.sh /app/start.sh
 RUN sed -i 's/\r$//' /app/*.py /app/*.sh /etc/unbound/*.conf /etc/unbound/*.py \
     && chmod +x /app/start.sh \
     && unbound-checkconf /etc/unbound/unbound.conf

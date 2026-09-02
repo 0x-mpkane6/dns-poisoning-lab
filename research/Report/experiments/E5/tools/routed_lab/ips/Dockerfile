@@ -8,12 +8,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install --no-cache-dir NetfilterQueue
 WORKDIR /app
 COPY e5_v2_lib.py /app/e5_v2_lib.py
-COPY wire.py /app/wire.py
-COPY ips /app/ips
-COPY ips/policy.py /app/policy.py
-COPY ips/preflight.sh /app/preflight.sh
-COPY ips/snapshot.sh /app/snapshot.sh
-COPY ips/entrypoint.sh /app/entrypoint.sh
+COPY tools/routed_lab/wire.py /app/wire.py
+COPY tools/routed_lab/ips /app/ips
+COPY tools/routed_lab/ips/policy.py /app/policy.py
+COPY tools/routed_lab/ips/preflight.sh /app/preflight.sh
+COPY tools/routed_lab/ips/snapshot.sh /app/snapshot.sh
+COPY tools/routed_lab/ips/entrypoint.sh /app/entrypoint.sh
 RUN find /app -type f -exec sed -i 's/\r$//' {} + \
     && chmod +x /app/*.sh /app/ips/*.sh \
     && mkdir -p /app/log /app/pcap

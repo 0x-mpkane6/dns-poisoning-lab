@@ -1,0 +1,10 @@
+output/
+tools/unbound/
+tools/unbound_lab/
+tools/routed_lab/output/
+tools/routed_lab/runtime/
+**/__pycache__/
+**/*.pyc
+**/*.jsonl
+**/*.pcap
+**/*.pcapng
