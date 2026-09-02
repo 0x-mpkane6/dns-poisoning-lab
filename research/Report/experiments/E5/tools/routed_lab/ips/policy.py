@@ -57,7 +57,7 @@ class RoutedPolicy:
         self.event_lock = threading.Lock()
         self.raw_condition = threading.Condition(self.state_lock)
         self.raw_fragment_keys: set[tuple[str, str, int]] = set()
-        self.raw_payload_hashes: set[str] = set()
+        self.raw_fragment_content_hashes: set[str] = set()
         self.raw_observer_started = threading.Event()
         self.raw_observer_error = False
         self.ready = False
@@ -190,13 +190,15 @@ class RoutedPolicy:
         if offset <= 0:
             return
         payload_sha256 = hashlib.sha256(bytes(ip)).hexdigest()
+        content_sha256 = hashlib.sha256(bytes(ip.payload)).hexdigest()
         # Docker's two veth captures can expose the same raw fragment on both
-        # interfaces.  Count one wire packet once for B5; keep both PCAPs for
-        # path evidence.
+        # interfaces, with TTL/checksum rewritten on the forwarded copy.
+        # Deduplicate invariant fragment payload content for B5 while keeping
+        # the full packet hash for packet-path correlation and both PCAPs.
         with self.state_lock:
-            if payload_sha256 in self.raw_payload_hashes:
+            if content_sha256 in self.raw_fragment_content_hashes:
                 return
-            self.raw_payload_hashes.add(payload_sha256)
+            self.raw_fragment_content_hashes.add(content_sha256)
         self.observe_fragment(
             src=src,
             dst=dst,
