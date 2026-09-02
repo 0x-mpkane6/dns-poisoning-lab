@@ -55,6 +55,7 @@ class RoutedPolicy:
         self.datagram_last_seen: dict[tuple[str, str, int], float] = {}
         self.events: deque[tuple[float, int]] = deque()
         self.state_lock = threading.Lock()
+        self.active_lock = threading.Lock()
         self.event_lock = threading.Lock()
         self.raw_condition = threading.Condition(self.state_lock)
         self.raw_fragment_keys: set[tuple[str, str, int]] = set()
@@ -126,6 +127,9 @@ class RoutedPolicy:
 
     def write_state(self, reason: str) -> bool:
         n, entropy, unique_ratio, active = self.b5_state()
+        with self.active_lock:
+            previous_active = self.last_active
+            self.last_active = active
         payload = {
             "schema_version": 1,
             "run_id": self.run_id,
@@ -145,9 +149,8 @@ class RoutedPolicy:
         }
         self.state_path.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
         self.event("detector_state", reason=reason, samples=n, entropy=entropy, unique_ratio=unique_ratio, b5_active=active)
-        if active and not self.last_active:
+        if active and not previous_active:
             self.event("detector_trigger", reason=reason, samples=n, entropy=entropy, unique_ratio=unique_ratio)
-        self.last_active = active
         return active
 
     def observe_fragment(
@@ -183,7 +186,9 @@ class RoutedPolicy:
         # Boolean detector state changes; the independent validator rebuilds
         # every intermediate state from fragment_observed rows.
         _samples, _entropy, _unique_ratio, active = self.b5_state()
-        if active != self.last_active:
+        with self.active_lock:
+            state_changed = active != self.last_active
+        if state_changed:
             return self.write_state("noninitial_fragment")
         return active
 
