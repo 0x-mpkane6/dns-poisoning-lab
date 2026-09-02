@@ -6,7 +6,7 @@ if ! command -v iptables >/dev/null 2>&1; then
     echo "NFQUEUE preflight failed: iptables is unavailable" >&2
     exit 20
 fi
-if ! iptables -m NFQUEUE -h >/dev/null 2>&1; then
+if ! iptables -j NFQUEUE -h >/dev/null 2>&1; then
     echo "NFQUEUE preflight failed: the NFQUEUE target is unavailable" >&2
     exit 21
 fi

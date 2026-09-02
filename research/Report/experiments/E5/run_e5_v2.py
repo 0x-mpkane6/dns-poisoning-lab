@@ -543,6 +543,10 @@ def ensure_registered(root: Path, protocol: dict[str, Any]) -> None:
     registered = json.loads((root / "registered.json").read_text(encoding="utf-8"))
     if registered.get("source_manifest") != source_manifest():
         raise RuntimeError("source or configuration changed after registration; use a new run ID")
+    for image_name, expected_id in registered.get("image_ids", {}).items():
+        current = run_command(["docker", "image", "inspect", image_name, "--format", "{{.Id}}"], check=False)
+        if current.returncode != 0 or current.stdout.strip() != expected_id:
+            raise RuntimeError(f"frozen image changed: {image_name}; use a new run ID")
     if not (root / "preflight.json").exists() or json.loads((root / "preflight.json").read_text(encoding="utf-8")).get("status") != "PASS":
         raise RuntimeError("NFQUEUE/routing preflight is not PASS")
 
@@ -661,6 +665,7 @@ def main(argv: list[str] | None = None) -> int:
         stages = [args.stage]
 
     for stage in stages:
+        ensure_registered(root, protocol)
         run_stage(root, protocol, stage)
     write_json(root / "finished.json", {"run_id": run_id, "stages": stages, "finished_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
     print(f"[e5-v2] COMPLETE: {root}", flush=True)
