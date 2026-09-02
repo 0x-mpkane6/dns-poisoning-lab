@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 import sys
 from pathlib import Path
 
@@ -17,6 +16,7 @@ from e5_v2_lib import (  # noqa: E402
     entropy_implied_min_samples,
     make_complete_block,
     policy_decision,
+    ratio_meets_threshold,
     raw_shannon_entropy,
 )
 
@@ -34,6 +34,12 @@ def test_entropy_threshold_implies_sample_lower_bound() -> None:
     assert entropy_implied_min_samples(0.0) == 1
     with pytest.raises(ValueError):
         entropy_implied_min_samples(-0.1)
+
+
+def test_ratio_threshold_uses_registered_decimal_boundary() -> None:
+    assert ratio_meets_threshold(9, 10, 0.90)
+    assert not ratio_meets_threshold(899, 1000, 0.90)
+    assert not ratio_meets_threshold(0, 0, 0.90)
 
 
 def test_trial_qnames_are_unique_and_dns_safe() -> None:

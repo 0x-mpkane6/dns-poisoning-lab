@@ -31,6 +31,7 @@
     "nfqueue_num": 5,
     "nfqueue_hook": "FORWARD",
     "pre_defragmentation_visibility_hook": "AF_PACKET capture on IPS interfaces",
+    "raw_observer_duplicate_window_seconds": 0.5,
     "nfqueue_fallback": false
   },
   "policies": [

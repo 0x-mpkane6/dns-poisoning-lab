@@ -17,7 +17,7 @@ from pathlib import Path
 from netfilterqueue import NetfilterQueue  # type: ignore
 from scapy.all import IP, UDP, send, sniff  # type: ignore
 
-from e5_v2_lib import Policy, policy_decision, raw_shannon_entropy
+from e5_v2_lib import Policy, policy_decision, ratio_meets_threshold, raw_shannon_entropy
 from ips.packet_logic import PacketMeta, build_tc_response, parse_packet
 
 
@@ -36,6 +36,8 @@ LOG_DIR = Path(os.environ.get("LOG_DIR", "/app/log"))
 WORKLOAD = os.environ.get("WORKLOAD", "unregistered")
 TRIAL_RE = re.compile(r"(?:^|\.)r(?P<rep>\d+)-t(?P<trial>\d+)-(?P<nonce>[0-9a-f]+)\.bank\.com\.?$")
 RAW_OBSERVER_WAIT_SECONDS = 0.15
+RAW_DUPLICATE_WINDOW_SECONDS = 0.5
+WINDOW_NS = int(WINDOW_SECONDS * 1_000_000_000)
 
 
 class RoutedPolicy:
@@ -53,7 +55,7 @@ class RoutedPolicy:
         self.query_map: dict[tuple[int, int], str] = {}
         self.datagram_map: dict[tuple[str, str, int], str] = {}
         self.datagram_last_seen: dict[tuple[str, str, int], float] = {}
-        self.events: deque[tuple[float, int]] = deque()
+        self.events: deque[tuple[int, int]] = deque()
         self.state_lock = threading.Lock()
         self.active_lock = threading.Lock()
         self.event_lock = threading.Lock()
@@ -104,26 +106,38 @@ class RoutedPolicy:
             row["trial_id"] = None
         self.append(self.events_path, row)
 
-    def cleanup(self, now: float) -> None:
-        cutoff = now - WINDOW_SECONDS
-        with self.state_lock:
-            while self.events and self.events[0][0] < cutoff:
-                self.events.popleft()
-            old = [key for key, seen in self.datagram_last_seen.items() if seen < cutoff]
-            for key in old:
-                self.datagram_last_seen.pop(key, None)
-                self.datagram_map.pop(key, None)
+    def _cleanup_locked(self, now_ns: int) -> None:
+        cutoff_ns = now_ns - WINDOW_NS
+        while self.events and self.events[0][0] < cutoff_ns:
+            self.events.popleft()
+        cutoff_s = now_ns / 1_000_000_000.0 - WINDOW_SECONDS
+        old = [key for key, seen in self.datagram_last_seen.items() if seen < cutoff_s]
+        for key in old:
+            self.datagram_last_seen.pop(key, None)
+            self.datagram_map.pop(key, None)
 
-    def b5_state(self, now: float | None = None) -> tuple[int, float, float, bool]:
-        reference_time = time.monotonic() if now is None else now
-        self.cleanup(reference_time)
+    def cleanup(self, now_ns: int) -> None:
         with self.state_lock:
-            ipids = [ipid for _, ipid in self.events]
+            self._cleanup_locked(now_ns)
+
+    def _b5_state_locked(self, now_ns: int) -> tuple[int, float, float, bool]:
+        self._cleanup_locked(now_ns)
+        ipids = [ipid for _, ipid in self.events]
         n = len(ipids)
         entropy = raw_shannon_entropy(ipids)
-        unique_ratio = len(set(ipids)) / n if n else 0.0
-        active = n >= MIN_SAMPLES and entropy >= ENTROPY_THRESHOLD and unique_ratio >= UNIQUE_RATIO_THRESHOLD
+        unique_count = len(set(ipids))
+        unique_ratio = unique_count / n if n else 0.0
+        active = n >= MIN_SAMPLES and entropy >= ENTROPY_THRESHOLD and ratio_meets_threshold(
+            unique_count,
+            n,
+            UNIQUE_RATIO_THRESHOLD,
+        )
         return n, entropy, unique_ratio, active
+
+    def b5_state(self, now_ns: int | None = None) -> tuple[int, float, float, bool]:
+        reference_ns = time.monotonic_ns() if now_ns is None else now_ns
+        with self.state_lock:
+            return self._b5_state_locked(reference_ns)
 
     def _emit_state(
         self,
@@ -179,17 +193,17 @@ class RoutedPolicy:
         stats: tuple[int, float, float, bool] | None = None,
         state_mono_ns: int | None = None,
     ) -> bool:
-        values = self.b5_state() if stats is None else stats
         timestamp = time.monotonic_ns() if state_mono_ns is None else state_mono_ns
         with self.active_lock:
+            values = self.b5_state(now_ns=timestamp) if stats is None else stats
             previous_active = self.last_active
             self.last_active = values[3]
-        return self._emit_state(
-            reason,
-            stats=values,
-            state_mono_ns=timestamp,
-            previous_active=previous_active,
-        )
+            return self._emit_state(
+                reason,
+                stats=values,
+                state_mono_ns=timestamp,
+                previous_active=previous_active,
+            )
 
     def _write_state_if_changed(
         self,
@@ -198,18 +212,18 @@ class RoutedPolicy:
         stats: tuple[int, float, float, bool],
         state_mono_ns: int,
     ) -> bool:
-        active = stats[3]
         with self.active_lock:
+            active = stats[3]
             if active == self.last_active:
                 return active
             previous_active = self.last_active
             self.last_active = active
-        return self._emit_state(
-            reason,
-            stats=stats,
-            state_mono_ns=state_mono_ns,
-            previous_active=previous_active,
-        )
+            return self._emit_state(
+                reason,
+                stats=stats,
+                state_mono_ns=state_mono_ns,
+                previous_active=previous_active,
+            )
 
     def observe_fragment(
         self,
@@ -224,33 +238,42 @@ class RoutedPolicy:
         capture_iface: str | None = None,
     ) -> bool:
         observed_mono_ns = time.monotonic_ns()
-        with self.state_lock:
-            self.events.append((observed_mono_ns / 1_000_000_000.0, ipid))
-            self.raw_fragment_keys.add((src, dst, ipid))
-            self.raw_condition.notify_all()
-        self.event(
-            "fragment_observed",
-            mono_ns=observed_mono_ns,
-            src=src,
-            dst=dst,
-            ipid=ipid,
-            offset=offset,
-            more_fragments=more_fragments,
-            payload_sha256=payload_sha256,
-            capture_source=capture_source,
-            capture_iface=capture_iface,
-        )
-        stats = self.b5_state(now=observed_mono_ns / 1_000_000_000.0)
-        # Raw evidence is retained for every fragment, but writing a second
-        # JSON row and rewriting detector_state.json for every packet would
-        # throttle the 200 fragments/s workload.  Persist state only when the
-        # Boolean detector state changes; the independent validator rebuilds
-        # every intermediate state from fragment_observed rows.
-        return self._write_state_if_changed(
-            "noninitial_fragment",
-            stats=stats,
-            state_mono_ns=observed_mono_ns,
-        )
+        with self.active_lock:
+            with self.state_lock:
+                self.events.append((observed_mono_ns, ipid))
+                self.raw_fragment_keys.add((src, dst, ipid))
+                self.raw_condition.notify_all()
+                stats = self._b5_state_locked(observed_mono_ns)
+            active = stats[3]
+            state_changed = active != self.last_active
+            previous_active = self.last_active
+            if state_changed:
+                self.last_active = active
+            self.event(
+                "fragment_observed",
+                mono_ns=observed_mono_ns,
+                src=src,
+                dst=dst,
+                ipid=ipid,
+                offset=offset,
+                more_fragments=more_fragments,
+                payload_sha256=payload_sha256,
+                capture_source=capture_source,
+                capture_iface=capture_iface,
+            )
+            # Raw evidence is retained for every fragment, but rewriting
+            # detector_state.json for every packet would throttle the 200
+            # fragments/s workload. Persist state only when the Boolean
+            # detector state changes; the independent validator rebuilds
+            # every intermediate state from fragment_observed rows.
+            if not state_changed:
+                return active
+            return self._emit_state(
+                "noninitial_fragment",
+                stats=stats,
+                state_mono_ns=observed_mono_ns,
+                previous_active=previous_active,
+            )
 
     def observe_noninitial(self, meta: PacketMeta, payload_sha256: str) -> bool:
         return self.observe_fragment(
@@ -283,10 +306,14 @@ class RoutedPolicy:
         content_key = f"{src}|{dst}|{int(ip.id)}|{offset}|{content_sha256}"
         with self.state_lock:
             previous = self.raw_fragment_content_seen.get(content_key)
-            if previous is not None and now - previous < 0.05:
+            if previous is not None and now - previous < RAW_DUPLICATE_WINDOW_SECONDS:
                 return
             self.raw_fragment_content_seen[content_key] = now
-            stale = [key for key, seen in self.raw_fragment_content_seen.items() if now - seen >= 2.0]
+            stale = [
+                key
+                for key, seen in self.raw_fragment_content_seen.items()
+                if now - seen >= max(2.0, RAW_DUPLICATE_WINDOW_SECONDS)
+            ]
             for key in stale:
                 self.raw_fragment_content_seen.pop(key, None)
         self.observe_fragment(
@@ -526,6 +553,7 @@ class RoutedPolicy:
                     "entropy_threshold": ENTROPY_THRESHOLD,
                     "unique_ratio_threshold": UNIQUE_RATIO_THRESHOLD,
                     "raw_observer": "AF_PACKET",
+                    "raw_observer_duplicate_window_seconds": RAW_DUPLICATE_WINDOW_SECONDS,
                 },
                 sort_keys=True,
             )

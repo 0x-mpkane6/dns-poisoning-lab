@@ -7,6 +7,7 @@ import random
 from collections import Counter
 from dataclasses import dataclass
 from enum import Enum
+from fractions import Fraction
 from typing import Sequence
 
 
@@ -55,6 +56,15 @@ def raw_shannon_entropy(values: Sequence[int]) -> float:
     counts = Counter(values)
     total = len(values)
     return -sum((count / total) * math.log2(count / total) for count in counts.values())
+
+
+def ratio_meets_threshold(numerator: int, denominator: int, threshold: float) -> bool:
+    """Compare a ratio using the decimal threshold registered by the protocol."""
+
+    if denominator <= 0:
+        return False
+    fraction = Fraction(str(threshold))
+    return numerator * fraction.denominator >= denominator * fraction.numerator
 
 
 def entropy_implied_min_samples(entropy_threshold: float) -> int:

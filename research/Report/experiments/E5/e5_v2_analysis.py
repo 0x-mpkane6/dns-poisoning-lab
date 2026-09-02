@@ -9,7 +9,7 @@ from collections import Counter, deque
 from pathlib import Path
 from typing import Any
 
-from e5_v2_lib import classify_outcome, raw_shannon_entropy
+from e5_v2_lib import classify_outcome, ratio_meets_threshold, raw_shannon_entropy
 
 
 POISON_IP = "6.6.6.6"
@@ -113,8 +113,13 @@ def reconstruct_b5_windows(
         ipids = [ipid for _, ipid in state]
         n = len(ipids)
         entropy = raw_shannon_entropy(ipids)
-        unique_ratio = len(set(ipids)) / n if n else 0.0
-        active = n >= min_samples and entropy >= entropy_threshold and unique_ratio >= unique_ratio_threshold
+        unique_count = len(set(ipids))
+        unique_ratio = unique_count / n if n else 0.0
+        active = n >= min_samples and entropy >= entropy_threshold and ratio_meets_threshold(
+            unique_count,
+            n,
+            unique_ratio_threshold,
+        )
         states.append(
             {
                 "mono_ns": timestamp,

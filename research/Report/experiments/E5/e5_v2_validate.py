@@ -153,6 +153,8 @@ def validate_run(
                     errors.append(f"IPS ready record has unlocked/mismatched {key}")
             if ready.get("raw_observer") != "AF_PACKET":
                 errors.append("IPS ready record lacks the AF_PACKET pre-defragmentation observer")
+            if ready.get("raw_observer_duplicate_window_seconds") != 0.5:
+                errors.append("IPS ready record has mismatched raw-observer duplicate window")
         else:
             errors.append("missing IPS ready record")
         for firewall_name in ("firewall_before.rules", "firewall_after.rules"):
