@@ -30,6 +30,7 @@
     "legitimate_tail_delay_seconds": 0.25,
     "nfqueue_num": 5,
     "nfqueue_hook": "FORWARD",
+    "pre_defragmentation_visibility_hook": "raw/PREROUTING",
     "nfqueue_fallback": false
   },
   "policies": [

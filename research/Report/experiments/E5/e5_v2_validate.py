@@ -159,6 +159,8 @@ def validate_run(
                 errors.append(f"{firewall_name} contains forbidden NFQUEUE fallback")
             if firewall_name.endswith("after.rules") and not _has_nonzero_nfqueue_counter(firewall):
                 errors.append("NFQUEUE/firewall counters did not increase")
+            if "raw" not in firewall.lower() or "PREROUTING" not in firewall:
+                errors.append(f"{firewall_name} does not preserve raw pre-defragmentation visibility")
         version_text = (run_dir / "unbound_version.txt").read_text(encoding="utf-8", errors="replace")
         if "1.26.1" not in version_text:
             errors.append("resolver is not the registered Unbound 1.26.1 build")
