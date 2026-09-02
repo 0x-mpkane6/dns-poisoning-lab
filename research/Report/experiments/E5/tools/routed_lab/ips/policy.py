@@ -60,13 +60,20 @@ class RoutedPolicy:
         self.raw_fragment_content_seen: dict[str, float] = {}
         self.raw_observer_started = threading.Event()
         self.raw_observer_error = False
+        self.events_handle = None
         self.ready = False
         self.last_active = False
 
     def append(self, path: Path, payload: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        with self.event_lock, path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(payload, sort_keys=True, allow_nan=False) + "\n")
+        encoded = json.dumps(payload, sort_keys=True, allow_nan=False) + "\n"
+        with self.event_lock:
+            if path == self.events_path and self.events_handle is not None:
+                self.events_handle.write(encoded)
+                self.events_handle.flush()
+            else:
+                with path.open("a", encoding="utf-8") as handle:
+                    handle.write(encoded)
 
     def event(self, event: str, **fields: object) -> None:
         row = {
@@ -166,7 +173,15 @@ class RoutedPolicy:
             capture_source=capture_source,
             capture_iface=capture_iface,
         )
-        return self.write_state("noninitial_fragment")
+        # Raw evidence is retained for every fragment, but writing a second
+        # JSON row and rewriting detector_state.json for every packet would
+        # throttle the 200 fragments/s workload.  Persist state only when the
+        # Boolean detector state changes; the independent validator rebuilds
+        # every intermediate state from fragment_observed rows.
+        _samples, _entropy, _unique_ratio, active = self.b5_state()
+        if active != self.last_active:
+            return self.write_state("noninitial_fragment")
+        return active
 
     def observe_noninitial(self, meta: PacketMeta, payload_sha256: str) -> bool:
         return self.observe_fragment(
@@ -407,6 +422,7 @@ class RoutedPolicy:
         LOG_DIR.mkdir(parents=True, exist_ok=True)
         self.events_path.write_text("", encoding="utf-8")
         self.state_path.write_text("", encoding="utf-8")
+        self.events_handle = self.events_path.open("a", encoding="utf-8")
         self.event("ips_start", auth_ip=AUTH_IP, resolver_ip=RESOLVER_IP, inside_ip=INSIDE_IP, queue_num=QUEUE_NUM)
         self.write_state("startup")
         queue = NetfilterQueue()
