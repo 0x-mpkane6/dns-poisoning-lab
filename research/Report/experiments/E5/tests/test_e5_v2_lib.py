@@ -10,6 +10,7 @@ E5_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(E5_ROOT))
 
 from e5_v2_lib import (  # noqa: E402
+    CONFIRMATORY_POLICIES,
     Policy,
     build_trial_qname,
     classify_outcome,
@@ -51,7 +52,7 @@ def test_complete_block_contains_each_policy_workload_once() -> None:
     assert first == second
     assert len(first) == 16
     assert len({(row.policy, row.workload) for row in first}) == 16
-    assert {row.policy for row in first} == {item.value for item in Policy}
+    assert {row.policy for row in first} == {item.value for item in CONFIRMATORY_POLICIES}
 
 
 def test_policy_decisions_isolate_detector_and_enforcement() -> None:
