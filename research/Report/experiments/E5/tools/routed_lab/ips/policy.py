@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import re
 import subprocess
@@ -19,15 +20,19 @@ from e5_v2_lib import Policy, policy_decision, raw_shannon_entropy
 from ips.packet_logic import PacketMeta, build_tc_response, parse_packet
 
 
-WINDOW_SECONDS = float(os.environ.get("FRAG2_WINDOW_SECONDS", "2.0"))
-MIN_SAMPLES = int(os.environ.get("R2_MIN_SAMPLES", "8"))
-ENTROPY_THRESHOLD = float(os.environ.get("R2_ENTROPY_THRESHOLD", "6.0"))
-UNIQUE_RATIO_THRESHOLD = float(os.environ.get("R2_UNIQUE_RATIO_THRESHOLD", "0.90"))
+# Registered and locked for E5-v2.  These are constants rather than
+# environment overrides so a runtime invocation cannot silently retune E3's
+# operating point.
+WINDOW_SECONDS = 2.0
+MIN_SAMPLES = 8
+ENTROPY_THRESHOLD = 6.0
+UNIQUE_RATIO_THRESHOLD = 0.90
 QUEUE_NUM = int(os.environ.get("NFQUEUE_NUM", "5"))
 AUTH_IP = os.environ.get("AUTH_IP", "10.82.0.100")
 RESOLVER_IP = os.environ.get("RESOLVER_IP", "10.81.0.53")
 INSIDE_IP = os.environ.get("IPS_INSIDE_IP", "10.81.0.1")
 LOG_DIR = Path(os.environ.get("LOG_DIR", "/app/log"))
+WORKLOAD = os.environ.get("WORKLOAD", "unregistered")
 TRIAL_RE = re.compile(r"(?:^|\.)r(?P<rep>\d+)-t(?P<trial>\d+)-(?P<nonce>[0-9a-f]+)\.bank\.com\.?$")
 
 
@@ -39,6 +44,7 @@ class RoutedPolicy:
             raise SystemExit(f"unsupported POLICY_MODE: {exc}") from exc
         self.run_id = os.environ.get("RUN_ID", "unregistered")
         self.rep = int(os.environ.get("REP", "0"))
+        self.workload = WORKLOAD
         self.events_path = LOG_DIR / "ips_events.jsonl"
         self.state_path = LOG_DIR / "detector_state.json"
         self.ready_path = LOG_DIR / "ips_ready.json"
@@ -47,7 +53,8 @@ class RoutedPolicy:
         self.datagram_last_seen: dict[tuple[str, str, int], float] = {}
         self.events: deque[tuple[float, int]] = deque()
         self.state_lock = threading.Lock()
-        self.running = False
+        self.ready = False
+        self.last_active = False
 
     def append(self, path: Path, payload: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -61,8 +68,9 @@ class RoutedPolicy:
             "run_id": self.run_id,
             "rep": self.rep,
             "policy": self.policy.value,
+            "workload": self.workload,
             "mono_ns": time.monotonic_ns(),
-            "wall_s": time.time(),
+            "wall_ns": time.time_ns(),
             **fields,
         }
         qname = fields.get("qname")
@@ -105,8 +113,10 @@ class RoutedPolicy:
             "run_id": self.run_id,
             "rep": self.rep,
             "policy": self.policy.value,
+            "workload": self.workload,
             "reason": reason,
             "mono_ns": time.monotonic_ns(),
+            "wall_ns": time.time_ns(),
             "samples": n,
             "entropy": entropy,
             "unique_ratio": unique_ratio,
@@ -117,17 +127,31 @@ class RoutedPolicy:
         }
         self.state_path.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
         self.event("detector_state", reason=reason, samples=n, entropy=entropy, unique_ratio=unique_ratio, b5_active=active)
+        if active and not self.last_active:
+            self.event("detector_trigger", reason=reason, samples=n, entropy=entropy, unique_ratio=unique_ratio)
+        self.last_active = active
         return active
 
-    def observe_noninitial(self, meta: PacketMeta) -> bool:
+    def observe_noninitial(self, meta: PacketMeta, payload_sha256: str) -> bool:
         with self.state_lock:
             self.events.append((time.monotonic(), meta.ipid))
+        self.event(
+            "fragment_observed",
+            src=meta.src,
+            dst=meta.dst,
+            ipid=meta.ipid,
+            offset=meta.offset,
+            more_fragments=meta.more_fragments,
+            qname=meta.qname,
+            payload_sha256=payload_sha256,
+        )
         return self.write_state("noninitial_fragment")
 
     def inside_iface(self) -> str:
-        output = subprocess.run(
-            ["ip", "-o", "-4", "addr", "show"], check=True, capture_output=True, text=True
-        ).stdout
+        configured = os.environ.get("INSIDE_IFACE")
+        if configured:
+            return configured
+        output = subprocess.run(["ip", "-o", "-4", "addr", "show"], check=True, capture_output=True, text=True).stdout
         for line in output.splitlines():
             fields = line.split()
             if len(fields) >= 4 and fields[3].split("/")[0] == INSIDE_IP:
@@ -159,6 +183,7 @@ class RoutedPolicy:
 
     def handle(self, nfq_packet) -> None:  # noqa: ANN001
         raw = nfq_packet.get_payload()
+        payload_sha256 = hashlib.sha256(raw).hexdigest()
         try:
             meta = parse_packet(raw, auth_ip=AUTH_IP, resolver_ip=RESOLVER_IP, query_map=self.query_map)
         except Exception as exc:
@@ -174,6 +199,18 @@ class RoutedPolicy:
         key = (meta.src, meta.dst, meta.ipid)
         qname = meta.qname or self.datagram_map.get(key)
         if meta.is_dns_response:
+            self.event(
+                "packet_ingress",
+                qname=qname,
+                src=meta.src,
+                dst=meta.dst,
+                ipid=meta.ipid,
+                offset=meta.offset,
+                more_fragments=meta.more_fragments,
+                txid=meta.txid,
+                dst_port=meta.dst_port,
+                payload_sha256=payload_sha256,
+            )
             self.datagram_last_seen[key] = time.monotonic()
             if meta.qname:
                 self.datagram_map[key] = meta.qname
@@ -181,7 +218,7 @@ class RoutedPolicy:
 
         b5_active = self.b5_state()[3]
         if meta.is_noninitial_fragment:
-            b5_active = self.observe_noninitial(meta)
+            b5_active = self.observe_noninitial(meta, payload_sha256)
 
         if meta.is_dns_response and (meta.is_first_fragment or meta.is_noninitial_fragment):
             action = policy_decision(
@@ -201,18 +238,20 @@ class RoutedPolicy:
                 verdict=action.verdict,
                 reason=action.reason,
                 b5_active=b5_active,
+                payload_sha256=payload_sha256,
             )
             if action.verdict == "inject_tc_drop":
                 injected = self.inject_tc(meta, qname)
-                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=injected, offset=meta.offset)
+                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=injected, offset=meta.offset, payload_sha256=payload_sha256)
                 nfq_packet.drop()
                 return
             if action.verdict in {"drop_tail", "drop_fragment"}:
-                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=False, offset=meta.offset)
+                self.event("packet_verdict", qname=qname, verdict="drop", injection_ok=False, offset=meta.offset, payload_sha256=payload_sha256)
                 nfq_packet.drop()
                 return
 
-        self.event("packet_verdict", qname=qname, src=meta.src, dst=meta.dst, ipid=meta.ipid, offset=meta.offset, verdict="forward")
+        if meta.is_dns_response or meta.is_noninitial_fragment:
+            self.event("packet_verdict", qname=qname, src=meta.src, dst=meta.dst, ipid=meta.ipid, offset=meta.offset, verdict="forward", payload_sha256=payload_sha256)
         nfq_packet.accept()
 
     def run(self) -> None:
@@ -225,7 +264,22 @@ class RoutedPolicy:
         queue.bind(QUEUE_NUM, self.handle)
         self.ready = True
         self.ready_path.write_text(
-            json.dumps({"schema_version": 1, "run_id": self.run_id, "rep": self.rep, "policy": self.policy.value, "queue_num": QUEUE_NUM}) + "\n",
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "run_id": self.run_id,
+                    "rep": self.rep,
+                    "policy": self.policy.value,
+                    "workload": self.workload,
+                    "queue_num": QUEUE_NUM,
+                    "window_seconds": WINDOW_SECONDS,
+                    "min_samples": MIN_SAMPLES,
+                    "entropy_threshold": ENTROPY_THRESHOLD,
+                    "unique_ratio_threshold": UNIQUE_RATIO_THRESHOLD,
+                },
+                sort_keys=True,
+            )
+            + "\n",
             encoding="utf-8",
         )
         self.event("ips_ready", queue_num=QUEUE_NUM)

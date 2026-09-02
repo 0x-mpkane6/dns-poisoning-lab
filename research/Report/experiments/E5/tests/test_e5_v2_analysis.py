@@ -1,0 +1,72 @@
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import pytest
+
+E5_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(E5_ROOT))
+
+from e5_v2_aggregate import exact_binomial_ci, paired_bootstrap_mean  # noqa: E402
+from e5_v2_analysis import compute_run_metrics  # noqa: E402
+
+
+def write_jsonl(path: Path, rows: list[dict]) -> None:
+    path.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+
+
+def test_exact_cp_zero_of_twenty_matches_two_sided_95_percent_bound() -> None:
+    low, high = exact_binomial_ci(0, 20)
+    assert low == pytest.approx(0.0)
+    assert high == pytest.approx(0.168433, abs=1e-5)
+
+
+def test_complete_block_bootstrap_is_deterministic() -> None:
+    result = paired_bootstrap_mean({1: 0.1, 2: 0.2, 3: 0.3}, replicates=500, seed=20260902)
+    assert result["estimate"] == pytest.approx(0.2)
+    assert result == paired_bootstrap_mean({1: 0.1, 2: 0.2, 3: 0.3}, replicates=500, seed=20260902)
+    assert result["ci_low"] <= result["estimate"] <= result["ci_high"]
+
+
+def test_run_metrics_reconstructs_attack_mechanism(tmp_path: Path) -> None:
+    qname = "r01-t000-abcdef01.bank.com."
+    base = {
+        "run_id": "E5-v2-routed-s20260902-r001",
+        "rep": 1,
+        "policy": "B1_RL2_TC",
+        "workload": "ATTACK_FIXED_MATCHED",
+    }
+    trial = {
+        **base,
+        "event": "trial",
+        "trial_id": "r01-t000-abcdef01",
+        "qname": qname,
+        "trial": 0,
+        "query_start_mono_ns": 200,
+        "answer_ip": "203.0.113.80",
+        "status": "legitimate_answer",
+        "client_latency_ms": 10.0,
+        "cache_before": {"cache_hit": False},
+        "cache_after": {"cache_hit": True, "answers": ["203.0.113.80"]},
+    }
+    write_jsonl(tmp_path / "trials.jsonl", [trial])
+    write_jsonl(
+        tmp_path / "ips_events.jsonl",
+        [
+            {**base, "event": "detector_trigger", "mono_ns": 100, "qname": None},
+            {**base, "event": "packet_ingress", "mono_ns": 300, "qname": qname, "ipid": 777, "offset": 40},
+            {**base, "event": "packet_verdict", "mono_ns": 301, "qname": qname, "ipid": 777, "offset": 40, "verdict": "drop"},
+            {**base, "event": "tc_injected", "mono_ns": 302, "qname": qname, "ipid": 777},
+        ],
+    )
+    write_jsonl(tmp_path / "attacker_events.jsonl", [{**base, "event": "forged_tail_send", "mono_ns": 250, "qname": qname, "ipid": 777}])
+    write_jsonl(tmp_path / "auth_events.jsonl", [{**base, "event": "tcp_receive", "mono_ns": 400, "qname": qname}])
+    write_jsonl(tmp_path / "cache_events.jsonl", [])
+    metrics = compute_run_metrics(tmp_path, expected_trials=1)
+    assert metrics["any_poison"] is False
+    assert metrics["tc_injection_trials"] == 1
+    assert metrics["tcp_retry_trials"] == 1
+    assert metrics["forged_tail_drop_trials"] == 1
+    assert metrics["root_cause_counts"]["mitigated"] == 1
