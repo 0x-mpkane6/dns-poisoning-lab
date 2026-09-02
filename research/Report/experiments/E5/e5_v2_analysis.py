@@ -134,6 +134,43 @@ def reconstruct_b5_windows(
     return states
 
 
+def compare_trigger_times(
+    reconstructed: list[int],
+    runtime: list[int],
+    *,
+    tolerance_ns: int = 100_000_000,
+) -> dict[str, Any]:
+    """Check temporal agreement between raw reconstruction and live logs.
+
+    The live detector can emit a transition from either the packet callback
+    or the periodic tick thread.  Their event-write times need not be
+    identical to the raw-observer row even when they describe the same
+    transition.  A bounded temporal match keeps that logging boundary from
+    becoming a false integrity failure while retaining both counts and any
+    genuinely unmatched transitions in the metrics.
+    """
+
+    if tolerance_ns < 0:
+        raise ValueError("tolerance_ns must be non-negative")
+
+    def nearest_distances(source: list[int], target: list[int]) -> list[int]:
+        if not target:
+            return [tolerance_ns + 1 for _ in source]
+        return [min(abs(value - candidate) for candidate in target) for value in source]
+
+    runtime_distances = nearest_distances(runtime, reconstructed)
+    reconstructed_distances = nearest_distances(reconstructed, runtime)
+    all_distances = runtime_distances + reconstructed_distances
+    return {
+        "mismatch": any(distance > tolerance_ns for distance in all_distances),
+        "tolerance_ns": tolerance_ns,
+        "runtime_unmatched_count": sum(distance > tolerance_ns for distance in runtime_distances),
+        "reconstructed_unmatched_count": sum(distance > tolerance_ns for distance in reconstructed_distances),
+        "max_nearest_error_ns": max(all_distances) if all_distances else None,
+        "count_difference": len(runtime) - len(reconstructed),
+    }
+
+
 def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) -> dict[str, Any]:
     """Reconstruct one run without treating its 50 trials as independent runs."""
 
@@ -155,6 +192,7 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
     reconstructed_states = reconstruct_b5_windows(ips)
     reconstructed_triggers = [row["mono_ns"] for row in reconstructed_states if row.get("triggered")]
     runtime_triggers = [int(row.get("mono_ns", 0)) for row in ips if row.get("event") == "detector_trigger"]
+    trigger_alignment = compare_trigger_times(reconstructed_triggers, runtime_triggers)
     trigger_times = reconstructed_triggers or runtime_triggers
     trigger_trials = 0
     forged_ingress_trials = 0
@@ -309,7 +347,16 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
         "b5_reconstructed_state_count": len(reconstructed_states),
         "b5_reconstructed_trigger_count": len(reconstructed_triggers),
         "b5_runtime_trigger_count": len(runtime_triggers),
-        "b5_trigger_mismatch": bool(reconstructed_states) and len(reconstructed_triggers) != len(runtime_triggers),
+        "b5_trigger_mismatch": bool(reconstructed_states) and bool(trigger_alignment["mismatch"]),
+        "b5_trigger_count_difference": trigger_alignment["count_difference"],
+        "b5_trigger_runtime_unmatched_count": trigger_alignment["runtime_unmatched_count"],
+        "b5_trigger_reconstructed_unmatched_count": trigger_alignment["reconstructed_unmatched_count"],
+        "b5_trigger_max_nearest_error_ms": (
+            trigger_alignment["max_nearest_error_ns"] / 1_000_000.0
+            if trigger_alignment["max_nearest_error_ns"] is not None
+            else None
+        ),
+        "b5_trigger_match_tolerance_ms": trigger_alignment["tolerance_ns"] / 1_000_000.0,
         "forged_tail_ingress_trials": forged_ingress_trials,
         "forged_tail_ingress_rate": forged_ingress_trials / n,
         "forged_tail_drop_trials": forged_drop_trials,

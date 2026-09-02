@@ -10,7 +10,7 @@ E5_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(E5_ROOT))
 
 from e5_v2_aggregate import exact_binomial_ci, paired_bootstrap_mean  # noqa: E402
-from e5_v2_analysis import compute_run_metrics, reconstruct_b5_windows  # noqa: E402
+from e5_v2_analysis import compare_trigger_times, compute_run_metrics, reconstruct_b5_windows  # noqa: E402
 
 
 def write_jsonl(path: Path, rows: list[dict]) -> None:
@@ -53,6 +53,20 @@ def test_b5_window_reconstruction_tracks_state_transitions_after_expiry() -> Non
     )
     states = reconstruct_b5_windows(rows)
     assert sum(row["triggered"] for row in states) == 2
+
+
+def test_trigger_time_comparison_tolerates_logging_boundary_but_reports_count() -> None:
+    result = compare_trigger_times([1_000_000_000], [1_050_000_000, 1_060_000_000])
+    assert result["mismatch"] is False
+    assert result["count_difference"] == 1
+    assert result["runtime_unmatched_count"] == 0
+    assert result["reconstructed_unmatched_count"] == 0
+
+
+def test_trigger_time_comparison_rejects_unmatched_transition() -> None:
+    result = compare_trigger_times([1_000_000_000], [1_500_000_000])
+    assert result["mismatch"] is True
+    assert result["runtime_unmatched_count"] == 1
 
 
 def test_run_metrics_reconstructs_attack_mechanism(tmp_path: Path) -> None:
