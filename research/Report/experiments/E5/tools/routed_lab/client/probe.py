@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import base64
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 import re
 import socket
 import subprocess
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -26,11 +28,12 @@ WORKLOAD = os.environ.get("WORKLOAD", "unregistered")
 POISON_IP = os.environ.get("POISON_IP", "6.6.6.6")
 LEGITIMATE_IP = os.environ.get("LEGITIMATE_IP", "203.0.113.80")
 IPV4 = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")
+APPEND_LOCK = threading.Lock()
 
 
 def append(path: Path, row: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
+    with APPEND_LOCK, path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(row, sort_keys=True, allow_nan=False) + "\n")
 
 
@@ -143,6 +146,64 @@ def run_dig(qname: str) -> tuple[dict[str, Any], str]:
         )
 
 
+def run_trial(
+    row: dict[str, Any],
+    before: dict[str, Any],
+    launch_epoch: float,
+    client_events_path: Path,
+) -> dict[str, Any]:
+    """Run one trial at its registered launch time.
+
+    Queries are launched with a deterministic 10-ms stagger and allowed to
+    remain in flight independently.  This is important for the RFC native
+    drop baseline: a sequential client would let Unbound mark the sole stub
+    server unavailable after the first few deliberately dropped responses,
+    preventing later registered qnames from reaching the authoritative
+    server.  The independent unit remains the recreated stack run, and the
+    same launch schedule is used for every policy.
+    """
+
+    trial_id = str(row["trial_id"])
+    qname = str(row["qname"])
+    target = launch_epoch + float(row.get("query_at_s", int(row.get("trial", 0)) * 0.01))
+    while True:
+        remaining = target - time.monotonic()
+        if remaining <= 0:
+            break
+        time.sleep(min(remaining, 0.01))
+
+    query_start = time.monotonic_ns()
+    append(client_events_path, envelope("client_query_send", trial_id=trial_id, qname=qname))
+    result, raw_output = run_dig(qname)
+    append(
+        client_events_path,
+        envelope(
+            "client_answer_receive",
+            trial_id=trial_id,
+            qname=qname,
+            status=result["status"],
+            answer_ip=result["answer_ip"],
+            tc_seen=result["tc_seen"],
+        ),
+    )
+    after = cache_probe("after", trial_id, qname)
+    append(client_events_path, envelope("cache_after_reply", trial_id=trial_id, qname=qname, **after))
+    end_ns = time.monotonic_ns()
+    return envelope(
+        "trial",
+        trial_id=trial_id,
+        qname=qname,
+        trial=int(row["trial"]),
+        client_query_start_mono_ns=query_start,
+        client_answer_end_mono_ns=end_ns,
+        client_latency_ms=(end_ns - query_start) / 1_000_000.0,
+        cache_before=before,
+        cache_after=after,
+        **result,
+        raw_output_b64=base64.b64encode(raw_output.encode("utf-8")).decode("ascii"),
+    )
+
+
 def main() -> int:
     schedule = json.loads(SCHEDULE_PATH.read_text(encoding="utf-8"))
     trials = schedule.get("trials", [])
@@ -155,36 +216,27 @@ def main() -> int:
     client_events_path.write_text("", encoding="utf-8")
     append(client_events_path, envelope("client_ready", trial_count=len(trials), deadline_s=QUERY_DEADLINE_S))
 
+    before_by_trial: dict[str, dict[str, Any]] = {}
     for row in trials:
         trial_id = str(row["trial_id"])
         qname = str(row["qname"])
         before = cache_probe("before", trial_id, qname)
+        before_by_trial[trial_id] = before
         append(client_events_path, envelope("cache_before_reply", trial_id=trial_id, qname=qname, **before))
-        query_start = time.monotonic_ns()
-        append(client_events_path, envelope("client_query_send", trial_id=trial_id, qname=qname))
-        result, raw_output = run_dig(qname)
-        append(
-            client_events_path,
-            envelope("client_answer_receive", trial_id=trial_id, qname=qname, status=result["status"], answer_ip=result["answer_ip"], tc_seen=result["tc_seen"]),
-        )
-        after = cache_probe("after", trial_id, qname)
-        append(client_events_path, envelope("cache_after_reply", trial_id=trial_id, qname=qname, **after))
-        end_ns = time.monotonic_ns()
-        record = envelope(
-            "trial",
-            trial_id=trial_id,
-            qname=qname,
-            trial=int(row["trial"]),
-            client_query_start_mono_ns=query_start,
-            client_answer_end_mono_ns=end_ns,
-            client_latency_ms=(end_ns - query_start) / 1_000_000.0,
-            cache_before=before,
-            cache_after=after,
-            **result,
-            raw_output_b64=base64.b64encode(raw_output.encode("utf-8")).decode("ascii"),
-        )
+
+    launch_epoch = time.monotonic()
+    records: list[dict[str, Any]] = []
+    with ThreadPoolExecutor(max_workers=max(1, len(trials))) as executor:
+        futures = {
+            executor.submit(run_trial, row, before_by_trial[str(row["trial_id"])], launch_epoch, client_events_path): row
+            for row in trials
+        }
+        for future in as_completed(futures):
+            records.append(future.result())
+
+    for record in sorted(records, key=lambda value: int(value.get("trial", 0))):
         append(trials_path, record)
-        print(f"{trial_id} {result['status']} {result['answer_ip'] or '-'} {result['latency_ms']:.3f}ms", flush=True)
+        print(f"{record['trial_id']} {record['status']} {record['answer_ip'] or '-'} {record['latency_ms']:.3f}ms", flush=True)
     return 0
 
 

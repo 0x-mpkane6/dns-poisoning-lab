@@ -92,13 +92,12 @@ def occupancy_payload(seq: int) -> bytes:
 
 
 def send_occupancy(seq: int, ipid: int, sender: RawIPSender) -> int:
-    """Send one non-initial occupancy fragment at the scheduled rate.
+    """Send one genuine two-fragment occupancy datagram at the scheduled rate.
 
-    The occupancy stream exists to exercise the routed detector's
-    pre-defragmentation observation path.  Sending the matching first
-    fragment as well would ask the resolver/kernel to reassemble hundreds of
-    unrelated UDP datagrams per second and can starve the DNS control path;
-    the registered rate is the rate of observed non-initial fragments.
+    The occupancy stream exercises the routed detector's
+    pre-defragmentation observation path.  The persistent raw socket keeps
+    the registered 200-packet/s replay rate attainable without changing the
+    packet pair represented in the schedule.
     """
 
     packets = fragment_udp_payload(
@@ -110,10 +109,9 @@ def send_occupancy(seq: int, ipid: int, sender: RawIPSender) -> int:
         fragsize=FRAGSIZE,
         src_port=9,
     )
-    tails = packets[1:]
-    for packet in tails:
+    for packet in packets:
         sender.send(packet)
-    return len(tails)
+    return len(packets)
 
 
 class ExternalAttacker:

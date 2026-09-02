@@ -95,7 +95,12 @@
     "same_schedule_across_policies": true,
     "schedule_duration_seconds": 120.0,
     "trials_per_run": 50,
-    "qname_template": "r<rep>-t<trial>-<nonce>.bank.com."
+    "qname_template": "r<rep>-t<trial>-<nonce>.bank.com.",
+    "query_launch": {
+      "mode": "deterministic_staggered_concurrent",
+      "spacing_seconds": 0.01,
+      "same_schedule_across_policies": true
+    }
   },
   "stages": {
     "pilot": {

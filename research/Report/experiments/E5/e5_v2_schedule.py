@@ -11,6 +11,9 @@ from typing import Any
 from e5_v2_lib import build_trial_qname
 
 
+QUERY_LAUNCH_SPACING_SECONDS = 0.01
+
+
 WORKLOAD_SPECS: dict[str, dict[str, Any]] = {
     "BENIGN_LOW": {
         "rate_pps": 2.5,
@@ -91,6 +94,7 @@ def build_replay_schedule(
                 "trial": trial,
                 "qname": qname,
                 "nonce": nonce,
+                "query_at_s": round(trial * QUERY_LAUNCH_SPACING_SECONDS, 9),
                 "auth_ipid": _auth_ipid(spec, trial, trial_rng),
                 "tail_delay_s": 0.25,
                 "attack_tail": bool(spec["attack_tail"]),
