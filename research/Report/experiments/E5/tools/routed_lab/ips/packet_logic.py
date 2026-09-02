@@ -118,6 +118,6 @@ def build_tc_response(
     packet = (
         IP(src=auth_ip, dst=resolver_ip, id=int(ipid) & 0xFFFF, flags=0, frag=0)
         / UDP(sport=53, dport=int(resolver_port))
-        / DNS(id=int(txid) & 0xFFFF, qr=1, aa=1, tc=1, qd=DNSQR(qname=qname, qtype="A"))
+        / DNS(id=int(txid) & 0xFFFF, qr=1, aa=1, rd=1, tc=1, qd=DNSQR(qname=qname, qtype="A"))
     )
     return bytes(packet)
