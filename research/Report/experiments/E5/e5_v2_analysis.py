@@ -5,11 +5,11 @@ from __future__ import annotations
 import json
 import math
 import statistics
-from collections import Counter
+from collections import Counter, deque
 from pathlib import Path
 from typing import Any
 
-from e5_v2_lib import classify_outcome
+from e5_v2_lib import classify_outcome, raw_shannon_entropy
 
 
 POISON_IP = "6.6.6.6"
@@ -69,6 +69,53 @@ def _has_drop(rows: list[dict[str, Any]], *, noninitial_only: bool = False) -> b
     )
 
 
+def reconstruct_b5_windows(
+    ips_rows: list[dict[str, Any]],
+    *,
+    window_seconds: float = 2.0,
+    min_samples: int = 8,
+    entropy_threshold: float = 6.0,
+    unique_ratio_threshold: float = 0.90,
+) -> list[dict[str, Any]]:
+    """Rebuild B5 state from raw non-initial-fragment observations only."""
+
+    if window_seconds <= 0 or min_samples < 0:
+        raise ValueError("window_seconds must be positive and min_samples non-negative")
+    observations = sorted(
+        (row for row in ips_rows if row.get("event") == "fragment_observed" and row.get("ipid") is not None),
+        key=lambda row: int(row["mono_ns"]),
+    )
+    states: list[dict[str, Any]] = []
+    state: deque[tuple[int, int]] = deque()
+    window_ns = int(window_seconds * 1_000_000_000)
+    for row in observations:
+        timestamp = int(row["mono_ns"])
+        cutoff = timestamp - window_ns
+        while state and state[0][0] < cutoff:
+            state.popleft()
+        previous_n = len(state)
+        previous_entropy = raw_shannon_entropy([ipid for _, ipid in state])
+        previous_ratio = len({ipid for _, ipid in state}) / previous_n if previous_n else 0.0
+        previous_active = previous_n >= min_samples and previous_entropy >= entropy_threshold and previous_ratio >= unique_ratio_threshold
+        state.append((timestamp, int(row["ipid"])))
+        ipids = [ipid for _, ipid in state]
+        n = len(ipids)
+        entropy = raw_shannon_entropy(ipids)
+        unique_ratio = len(set(ipids)) / n if n else 0.0
+        active = n >= min_samples and entropy >= entropy_threshold and unique_ratio >= unique_ratio_threshold
+        states.append(
+            {
+                "mono_ns": timestamp,
+                "b5_active": active,
+                "triggered": active and not previous_active,
+                "samples": n,
+                "entropy": entropy,
+                "unique_ratio": unique_ratio,
+            }
+        )
+    return states
+
+
 def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) -> dict[str, Any]:
     """Reconstruct one run without treating its 50 trials as independent runs."""
 
@@ -86,6 +133,10 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
     workload = str(first.get("workload", "unknown"))
     policy = str(first.get("policy", "unknown"))
     attack = workload.startswith("ATTACK_")
+    reconstructed_states = reconstruct_b5_windows(ips)
+    reconstructed_triggers = [row["mono_ns"] for row in reconstructed_states if row.get("triggered")]
+    runtime_triggers = [int(row.get("mono_ns", 0)) for row in ips if row.get("event") == "detector_trigger"]
+    trigger_times = reconstructed_triggers or runtime_triggers
     trigger_trials = 0
     forged_ingress_trials = 0
     forged_drop_trials = 0
@@ -105,8 +156,7 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
         attacker_events = _trial_events(attacker, trial)
         query_start = int(trial.get("client_query_start_mono_ns", trial.get("mono_ns", 0)))
         trigger_before = any(
-            row.get("event") == "detector_trigger" and int(row.get("mono_ns", 0)) <= query_start
-            for row in ips
+            int(timestamp) <= query_start for timestamp in trigger_times
         )
         forged_sends = [row for row in attacker_events if row.get("event") == "forged_tail_send"]
         candidate_ipids = {int(row["ipid"]) for row in forged_sends if row.get("ipid") is not None}
@@ -222,6 +272,11 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
         "noanswer_rate": noanswer_trials / n,
         "trigger_trials": trigger_trials,
         "trigger_rate": trigger_trials / n,
+        "b5_reconstruction_available": bool(reconstructed_states),
+        "b5_reconstructed_state_count": len(reconstructed_states),
+        "b5_reconstructed_trigger_count": len(reconstructed_triggers),
+        "b5_runtime_trigger_count": len(runtime_triggers),
+        "b5_trigger_mismatch": bool(reconstructed_states) and len(reconstructed_triggers) != len(runtime_triggers),
         "forged_tail_ingress_trials": forged_ingress_trials,
         "forged_tail_ingress_rate": forged_ingress_trials / n,
         "forged_tail_drop_trials": forged_drop_trials,

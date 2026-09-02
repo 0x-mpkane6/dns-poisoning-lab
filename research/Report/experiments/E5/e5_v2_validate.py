@@ -111,6 +111,8 @@ def validate_run(
         }
         for name, rows in log_rows.items():
             errors.extend(f"{name}: {error}" for error in _event_identity_errors(rows, expected))
+        if not any(row.get("event") == "fragment_observed" for row in log_rows["ips_events.jsonl"]):
+            errors.append("IPS raw fragment observation log is empty")
         trial_ids = {row.get("trial_id") for row in trial_rows}
         for trial_id in trial_ids:
             if not trial_id:
@@ -156,6 +158,12 @@ def validate_run(
         version_text = (run_dir / "unbound_version.txt").read_text(encoding="utf-8", errors="replace")
         if "1.26.1" not in version_text:
             errors.append("resolver is not the registered Unbound 1.26.1 build")
+        try:
+            metrics = json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
+            if metrics.get("b5_trigger_mismatch"):
+                errors.append("independent B5 window reconstruction disagrees with detector trigger log")
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"metrics.json cannot be read: {exc}")
     if require_pcap:
         for pcap in (run_dir / "ips_inside.pcapng", run_dir / "ips_outside.pcapng"):
             if pcap.exists() and not _pcapng(pcap):

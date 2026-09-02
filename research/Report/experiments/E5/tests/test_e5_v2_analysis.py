@@ -10,7 +10,7 @@ E5_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(E5_ROOT))
 
 from e5_v2_aggregate import exact_binomial_ci, paired_bootstrap_mean  # noqa: E402
-from e5_v2_analysis import compute_run_metrics  # noqa: E402
+from e5_v2_analysis import compute_run_metrics, reconstruct_b5_windows  # noqa: E402
 
 
 def write_jsonl(path: Path, rows: list[dict]) -> None:
@@ -28,6 +28,18 @@ def test_complete_block_bootstrap_is_deterministic() -> None:
     assert result["estimate"] == pytest.approx(0.2)
     assert result == paired_bootstrap_mean({1: 0.1, 2: 0.2, 3: 0.3}, replicates=500, seed=20260902)
     assert result["ci_low"] <= result["estimate"] <= result["ci_high"]
+
+
+def test_b5_window_reconstruction_uses_raw_fragment_events() -> None:
+    rows = [
+        {"event": "fragment_observed", "mono_ns": index * 1_000_000, "ipid": index}
+        for index in range(64)
+    ]
+    states = reconstruct_b5_windows(rows)
+    assert states[-1]["samples"] == 64
+    assert states[-1]["entropy"] == pytest.approx(6.0)
+    assert states[-1]["unique_ratio"] == pytest.approx(1.0)
+    assert any(row["triggered"] for row in states)
 
 
 def test_run_metrics_reconstructs_attack_mechanism(tmp_path: Path) -> None:
