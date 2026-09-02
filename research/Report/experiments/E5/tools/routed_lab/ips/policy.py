@@ -114,9 +114,9 @@ class RoutedPolicy:
                 self.datagram_last_seen.pop(key, None)
                 self.datagram_map.pop(key, None)
 
-    def b5_state(self) -> tuple[int, float, float, bool]:
-        now = time.monotonic()
-        self.cleanup(now)
+    def b5_state(self, now: float | None = None) -> tuple[int, float, float, bool]:
+        reference_time = time.monotonic() if now is None else now
+        self.cleanup(reference_time)
         with self.state_lock:
             ipids = [ipid for _, ipid in self.events]
         n = len(ipids)
@@ -125,11 +125,15 @@ class RoutedPolicy:
         active = n >= MIN_SAMPLES and entropy >= ENTROPY_THRESHOLD and unique_ratio >= UNIQUE_RATIO_THRESHOLD
         return n, entropy, unique_ratio, active
 
-    def write_state(self, reason: str) -> bool:
-        n, entropy, unique_ratio, active = self.b5_state()
-        with self.active_lock:
-            previous_active = self.last_active
-            self.last_active = active
+    def _emit_state(
+        self,
+        reason: str,
+        *,
+        stats: tuple[int, float, float, bool],
+        state_mono_ns: int,
+        previous_active: bool,
+    ) -> bool:
+        n, entropy, unique_ratio, active = stats
         payload = {
             "schema_version": 1,
             "run_id": self.run_id,
@@ -137,7 +141,7 @@ class RoutedPolicy:
             "policy": self.policy.value,
             "workload": self.workload,
             "reason": reason,
-            "mono_ns": time.monotonic_ns(),
+            "mono_ns": state_mono_ns,
             "wall_ns": time.time_ns(),
             "samples": n,
             "entropy": entropy,
@@ -148,10 +152,64 @@ class RoutedPolicy:
             "b5_active": active,
         }
         self.state_path.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
-        self.event("detector_state", reason=reason, samples=n, entropy=entropy, unique_ratio=unique_ratio, b5_active=active)
+        self.event(
+            "detector_state",
+            reason=reason,
+            samples=n,
+            entropy=entropy,
+            unique_ratio=unique_ratio,
+            b5_active=active,
+            mono_ns=state_mono_ns,
+        )
         if active and not previous_active:
-            self.event("detector_trigger", reason=reason, samples=n, entropy=entropy, unique_ratio=unique_ratio)
+            self.event(
+                "detector_trigger",
+                reason=reason,
+                samples=n,
+                entropy=entropy,
+                unique_ratio=unique_ratio,
+                mono_ns=state_mono_ns,
+            )
         return active
+
+    def write_state(
+        self,
+        reason: str,
+        *,
+        stats: tuple[int, float, float, bool] | None = None,
+        state_mono_ns: int | None = None,
+    ) -> bool:
+        values = self.b5_state() if stats is None else stats
+        timestamp = time.monotonic_ns() if state_mono_ns is None else state_mono_ns
+        with self.active_lock:
+            previous_active = self.last_active
+            self.last_active = values[3]
+        return self._emit_state(
+            reason,
+            stats=values,
+            state_mono_ns=timestamp,
+            previous_active=previous_active,
+        )
+
+    def _write_state_if_changed(
+        self,
+        reason: str,
+        *,
+        stats: tuple[int, float, float, bool],
+        state_mono_ns: int,
+    ) -> bool:
+        active = stats[3]
+        with self.active_lock:
+            if active == self.last_active:
+                return active
+            previous_active = self.last_active
+            self.last_active = active
+        return self._emit_state(
+            reason,
+            stats=stats,
+            state_mono_ns=state_mono_ns,
+            previous_active=previous_active,
+        )
 
     def observe_fragment(
         self,
@@ -182,17 +240,17 @@ class RoutedPolicy:
             capture_source=capture_source,
             capture_iface=capture_iface,
         )
+        stats = self.b5_state(now=observed_mono_ns / 1_000_000_000.0)
         # Raw evidence is retained for every fragment, but writing a second
         # JSON row and rewriting detector_state.json for every packet would
         # throttle the 200 fragments/s workload.  Persist state only when the
         # Boolean detector state changes; the independent validator rebuilds
         # every intermediate state from fragment_observed rows.
-        _samples, _entropy, _unique_ratio, active = self.b5_state()
-        with self.active_lock:
-            state_changed = active != self.last_active
-        if state_changed:
-            return self.write_state("noninitial_fragment")
-        return active
+        return self._write_state_if_changed(
+            "noninitial_fragment",
+            stats=stats,
+            state_mono_ns=observed_mono_ns,
+        )
 
     def observe_noninitial(self, meta: PacketMeta, payload_sha256: str) -> bool:
         return self.observe_fragment(
