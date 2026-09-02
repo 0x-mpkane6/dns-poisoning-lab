@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import math
 import statistics
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -94,7 +94,6 @@ def compute_run_metrics(run_dir: Path, *, expected_trials: int | None = None) ->
     poison_trials = 0
     legit_trials = 0
     noanswer_trials = 0
-    first_trial_poison = False
     latencies: list[float] = []
     per_trial: list[dict[str, Any]] = []
     root_causes: Counter[str] = Counter()

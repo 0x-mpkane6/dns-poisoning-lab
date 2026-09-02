@@ -21,8 +21,9 @@ sysctl -w net.ipv4.ip_forward=1 >/dev/null
 # The only forwarding decision point is NFQUEUE.  There is intentionally no
 # --queue-bypass option: a missing policy process must not silently forward.
 iptables -F FORWARD
-iptables -P FORWARD ACCEPT
+iptables -P FORWARD DROP
 iptables -A FORWARD -j NFQUEUE --queue-num "$QUEUE_NUM"
+iptables -A FORWARD -j ACCEPT
 
 /app/snapshot.sh before
 printf '{"schema_version":1,"inside_ip":"%s","outside_ip":"%s","inside_iface":"%s","outside_iface":"%s","queue_num":%s}\n' \

@@ -1,4 +1,11 @@
-"""Unbound Python-module logger for resolver-level evidence."""
+"""Unbound Python-module logger for resolver-level evidence.
+
+Unbound injects ``log_info``, ``log_err``, and the MODULE_* constants into
+Python-module globals when it loads this file; they are intentionally not
+ordinary Python imports.
+"""
+
+# ruff: noqa: F821
 
 import json
 import os

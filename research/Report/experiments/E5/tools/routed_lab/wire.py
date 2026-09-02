@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import struct
-from typing import Iterable
 
 from dnslib import A, DNSHeader, DNSQuestion, DNSRecord, QTYPE, RR
 from scapy.all import IP, Raw  # type: ignore
