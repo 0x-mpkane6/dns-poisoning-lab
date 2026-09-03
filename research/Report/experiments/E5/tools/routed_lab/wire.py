@@ -1,4 +1,4 @@
-"""Shared DNS and IPv4-fragment wire helpers for E5-v2 containers."""
+"""Shared DNS and IPv4-fragment wire helpers for E5 containers."""
 
 from __future__ import annotations
 

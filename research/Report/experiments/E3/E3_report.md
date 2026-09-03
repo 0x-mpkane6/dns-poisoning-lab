@@ -121,7 +121,10 @@ Tuy vậy, đây là một cải thiện **nhỏ về độ tách biệt tổng 
 3. **Failure boundary còn nặng.** Fixed-IPID và duplicate-sweep vẫn cho $J$ âm gần −1 ở volume 120–200. E3 không thể gọi candidate mới là robust trước các pattern low-diversity này.
 4. **Lợi ích primary không đồng đều.** Tín hiệu chủ yếu ở level 60; level 24 không cảnh báo cả hai lớp, còn nhiều level cao gần bão hòa. Macro $\Delta J$ che giấu heterogeneity này nếu chỉ nhìn một con số.
 5. **Grid hẹp và threshold rời rạc.** E3 chỉ kiểm tra 60 point đã đăng ký. Không có căn cứ để suy ra optimum toàn cục, cũng không được mở rộng/re-tune grid trên held-out test này.
-6. **Không có claim triển khai.** Việc tích hợp `8/6.0/0.90` vào runtime cần campaign mới được đăng ký trước, với fragmentation/resolver thật và outcome end-to-end. Không dùng held-out E3 hiện tại để tune campaign mới.
+6. **Không có claim triển khai.** E5 đã chạy campaign mới được đăng ký trước,
+   với fragmentation/resolver thật và outcome end-to-end trong một Docker
+   testbed; kết quả vẫn không đủ để gọi operating point deployment-ready. Không
+   dùng held-out E3 hiện tại để tune campaign mới.
 
 ## 8. Kết luận
 

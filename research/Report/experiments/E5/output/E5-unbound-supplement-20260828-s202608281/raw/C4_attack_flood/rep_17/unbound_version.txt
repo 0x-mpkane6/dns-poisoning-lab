@@ -1,8 +1,0 @@
-Version 1.26.1
-
-Configure line: --prefix=/usr --sysconfdir=/etc --with-libevent --with-pythonmodule --disable-rpath
-Linked libs: libevent 2.1.12-stable (it uses epoll), OpenSSL 3.0.2 15 Mar 2022
-Linked modules: dns64 python respip validator iterator
-
-BSD licensed, see LICENSE in source package for details.
-Report bugs to unbound-bugs@nlnetlabs.nl or https://github.com/NLnetLabs/unbound/issues

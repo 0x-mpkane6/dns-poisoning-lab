@@ -1,4 +1,4 @@
-name: e5-v2-routed
+name: e5-routed
 
 services:
   ips:

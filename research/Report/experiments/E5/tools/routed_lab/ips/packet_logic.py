@@ -1,4 +1,4 @@
-"""Scapy packet parsing and TC-response construction for the E5-v2 IPS."""
+"""Scapy packet parsing and TC-response construction for the E5 IPS."""
 
 from __future__ import annotations
 

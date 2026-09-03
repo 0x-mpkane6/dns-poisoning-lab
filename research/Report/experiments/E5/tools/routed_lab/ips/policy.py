@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NFQUEUE policy plane for the E5-v2 routed resolver experiment."""
+"""NFQUEUE policy plane for the E5 routed resolver experiment."""
 
 from __future__ import annotations
 
@@ -17,11 +17,11 @@ from pathlib import Path
 from netfilterqueue import NetfilterQueue  # type: ignore
 from scapy.all import IP, UDP, send, sniff  # type: ignore
 
-from e5_v2_lib import Policy, policy_decision, ratio_meets_threshold, raw_shannon_entropy
+from e5_lib import Policy, policy_decision, ratio_meets_threshold, raw_shannon_entropy
 from ips.packet_logic import PacketMeta, build_tc_response, parse_packet
 
 
-# Registered and locked for E5-v2.  These are constants rather than
+# Registered and locked for E5.  These are constants rather than
 # environment overrides so a runtime invocation cannot silently retune E3's
 # operating point.
 WINDOW_SECONDS = 2.0

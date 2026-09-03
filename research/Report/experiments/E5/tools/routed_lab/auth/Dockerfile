@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-scapy python3-dnslib iproute2 ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY e5_v2_lib.py /app/e5_v2_lib.py
+COPY e5_lib.py /app/e5_lib.py
 COPY tools/routed_lab/wire.py /app/wire.py
 COPY tools/routed_lab/auth/auth_server.py /app/auth_server.py
 COPY tools/routed_lab/auth/entrypoint.sh /app/entrypoint.sh

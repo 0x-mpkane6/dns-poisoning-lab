@@ -1,0 +1,130 @@
+[
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_BOUNDARY.json",
+    "schedule_sha256": "9926f95c57f790658d2077413d19b55cb9d61dbf7b5d0d9f95f4f377d961080d",
+    "stage": "sanity",
+    "workload": "BENIGN_BOUNDARY"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "08d45f91c952518da0b0cdb405029f5c24dd455491e9e81c28f092d19973d9bd",
+    "stage": "sanity",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "08d45f91c952518da0b0cdb405029f5c24dd455491e9e81c28f092d19973d9bd",
+    "stage": "sanity",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_LOW.json",
+    "schedule_sha256": "e913fd18f04836b2570597a20ea8915a56a7bd8238d368f34f404a36b3071493",
+    "stage": "sanity",
+    "workload": "BENIGN_LOW"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_BOUNDARY.json",
+    "schedule_sha256": "9926f95c57f790658d2077413d19b55cb9d61dbf7b5d0d9f95f4f377d961080d",
+    "stage": "sanity",
+    "workload": "BENIGN_BOUNDARY"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "08d45f91c952518da0b0cdb405029f5c24dd455491e9e81c28f092d19973d9bd",
+    "stage": "sanity",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_BOUNDARY.json",
+    "schedule_sha256": "9926f95c57f790658d2077413d19b55cb9d61dbf7b5d0d9f95f4f377d961080d",
+    "stage": "sanity",
+    "workload": "BENIGN_BOUNDARY"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_BOUNDARY.json",
+    "schedule_sha256": "9926f95c57f790658d2077413d19b55cb9d61dbf7b5d0d9f95f4f377d961080d",
+    "stage": "sanity",
+    "workload": "BENIGN_BOUNDARY"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_LOW.json",
+    "schedule_sha256": "e913fd18f04836b2570597a20ea8915a56a7bd8238d368f34f404a36b3071493",
+    "stage": "sanity",
+    "workload": "BENIGN_LOW"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_LOW.json",
+    "schedule_sha256": "e913fd18f04836b2570597a20ea8915a56a7bd8238d368f34f404a36b3071493",
+    "stage": "sanity",
+    "workload": "BENIGN_LOW"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "3582cdd296794f06e081fd609308f438a168cb9314ebe0246108e76e66a4cc27",
+    "stage": "sanity",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "3582cdd296794f06e081fd609308f438a168cb9314ebe0246108e76e66a4cc27",
+    "stage": "sanity",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "3582cdd296794f06e081fd609308f438a168cb9314ebe0246108e76e66a4cc27",
+    "stage": "sanity",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "3582cdd296794f06e081fd609308f438a168cb9314ebe0246108e76e66a4cc27",
+    "stage": "sanity",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "08d45f91c952518da0b0cdb405029f5c24dd455491e9e81c28f092d19973d9bd",
+    "stage": "sanity",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_LOW.json",
+    "schedule_sha256": "e913fd18f04836b2570597a20ea8915a56a7bd8238d368f34f404a36b3071493",
+    "stage": "sanity",
+    "workload": "BENIGN_LOW"
+  }
+]

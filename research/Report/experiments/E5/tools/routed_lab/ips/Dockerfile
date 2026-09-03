@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --no-cache-dir NetfilterQueue
 WORKDIR /app
-COPY e5_v2_lib.py /app/e5_v2_lib.py
+COPY e5_lib.py /app/e5_lib.py
 COPY tools/routed_lab/wire.py /app/wire.py
 COPY tools/routed_lab/ips /app/ips
 COPY tools/routed_lab/ips/policy.py /app/policy.py

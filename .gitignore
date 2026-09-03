@@ -9,5 +9,18 @@ labs/r2entropy/localtest/runs/
 research/doc/
 research/Report/framework/artifacts/
 
+# Local agent traces — not experiment artifacts.
+.aris/
+
 # E5: keep the large local Unbound source out of Git.
 /research/Report/experiments/E5/tools/unbound/
+
+# E5: ignore bulky runtime evidence. Keep only campaign-root JSON,
+# validation/aggregate/metrics, registered.json, and source_snapshot.
+/research/Report/experiments/E5/output/**/raw/
+/research/Report/experiments/E5/output/**/schedules/
+/research/Report/experiments/E5/output/**/preflight/
+/research/Report/experiments/E5/output/*-failed/
+/research/Report/experiments/E5/output/**/*.pcapng
+/research/Report/experiments/E5/output/**/*_partial.json
+/research/Report/experiments/E5/output/**/registration.env

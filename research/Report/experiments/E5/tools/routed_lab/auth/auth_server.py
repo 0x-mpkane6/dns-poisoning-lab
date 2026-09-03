@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Authoritative DNS service for E5-v2.
+"""Authoritative DNS service for E5.
 
 UDP replies are deliberately fragmented.  TCP replies are always one
 unfragmented DNS message so TC-based policies have a clean transport path.

@@ -1,4 +1,0 @@
-SERVICE   #   UID   PID    PPID   C   STIME  TTY  TIME      CMD
-attacker  1   root  95231  95209  0   11:42  ?    00:00:00  sleep infinity
-attacker  1   root  95560  95209  4   11:42  ?    00:00:00  python3 /app/sender.py --role notify-poison
-attacker  1   root  95579  95209  8   11:42  ?    00:00:00  python3 /app/sender.py --role occupancy --mode rate --rate-pps 12.0 --seed 939627149 --ipid-mode fixed --fixed-ipid 777

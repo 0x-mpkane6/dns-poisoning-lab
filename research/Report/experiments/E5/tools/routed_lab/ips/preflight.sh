@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This is deliberately a hard gate.  E5-v2 has no non-NFQUEUE fallback.
+# This is deliberately a hard gate.  E5 has no non-NFQUEUE fallback.
 if ! command -v iptables >/dev/null 2>&1; then
     echo "NFQUEUE preflight failed: iptables is unavailable" >&2
     exit 20

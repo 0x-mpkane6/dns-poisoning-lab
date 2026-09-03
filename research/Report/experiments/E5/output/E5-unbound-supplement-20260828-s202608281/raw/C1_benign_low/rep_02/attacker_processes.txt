@@ -1,3 +1,0 @@
-SERVICE   #   UID   PID    PPID   C   STIME  TTY  TIME      CMD
-attacker  1   root  84119  84094  0   10:50  ?    00:00:00  sleep infinity
-attacker  1   root  84447  84094  7   10:50  ?    00:00:00  python3 /app/sender.py --role occupancy --mode rate --rate-pps 2.5 --seed 2051653217 --ipid-mode random

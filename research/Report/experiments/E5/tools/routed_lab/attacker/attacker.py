@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The single external attacker process used by E5-v2."""
+"""The single external attacker process used by E5."""
 
 from __future__ import annotations
 

@@ -211,7 +211,10 @@ Từ E2 có thể đặt ra ba giả thuyết cho các thí nghiệm tiếp theo
 2. Một luật xem xét cả độ đa dạng quá cao và quá thấp có thể tránh được bất đối xứng của điều kiện một chiều hiện tại.
 3. So sánh với đặc trưng hợp lệ riêng của từng nguồn có thể phù hợp hơn một bộ ngưỡng dùng chung.
 
-E3 cần so sánh các phương án này trên tập chọn ngưỡng và tập kiểm định tách biệt, với ràng buộc giảm kích hoạt không cần thiết nhưng không làm mất cảnh báo ở các phép thử giới hạn. Sau khi khóa luật, E5 cần đánh giá bằng mảnh IP và trình phân giải DNS thật để đo cả hiệu quả phát hiện lẫn chi phí hệ thống.
+E3 đã so sánh operating point trên tập chọn ngưỡng và tập held-out tách biệt.
+Sau khi khóa luật, E5 đã đánh giá bằng fragment IPv4 thật và Unbound; kết quả
+runtime cho thấy cần tách detector trigger khỏi poisoning outcome và chi phí
+hệ thống vẫn chưa phải overhead ghép cặp.
 
 ## 7. Kết luận
 

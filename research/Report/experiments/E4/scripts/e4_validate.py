@@ -7,7 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -158,7 +158,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args(); checks: list[dict[str, Any]] = []
-    report: dict[str, Any] = {"schema_version": 1, "experiment": "E4 independent final validation", "generated_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"), "checks": checks,
+    report: dict[str, Any] = {"schema_version": 1, "experiment": "E4 independent final validation", "generated_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), "checks": checks,
                               "audit_scope": "Frozen E4 inputs/outputs only; no raw decision data, threshold selection, or upstream modification."}
     try:
         protocol, manifest, preflight, summary_meta = (load_json(path) for path in (args.protocol, args.manifest, args.preflight, args.summary_meta))

@@ -1,12 +1,15 @@
-# E5-v2 routed laboratory
+# E5 routed laboratory
 
-This directory contains the isolated two-network Docker lab for the E5-v2
-campaign.  The resolver and attacker are on different sides of the two-
-interface IPS.  The attacker process is the only forged-tail sender; there is
-no resolver-local poisoner in this lab.
+Canonical lab-construction notes are in
+[`E5_LAB.md`](../../E5_LAB.md).  Campaign execution order is in
+[`E5_RUNBOOK.md`](../../E5_RUNBOOK.md).  Confirmatory numbers are in
+[`E5_report.md`](../../E5_report.md).
 
-The lab is normally driven by the parent runner
-`research/Report/experiments/E5/run_e5_v2.py`, which supplies read-only replay
-schedules and per-cell artifact mounts.  Starting the compose file manually
-without those mounts is useful only for image/configuration debugging, not for
-data collection.
+This directory is the only E5 testbed: two Docker networks and a
+two-interface IPS.  The attacker process is the only forged-tail sender;
+there is no resolver-local poisoner.
+
+The lab is driven by `research/Report/experiments/E5/run_e5.py`, which
+supplies read-only replay schedules and per-cell artifact mounts.  Starting
+`compose.yaml` manually without those mounts is useful only for
+image/configuration debugging, not for data collection.

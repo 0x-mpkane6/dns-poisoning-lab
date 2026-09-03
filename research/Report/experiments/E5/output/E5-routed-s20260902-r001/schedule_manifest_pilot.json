@@ -1,0 +1,58 @@
+[
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "be932783b5e518b0caa5ddd7e1b1cec6ee04dc418bd9113b8f87dc916f0bc9fb",
+    "stage": "pilot",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "PREARM_TAIL_DROP",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "be932783b5e518b0caa5ddd7e1b1cec6ee04dc418bd9113b8f87dc916f0bc9fb",
+    "stage": "pilot",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_BOUNDARY.json",
+    "schedule_sha256": "94220b4e3f07d338d70050f6371e350ebbb043b6eb9ab9716d85621d3e3decb3",
+    "stage": "pilot",
+    "workload": "BENIGN_BOUNDARY"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "be932783b5e518b0caa5ddd7e1b1cec6ee04dc418bd9113b8f87dc916f0bc9fb",
+    "stage": "pilot",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "9f85a01c83f59fd00b2f77c199f127a58b65281687eb7495295e31a135d83bb0",
+    "stage": "pilot",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_BOUNDARY.json",
+    "schedule_sha256": "94220b4e3f07d338d70050f6371e350ebbb043b6eb9ab9716d85621d3e3decb3",
+    "stage": "pilot",
+    "workload": "BENIGN_BOUNDARY"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "be932783b5e518b0caa5ddd7e1b1cec6ee04dc418bd9113b8f87dc916f0bc9fb",
+    "stage": "pilot",
+    "workload": "ATTACK_FIXED_MATCHED"
+  }
+]

@@ -18,6 +18,13 @@ E4 chỉ tổng hợp controlled-emulation evidence:
 
 E4 input manifest xác nhận 17 artifact canonical/freeze. E1 validator đạt `PASS` 18/18, E2 validator `PASS` 18/18, E3 final validator `PASS` 12/12 và E3 lock validator `PASS` 9/9.
 
+Artifact E4 frozen ghi nhận final validator `PASS` 9/9. Khi replay trên
+checkout Windows cũ, hash byte của các file text có thể lệch do CRLF; replay
+trong checkout LF-normalized của cùng repository đạt lại preflight `PASS` 9/9
+và final validation `PASS` 9/9 mà không mở raw decision data hoặc thay đổi
+metric. Quy tắc repository đã khai báo JSON dùng LF để các checkout mới tái lập
+đúng provenance này.
+
 | Nguồn | Đơn vị độc lập | Quy mô cần giữ khi diễn giải | Inference kế thừa |
 | --- | --- | --- | --- |
 | E1 | Independent run | 20 run/cell | Cluster bootstrap theo run |
@@ -89,14 +96,19 @@ Chuỗi E1–E4 hiện hỗ trợ claim hẹp sau:
 
 > Trong controlled synthetic emulation, operating point B5 mới `8/6.0/0.90` tạo synthetic detector separation macro cao hơn B2/old B5 một lượng nhỏ trên E3 held-out, nhưng vẫn có failure boundary rõ với IPID low-diversity và chưa có evidence end-to-end về DNS cache poisoning.
 
-Hướng tiếp theo đúng là E5/runtime validation, không phải retune E3 held-out:
+E5/runtime validation được thực hiện như một campaign độc lập sau khi E4 đã
+đóng băng. E5 không retune E3 held-out và được đọc cùng E4 chỉ ở mức bổ sung
+construct/runtime evidence:
 
-1. Đăng ký campaign E5 tách biệt với E3 data.
-2. Chạy Unbound/BIND với IP fragmentation thật hoặc PCAP replay.
-3. Đo attempt/success có denominator rõ (ASR), resolver answer/cache state, latency p50/p95/p99, throughput, CPU và memory.
-4. Giữ paired runs và K cố định; report đầy đủ cả failure conditions.
+1. E5 đã đăng ký campaign tách biệt với E3 data.
+2. E5 chạy Unbound 1.26.1 với fragment IPv4 thật trong Docker.
+3. E5 đo poisoned-answer outcome/ASR, resolver answer, latency, CPU và
+   memory trên 16 policy--workload cells.
+4. E5 giữ K=20 run/cell và báo cáo cả positive control lẫn failure conditions.
 
-Nếu không thực hiện E5, bài chỉ nên gọi E1–E4 là controlled-emulation proof of concept và nêu explicit Threats to Validity.
+E5 bổ sung runtime evidence, nhưng bài vẫn chỉ nên gọi toàn bộ kết quả là
+controlled evaluation trên synthetic emulation và một Docker testbed; E5 chưa
+đủ để suy ra deployment readiness hoặc hiệu quả trên Internet.
 
 ## 8. Artifact E4
 

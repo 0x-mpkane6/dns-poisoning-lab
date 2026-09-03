@@ -1,4 +1,0 @@
-SERVICE   #   UID   PID    PPID   C   STIME  TTY  TIME      CMD
-attacker  1   root  35828  35803  0   11:02  ?    00:00:00  sleep infinity
-attacker  1   root  36154  35803  3   11:02  ?    00:00:00  python3 /app/sender.py --role notify-poison
-attacker  1   root  36173  35803  64  11:02  ?    00:00:03  python3 /app/sender.py --role occupancy --mode flood --ipid-mode sweep --seed 482501989

@@ -151,7 +151,9 @@ Vì vậy, E1 chỉ cho phép kết luận rằng **B5 có ích ở tải thấp
 - E1 đo quyết định của bộ phát hiện, chưa đo kết quả đầu cuối của máy chủ DNS.
 - Các cửa sổ trong cùng một lần chạy bị chồng lên nhau, nên khoảng sai số chính được tính theo 20 lần chạy độc lập.
 - E1 chưa có phép đo độ trễ, CPU, bộ nhớ hoặc thông lượng đủ tin cậy để kết luận về hiệu năng hệ thống.
-- Muốn khẳng định B5 là một cải tiến an toàn, cần thêm E2/E3 và thí nghiệm với tấn công, Unbound/BIND và IP fragmentation thật.
+- E2/E3 và E5 đã bổ sung lần lượt attack comparison, threshold lock và runtime
+  validation; tuy nhiên các kết quả đó vẫn chưa đủ để khẳng định B5 là một cải
+  tiến an toàn hoặc sẵn sàng triển khai.
 
 ## 10. Tệp nguồn để kiểm tra lại
 

@@ -1,0 +1,176 @@
+{
+  "entropy_implementation": {
+    "consequence": "H >= 6 implies n >= 64; min_samples=8 is redundant.",
+    "formula": "-sum((count/n) * log2(count/n))",
+    "normalized": false,
+    "sources": [
+      "labs/r2entropy/resolver/resolver.py:224-229",
+      "research/Report/experiments/E5/tools/unbound_lab/resolver/detector.py:39-44"
+    ],
+    "type": "raw Shannon entropy in bits"
+  },
+  "grid": {
+    "registered_candidates": 60,
+    "selected_candidate": {
+      "entropy_threshold": 6,
+      "min_samples": 8,
+      "unique_ratio_threshold": 0.9
+    },
+    "selected_primary_equivalence_class": [
+      {
+        "all_validation_equivalence_class": "A013",
+        "all_validation_equivalence_class_size": 4,
+        "entropy_implied_min_samples": 64,
+        "entropy_threshold": 6.0,
+        "min_samples": 8,
+        "min_samples_gate_redundant": true,
+        "primary_equivalence_class": "P008",
+        "primary_equivalence_class_size": 4,
+        "selected_locked_candidate": true,
+        "unique_ratio_threshold": 0.9,
+        "validation_J": 0.00972222222222222,
+        "validation_attack_alert_rate": 0.5911111111111111,
+        "validation_benign_trigger_rate": 0.5813888888888888,
+        "validation_delta_J_vs_B2": 0.00972222222222222
+      },
+      {
+        "all_validation_equivalence_class": "A013",
+        "all_validation_equivalence_class_size": 4,
+        "entropy_implied_min_samples": 64,
+        "entropy_threshold": 6.0,
+        "min_samples": 16,
+        "min_samples_gate_redundant": true,
+        "primary_equivalence_class": "P008",
+        "primary_equivalence_class_size": 4,
+        "selected_locked_candidate": false,
+        "unique_ratio_threshold": 0.9,
+        "validation_J": 0.00972222222222222,
+        "validation_attack_alert_rate": 0.5911111111111111,
+        "validation_benign_trigger_rate": 0.5813888888888888,
+        "validation_delta_J_vs_B2": 0.00972222222222222
+      },
+      {
+        "all_validation_equivalence_class": "A013",
+        "all_validation_equivalence_class_size": 4,
+        "entropy_implied_min_samples": 64,
+        "entropy_threshold": 6.0,
+        "min_samples": 24,
+        "min_samples_gate_redundant": true,
+        "primary_equivalence_class": "P008",
+        "primary_equivalence_class_size": 4,
+        "selected_locked_candidate": false,
+        "unique_ratio_threshold": 0.9,
+        "validation_J": 0.00972222222222222,
+        "validation_attack_alert_rate": 0.5911111111111111,
+        "validation_benign_trigger_rate": 0.5813888888888888,
+        "validation_delta_J_vs_B2": 0.00972222222222222
+      },
+      {
+        "all_validation_equivalence_class": "A013",
+        "all_validation_equivalence_class_size": 4,
+        "entropy_implied_min_samples": 64,
+        "entropy_threshold": 6.0,
+        "min_samples": 48,
+        "min_samples_gate_redundant": true,
+        "primary_equivalence_class": "P008",
+        "primary_equivalence_class_size": 4,
+        "selected_locked_candidate": false,
+        "unique_ratio_threshold": 0.9,
+        "validation_J": 0.00972222222222222,
+        "validation_attack_alert_rate": 0.5911111111111111,
+        "validation_benign_trigger_rate": 0.5813888888888888,
+        "validation_delta_J_vs_B2": 0.00972222222222222
+      }
+    ],
+    "unique_all_validation_prediction_vectors": 24,
+    "unique_primary_prediction_vectors": 14
+  },
+  "partition_rows": {
+    "held_out_test": 27600,
+    "validation": 27600
+  },
+  "primary_rows": {
+    "held_out_test": 14400,
+    "validation": 14400
+  },
+  "schema_version": 1,
+  "scope": "Read-only diagnostic of frozen E3 validation and held-out artifacts; no threshold selection or artifact modification.",
+  "validation_level_60_primary_cells": [
+    {
+      "condition": "attack_sweep_bursty",
+      "decision_rows": 900,
+      "e3_split": "validation",
+      "fraction_entropy_ge_6": 0.43666666666666665,
+      "fraction_locked_trigger": 0.43666666666666665,
+      "fraction_samples_ge_64": 0.4444444444444444,
+      "fraction_unique_ratio_ge_0_90": 1.0,
+      "level": 60,
+      "paired_traces": 6,
+      "profile": "bursty",
+      "role": "attack",
+      "samples_max": 109.0,
+      "samples_mean": 59.88333333333333,
+      "samples_median": 59.0,
+      "samples_min": 24.0,
+      "samples_p95": 88.04999999999995,
+      "source_e2_split": "matched_primary"
+    },
+    {
+      "condition": "benign_bursty",
+      "decision_rows": 900,
+      "e3_split": "validation",
+      "fraction_entropy_ge_6": 0.41555555555555557,
+      "fraction_locked_trigger": 0.41555555555555557,
+      "fraction_samples_ge_64": 0.4444444444444444,
+      "fraction_unique_ratio_ge_0_90": 1.0,
+      "level": 60,
+      "paired_traces": 6,
+      "profile": "bursty",
+      "role": "benign",
+      "samples_max": 109.0,
+      "samples_mean": 59.88333333333333,
+      "samples_median": 59.0,
+      "samples_min": 24.0,
+      "samples_p95": 88.04999999999995,
+      "source_e2_split": "matched_primary"
+    },
+    {
+      "condition": "attack_sweep_continuous",
+      "decision_rows": 900,
+      "e3_split": "validation",
+      "fraction_entropy_ge_6": 0.30444444444444446,
+      "fraction_locked_trigger": 0.30444444444444446,
+      "fraction_samples_ge_64": 0.3188888888888889,
+      "fraction_unique_ratio_ge_0_90": 1.0,
+      "level": 60,
+      "paired_traces": 6,
+      "profile": "continuous",
+      "role": "attack",
+      "samples_max": 84.0,
+      "samples_mean": 60.093333333333334,
+      "samples_median": 60.0,
+      "samples_min": 41.0,
+      "samples_p95": 73.04999999999995,
+      "source_e2_split": "matched_primary"
+    },
+    {
+      "condition": "benign_continuous",
+      "decision_rows": 900,
+      "e3_split": "validation",
+      "fraction_entropy_ge_6": 0.2544444444444444,
+      "fraction_locked_trigger": 0.2544444444444444,
+      "fraction_samples_ge_64": 0.3188888888888889,
+      "fraction_unique_ratio_ge_0_90": 1.0,
+      "level": 60,
+      "paired_traces": 6,
+      "profile": "continuous",
+      "role": "benign",
+      "samples_max": 84.0,
+      "samples_mean": 60.093333333333334,
+      "samples_median": 60.0,
+      "samples_min": 41.0,
+      "samples_p95": 73.04999999999995,
+      "source_e2_split": "matched_primary"
+    }
+  ]
+}

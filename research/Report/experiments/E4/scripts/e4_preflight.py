@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -216,7 +216,7 @@ def main() -> int:
     report: dict[str, Any] = {
         "schema_version": 1,
         "experiment": "E4 preflight",
-        "generated_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "generated_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "data_access": "protocol, input manifest, and frozen registered artifacts only; no raw decision data opened",
         "checks": checks,
     }
