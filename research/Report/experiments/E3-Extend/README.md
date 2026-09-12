@@ -20,6 +20,10 @@ From the repository root:
 ```bash
 python3 research/Report/experiments/E3-Extend/scripts/e3_extend_sensitivity.py
 python3 research/Report/experiments/E3-Extend/scripts/e3_extend_validate.py
+python3 -m pip install -r research/Report/experiments/E3-Extend/requirements-plot.txt
+python3 research/Report/experiments/E3-Extend/scripts/e3_extend_plot_rq2.py
 ```
 
 Expected outputs are `e3_extend_sensitivity_grid.csv`, `e3_extend_sensitivity_grid.json`, and `e3_extend_validation.json`. A PASS validation means the descriptive grid has been reproduced correctly; it does **not** authorize any threshold change or a second held-out run.
+
+`figures/RQ2-threshold-calibration-compact.png` is a two-panel replacement for the former four-heatmap RQ2 layout. It is rendered with Matplotlib only from frozen E3 JSON artifacts at 7.0 × 3.6 inches and 300 dpi; general figure text is 8 pt at that native size. [`RQ2_posthoc_sensitivity_table.tex`](RQ2_posthoc_sensitivity_table.tex) is the separate LaTex table for the post-hoc result.

@@ -1,0 +1,18 @@
+% Post-hoc descriptive result. Keep this table separate from the
+% pre-specified 60-candidate validation selection and held-out result.
+\begin{table}[t]
+\centering
+\caption{Post-hoc validation-only sensitivity to extreme entropy and uniqueness thresholds. Results are identical for all $N\in\{8,16,24,48\}$; no configuration was selected, locked, or evaluated on held-out data.}
+\label{tab:rq2-posthoc-sensitivity}
+\footnotesize
+\begin{tabular}{ccrrrr}
+\hline
+$H_0$ & $U_0$ & Attack-alert & Benign-trigger & FNR & $\Delta J$ vs. B2 \\
+\hline
+7 & 0.95 & 0.3064 & 0.1799 & 0.6936 & 0.1265 \\
+7 & 0.99 & 0.1829 & 0.0051 & 0.8171 & \textbf{0.1778} \\
+8 & 0.95 & 0.0250 & 0.0017 & 0.9750 & 0.0233 \\
+8 & 0.99 & 0.0083 & 0.0000 & 0.9917 & 0.0083 \\
+\hline
+\end{tabular}
+\end{table}
