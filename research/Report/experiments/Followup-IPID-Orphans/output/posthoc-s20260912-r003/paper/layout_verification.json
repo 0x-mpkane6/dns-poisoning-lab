@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "figure_print_width_mm": 122,
+  "figure_min_font_pt": 8.5,
+  "latex_table_min_font_pdf_pt": [
+    8.966400146484375,
+    8.966400146484375
+  ],
+  "latex_table_overfull_boxes": 0,
+  "unit_tests_passed": 12
+}

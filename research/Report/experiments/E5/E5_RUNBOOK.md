@@ -7,6 +7,11 @@ How the testbed is built is in [`E5_LAB.md`](E5_LAB.md).
 The registered protocol is [`e5_protocol.json`](e5_protocol.json).
 The implementation is under [`tools/routed_lab`](tools/routed_lab).
 
+The post-hoc factorial follow-up is registered separately as
+[`e5_factorial_protocol.json`](e5_factorial_protocol.json).  It uses only the
+four diverse traffic/rate workloads in that protocol and must not be pooled
+with the original campaign.
+
 ## Execution order
 
 From the repository root:
@@ -38,3 +43,23 @@ written only after all 320 recreated-stack runs pass validation.
 Docker Desktop/Linux containers must be running before `--stage preflight`.
 The preflight deliberately aborts when the kernel cannot bind NFQUEUE; it does
 not silently fall back to resolver-local filtering or a non-NFQUEUE path.
+
+## Factorial follow-up
+
+From `Code`, select the protocol explicitly and use a fresh run identifier:
+
+```powershell
+$runId = 'E5-factorial-s20260911-r001'
+$protocol = 'research/Report/experiments/E5/e5_factorial_protocol.json'
+$runner = 'research/Report/experiments/E5/run_e5.py'
+
+python $runner --protocol $protocol --run-id $runId --stage pilot --dry-run
+python $runner --protocol $protocol --run-id $runId --stage preflight
+python $runner --protocol $protocol --run-id $runId --stage pilot
+python $runner --protocol $protocol --run-id $runId --stage sanity
+python $runner --protocol $protocol --run-id $runId --stage confirmatory
+```
+
+Add `--resume` when continuing an interrupted stage.  The runner reuses only
+cells whose validation and schedule digest still match the registered
+protocol; a changed source, image, or protocol requires a new run identifier.

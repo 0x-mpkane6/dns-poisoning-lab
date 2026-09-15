@@ -1,0 +1,25 @@
+% Figure 3A is removed. Keep this sentence in RQ1; do not add it twice.
+Across the eight volume-matched primary cells, initial B5 and B2 have identical
+separation, with macro $\Delta J=0$ (95\% CI $[0,0]$).
+
+% Replace/extend the existing paragraph explaining the redundant N=8 gate.
+Since $H\leq\log_2 n$, the locked rule requires at least 64 fragments per
+two-second window together with high IPID diversity ($U\geq0.90$); at the
+boundary $n=64$, all IPIDs must be distinct to attain $H=6$.
+These are necessary conditions, not a replacement for the complete entropy gate.
+
+% Replace the Figure 6 introduction and references in RQ4.
+Table~\ref{tab:rq4-runtime} reports runtime outcomes.
+For locked B5, detector triggering, forged-tail dropping, TC injection, and
+TCP retry are all absent under the matched fixed-IPID attack and all present
+in every sweep-flood trial.
+% If a separate mechanism table is needed, also insert RQ4_runtime_mechanism.tex.
+Table~\ref{tab:benign-cost-original} quantifies the corresponding benign costs.
+The follow-up factorial outcomes and benign costs are reported separately in
+Tables~\ref{tab:runtime-factorial} and~\ref{tab:benign-cost-factorial}.
+
+% OPTIONAL: Table 1 in the available manuscript defines B0--B5 (not settings).
+% Only if removing that table: replace its prose reference with this paragraph.
+The baselines comprise no defense (B0), the original POPS rule (B1),
+volume-only detection $n\geq N$ (B2), entropy-only detection $H\geq H_0$ (B3),
+uniqueness-only detection $U\geq U_0$ (B4), and their conjunction (B5).

@@ -1,0 +1,37 @@
+\begin{table}[t]
+\centering
+\caption{CPU and observed query throughput, separate from attack-success rates. CPU is the mean across 20 recreated-stack runs of each run's median and 95th-percentile container sample. Query rate is completed trials divided by that run's wall-clock duration, not Unbound capacity. Occupancy is the registered background fragment rate; flood CPU tracks occupancy, not B5 overhead. Original and factorial campaigns are not pooled.}
+\label{tab:runtime-cpu-throughput}
+\begingroup
+\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lllrrrr}
+\hline
+Campaign & Policy & Traffic & CPU med. & CPU p95 & Query/s & Occ. /s \\
+\hline
+original & B0 & Fixed & 0.0 & 3.0 & 1.80 & 12 \\
+original & B0 & Flood & 0.0 & 46.3 & 1.72 & 200 \\
+original & B1+TC & Fixed & 0.0 & 3.0 & 1.83 & 12 \\
+original & B1+TC & Flood & 0.0 & 45.2 & 1.70 & 200 \\
+original & Locked B5+TC & Fixed & 0.0 & 3.0 & 1.82 & 12 \\
+original & Locked B5+TC & Flood & 0.0 & 47.1 & 1.70 & 200 \\
+original & Native drop & Fixed & 1.5 & 4.4 & 1.59 & 12 \\
+original & Native drop & Flood & 1.4 & 48.2 & 1.46 & 200 \\
+factorial & B0 & A200 & 0.0 & 37.1 & 1.60 & 200 \\
+factorial & B0 & A12 & 0.0 & 3.0 & 1.74 & 12 \\
+factorial & B1+TC & A200 & 0.0 & 37.1 & 1.60 & 200 \\
+factorial & B1+TC & A12 & 0.0 & 3.1 & 1.74 & 12 \\
+factorial & Locked B5+TC & A200 & 0.0 & 36.8 & 1.58 & 200 \\
+factorial & Locked B5+TC & A12 & 0.0 & 3.1 & 1.73 & 12 \\
+factorial & Native drop & A200 & 1.2 & 38.0 & 1.42 & 200 \\
+factorial & Native drop & A12 & 1.2 & 3.6 & 1.48 & 12 \\
+b2 & B2+TC & Fixed & 0.0 & 3.3 & 1.79 & 12 \\
+b2 & B2+TC & Flood & 0.0 & 50.6 & 1.68 & 200 \\
+pmtud & B0 & Fixed & 0.0 & 6.4 & 1.55 & 12 \\
+pmtud & B0 & Flood & 0.0 & 49.1 & 1.48 & 200 \\
+pmtud & Locked B5+TC & Fixed & 0.0 & 6.6 & 1.56 & 12 \\
+pmtud & Locked B5+TC & Flood & 0.0 & 48.7 & 1.46 & 200 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

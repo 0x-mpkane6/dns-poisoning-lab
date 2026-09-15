@@ -1,0 +1,130 @@
+[
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "f686d52da162400ef276b6bfb8467b9c428d5135f813c574e6c765771812a794",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "5482a36105e0631d2bcca619cfcf2a25eb11fac613cbad559149f75824b0d4e0",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "f686d52da162400ef276b6bfb8467b9c428d5135f813c574e6c765771812a794",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "14b73b752f5ca91db7ae5a8ff3122295a46d63406014dd52dec788316de4faab",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "f686d52da162400ef276b6bfb8467b9c428d5135f813c574e6c765771812a794",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "14b73b752f5ca91db7ae5a8ff3122295a46d63406014dd52dec788316de4faab",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "5482a36105e0631d2bcca619cfcf2a25eb11fac613cbad559149f75824b0d4e0",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "14b73b752f5ca91db7ae5a8ff3122295a46d63406014dd52dec788316de4faab",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "5482a36105e0631d2bcca619cfcf2a25eb11fac613cbad559149f75824b0d4e0",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "2470edadd084cc855298b63892f7f06d582bc76de35621cdb884ad12ee8a47a1",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "14b73b752f5ca91db7ae5a8ff3122295a46d63406014dd52dec788316de4faab",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "2470edadd084cc855298b63892f7f06d582bc76de35621cdb884ad12ee8a47a1",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "2470edadd084cc855298b63892f7f06d582bc76de35621cdb884ad12ee8a47a1",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "2470edadd084cc855298b63892f7f06d582bc76de35621cdb884ad12ee8a47a1",
+    "stage": "sanity",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "5482a36105e0631d2bcca619cfcf2a25eb11fac613cbad559149f75824b0d4e0",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "f686d52da162400ef276b6bfb8467b9c428d5135f813c574e6c765771812a794",
+    "stage": "sanity",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  }
+]

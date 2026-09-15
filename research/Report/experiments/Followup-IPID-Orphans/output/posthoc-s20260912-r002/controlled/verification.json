@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "validation_decisions": 27600,
+  "source_condition_traces": 184,
+  "source_frag2_events_checked": 403593,
+  "old_decisions_recomputed": 27600,
+  "new_decisions": 27600,
+  "primary_matched_pairs": 48,
+  "all_attack_benign_pairs": 120,
+  "benign_only_traces_retained": 16,
+  "max_feature_error": 0.0,
+  "arrival_query_occupancy_and_origin_matching": true,
+  "source_raw_hashes_verified": true,
+  "held_out_accessed": false
+}

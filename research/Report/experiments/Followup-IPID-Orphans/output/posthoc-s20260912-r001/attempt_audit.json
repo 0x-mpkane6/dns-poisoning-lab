@@ -1,0 +1,7 @@
+{
+  "status": "controlled_complete_orphan_interrupted",
+  "reason": "PCAP record order is not monotonic in kernel capture timestamps; examples include reversals of 243.4 ms and 18.5 us. No outcome-based exclusion.",
+  "resolution": "Sort all scoped frames stably by capture timestamp and record every inversion. Implemented under a new source snapshot/run ID r002.",
+  "controlled_output": "Valid and retained; regenerated unchanged under r002 for one coherent source snapshot.",
+  "utc": "2026-09-12T06:17:08.206195+00:00"
+}

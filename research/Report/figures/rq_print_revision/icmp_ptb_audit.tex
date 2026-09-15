@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{ICMP Path MTU Discovery messages in archived IPS captures. IPv4 counts type~3 code~4; IPv6 counts type~2. The main lab crafts fragments in user space (FRAGSIZE $=40$); it does not induce kernel fragmentation via PTB. A separate PMTUD branch is required before any PMTUD claim.}
+\label{tab:icmp-ptb-audit}
+\begingroup
+\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrr}
+\hline
+Campaign & IPv4 PTB & IPv6 Packet Too Big \\
+\hline
+E5-routed-s20260902-r001 & 0 & 0 \\
+E5-factorial-s20260911-r003 & 0 & 0 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

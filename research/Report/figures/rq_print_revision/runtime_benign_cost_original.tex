@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\caption{Benign runtime costs in the original runtime campaign. Rates are percentages; latency is median and 95th percentile (ms) of 1,000 query attempts per cell, including timeouts and excluding cache probes. These quantiles are descriptive; 20 recreated-stack runs are the independent units. Native dropping uses concurrent queries; the other policies use sequential queries.}
+\label{tab:benign-cost-original}
+\begingroup\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrr}
+\hline
+Policy & Load & TC \% & TCP \% & Med. ms & p95 ms & None \% \\
+\hline
+B0 & 2.5/s & 0.0 & 0.0 & 334.3 & 361.2 & 0.8 \\
+B0 & 12/s & 0.0 & 0.0 & 336.9 & 363.2 & 0.4 \\
+B1+TC & 2.5/s & 100.0 & 100.0 & 376.0 & 409.7 & 0.7 \\
+B1+TC & 12/s & 100.0 & 100.0 & 380.5 & 420.2 & 1.3 \\
+B5+TC & 2.5/s & 0.0 & 0.0 & 334.2 & 363.4 & 0.7 \\
+B5+TC & 12/s & 0.0 & 0.0 & 337.0 & 365.0 & 0.3 \\
+Native drop & 2.5/s & 0.0 & 0.0 & 2010.5 & 2022.1 & 100.0 \\
+Native drop & 12/s & 0.0 & 0.0 & 2010.7 & 2021.7 & 100.0 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

@@ -75,3 +75,21 @@ def test_sweep_is_monotone_and_fixed_is_constant() -> None:
     )
     assert {row["ipid"] for row in fixed["occupancy"]} == {777}
     assert [row["ipid"] for row in sweep["occupancy"][:100]] == list(range(100))
+
+
+def test_factorial_kind_pair_shares_qnames_ipids_and_sweep_start() -> None:
+    benign = build_replay_schedule(
+        run_id="E5-factorial-s20260911-r001", rep=2, workload="BENIGN_DIVERSE_MODERATE", seed=20260911, trials=5, duration_s=1.0
+    )
+    attack = build_replay_schedule(
+        run_id="E5-factorial-s20260911-r001", rep=2, workload="ATTACK_DIVERSE_MODERATE", seed=20260911, trials=5, duration_s=1.0
+    )
+    assert [row["qname"] for row in benign["trials"]] == [row["qname"] for row in attack["trials"]]
+    assert [row["auth_ipid"] for row in benign["trials"]] == [row["auth_ipid"] for row in attack["trials"]]
+    assert benign["occupancy"] == attack["occupancy"]
+    assert benign["matching_component_sha256"] == attack["matching_component_sha256"]
+    assert schedule_digest(benign) != schedule_digest(attack)
+    assert benign["attack_tail"] is False and attack["attack_tail"] is True
+    assert benign["occupancy"][0]["ipid"] != 0
+    assert benign["trials"][0]["query_at_s"] >= 3.0
+    assert all(0 <= row["ipid"] <= 65535 for row in benign["occupancy"])

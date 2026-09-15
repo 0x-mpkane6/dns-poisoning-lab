@@ -1,0 +1,59 @@
+\begin{table}[t]
+\centering
+\caption{Runtime outcomes in the original campaign and the separately analyzed $2\times2$ follow-up. Activation is locked-B5 window state at query start for B0/B5 (passive under B0); B1 and native-drop are recorded as 100\% policy-on. B2, when present, is volume $n\geq 8$ at query start and is a separate campaign. Each row contains 20 recreated-stack runs with 50 trials per run. Malicious-answer and no-answer rates are trial percentages. Affected runs contain at least one malicious answer; intervals are exact 95\% Clopper--Pearson intervals for the affected-run percentage. Campaigns are not pooled.}
+\label{tab:rq4-runtime}
+\begingroup
+\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrrrr}
+\hline
+Policy & Workload & Act. & Malicious & No answer & Affected & 95\% CI \\
+ & & (\%) & (\%) & (\%) & runs & (\%) \\
+\hline
+\multicolumn{7}{l}{\textit{Original campaign}} \\
+\hline
+B0 & Fixed & 0.0 & 97.5 & 0.9 & 20/20 & 83.2--100.0 \\
+B0 & Flood & 100.0 & 99.5 & 0.5 & 20/20 & 83.2--100.0 \\
+B1+TC & Fixed & 100.0 & 0.0 & 0.2 & 0/20 & 0.0--16.8 \\
+B1+TC & Flood & 100.0 & 0.0 & 0.8 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & Fixed & 0.0 & 98.0 & 0.4 & 20/20 & 83.2--100.0 \\
+Locked B5+TC & Flood & 100.0 & 0.0 & 0.6 & 0/20 & 0.0--16.8 \\
+Native drop & Fixed & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+Native drop & Flood & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+\hline
+\multicolumn{7}{l}{\textit{Post-hoc-designed $2\times2$ follow-up}} \\
+\hline
+B0 & A200 & 100.0 & 99.6 & 0.2 & 20/20 & 83.2--100.0 \\
+B0 & A12 & 0.0 & 100.0 & 0.0 & 20/20 & 83.2--100.0 \\
+B0 & B200 & 100.0 & 0.0 & 0.1 & 0/20 & 0.0--16.8 \\
+B0 & B12 & 0.0 & 0.0 & 0.2 & 0/20 & 0.0--16.8 \\
+B1+TC & A200 & 100.0 & 0.0 & 0.5 & 0/20 & 0.0--16.8 \\
+B1+TC & A12 & 100.0 & 0.0 & 0.2 & 0/20 & 0.0--16.8 \\
+B1+TC & B200 & 100.0 & 0.0 & 0.5 & 0/20 & 0.0--16.8 \\
+B1+TC & B12 & 100.0 & 0.0 & 0.4 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & A200 & 100.0 & 0.0 & 0.2 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & A12 & 0.0 & 99.8 & 0.2 & 20/20 & 83.2--100.0 \\
+Locked B5+TC & B200 & 100.0 & 0.0 & 0.7 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & B12 & 0.0 & 0.0 & 0.3 & 0/20 & 0.0--16.8 \\
+Native drop & A200 & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+Native drop & A12 & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+Native drop & B200 & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+Native drop & B12 & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+\hline
+\multicolumn{7}{l}{\textit{B2 volume-only addon (not pooled)}} \\
+\hline
+B2+TC & Fixed & 99.2 & 0.0 & 1.3 & 0/20 & 0.0--16.8 \\
+B2+TC & Flood & 100.0 & 0.0 & 1.1 & 0/20 & 0.0--16.8 \\
+B2+TC & Benign 12 & 99.4 & 0.0 & 1.1 & 0/20 & 0.0--16.8 \\
+B2+TC & Benign 2.5 & 89.5 & 0.0 & 1.2 & 0/20 & 0.0--16.8 \\
+\hline
+\multicolumn{7}{l}{\textit{PMTUD kernel-fragment branch (not pooled)}} \\
+\hline
+B0 & Fixed & 0.0 & 0.0 & 1.5 & 0/20 & 0.0--16.8 \\
+B0 & Flood & 100.0 & 0.0 & 1.4 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & Fixed & 0.0 & 0.0 & 1.5 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & Flood & 100.0 & 0.0 & 1.3 & 0/20 & 0.0--16.8 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

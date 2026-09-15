@@ -1,0 +1,34 @@
+[
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "820a5a8269959e41583db57a7dbda65c655a5f3e328c1b8259f521857d334acd",
+    "stage": "pilot",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "820a5a8269959e41583db57a7dbda65c655a5f3e328c1b8259f521857d334acd",
+    "stage": "pilot",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "1e7c99e15bc0f7ad56c244a17d512c05b38f433726c7224ba723bf2d8d9ac02e",
+    "stage": "pilot",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "1e7c99e15bc0f7ad56c244a17d512c05b38f433726c7224ba723bf2d8d9ac02e",
+    "stage": "pilot",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  }
+]

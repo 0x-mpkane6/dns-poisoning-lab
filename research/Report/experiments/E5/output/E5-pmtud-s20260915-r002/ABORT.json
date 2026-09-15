@@ -1,0 +1,5 @@
+{
+  "error": "RuntimeError(\"pilot engineering gate failed for {'stage': 'pilot', 'rep': 0, 'policy': 'B5_LOCKED_TC', 'workload': 'ATTACK_SWEEP_FLOOD'}: ['B5 flood pilot produced no enforced drop']\")",
+  "stage": "pilot",
+  "utc": "2026-09-15T12:04:20Z"
+}

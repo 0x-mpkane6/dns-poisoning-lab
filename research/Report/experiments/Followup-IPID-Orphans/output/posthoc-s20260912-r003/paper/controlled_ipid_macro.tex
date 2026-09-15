@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{Post-hoc validation-only IPID-space sensitivity. Values are equally weighted macro means over eight primary cells (six matched traces per cell). The difference is 65,536 minus 2,048; intervals use 5,000 paired-trace bootstrap resamples stratified by cell. B5 uses the unchanged locked thresholds. Rates and J are on the 0--1 scale; these are descriptive intervals, not a new held-out evaluation.}
+\label{tab:ipid-space}
+\begingroup\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lrrrr}
+\hline
+Metric & 2,048 & 65,536 & Difference & 95\% CI \\
+\hline
+Entropy AP & 0.5780 & 0.5041 & -0.0739 & [-0.0786, -0.0696] \\
+Unique-ratio AP & 0.7512 & 0.5196 & -0.2315 & [-0.2405, -0.2224] \\
+B5 attack alert & 0.5911 & 0.5942 & +0.0031 & [+0.0015, +0.0047] \\
+B5 benign trigger & 0.5814 & 0.5936 & +0.0122 & [+0.0103, +0.0144] \\
+B5 FNR & 0.4089 & 0.4058 & -0.0031 & [-0.0047, -0.0015] \\
+B5 J & 0.0097 & 0.0006 & -0.0092 & [-0.0121, -0.0067] \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

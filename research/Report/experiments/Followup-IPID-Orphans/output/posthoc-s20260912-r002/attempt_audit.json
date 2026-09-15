@@ -1,0 +1,7 @@
+{
+  "status": "superseded_by_r003",
+  "reason": "Post-run audit detected repeated captured packets sharing forged packet hashes and client wall/monotonic offset spreads up to 2.888 seconds. The old count mixed capture records with unique signatures.",
+  "resolution": "Separate unique signatures from capture records, check orphan ratios in original record order as well as timestamp order, and require time-invariant scores before accepting interval assignment when clock alignment is uncertain.",
+  "data_retained": true,
+  "utc": "2026-09-12T06:25:06.221014+00:00"
+}

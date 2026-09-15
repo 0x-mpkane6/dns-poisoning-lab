@@ -1,0 +1,27 @@
+% Addendum blocks. Do not replace RQ1 ($M=2{,}048$) or pool new campaigns with locked E5.
+The $M=65{,}536$ comparison is a post-hoc descriptive sensitivity on matched benign replay
+(Tables~\ref{tab:e1-ipid-highload}--\ref{tab:e1-ipid-initial}, Figure~\ref{fig:e1-ipid-space}).
+At registered high load (target $n=600$), locked B5 never triggers in the 2,048-value space (0/20 runs) and triggers in every run of the matched 65,536-value replay (20/20). The main RQ1 figures remain $M=2{,}048$.
+Sequential main-grid rates are preserved; \texttt{smallpool16} is unchanged.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure/e1_ipid_space_boundary.pdf}
+\caption{Post-hoc benign IPID-space sensitivity. Panel A is initial B5; panel B is locked B5.
+Arrival times and occupancy are matched across $M=2{,}048$ and $M=65{,}536$. Bands are run-level
+percentile 95\% intervals (20 runs, 300 decisions). This figure does not replace RQ1.}
+\label{fig:e1-ipid-space}
+\end{figure}
+
+Table~\ref{tab:rq4-runtime} adds an activation column. For B5 it is detector state at query start;
+for B1 and native-drop it is policy-on (100\%), not B5. B0 reports passive B5 state.
+Table~\ref{tab:runtime-cpu-throughput} reports CPU and completed-query wall throughput separately
+from attack-success rates.
+The B2 volume-only addon uses the same occupancy/qname schedules as the original campaign and is paired by (workload, rep). It is not pooled with the four original policies.
+
+Table~\ref{tab:icmp-ptb-audit} audits ICMP PTB on the crafted-fragment captures.
+The PMTUD branch is a separate campaign and is not pooled with the crafted-fragment E5 results.
+
+Table~\ref{tab:orphan-baseline} is an offline orphan-fragment detector baseline on no-enforcement
+traces. No orphan policy was enforced, so these rates are not poisoning-prevention or ASR.
+Any PMTUD orphan score is a separate stratum and is not mixed with this table.

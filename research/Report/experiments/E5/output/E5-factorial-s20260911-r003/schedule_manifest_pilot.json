@@ -1,0 +1,130 @@
+[
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "c040f76466bc1748eca4149246f604e85f3cf3703a36c53df12c6ade3de31fbd",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "c46e46b92aa3f1f86d4cc9644c28688cb5468d5d3c0efccdc2e67d36f828c020",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "0d89bf856f46b04a4411052f61de8dcba60cbce8adac254dd561b1bb191ffda7",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "c43e9402888faad0e7736758bedec44777db8359fd526ec667df607abc133c96",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "c040f76466bc1748eca4149246f604e85f3cf3703a36c53df12c6ade3de31fbd",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "c46e46b92aa3f1f86d4cc9644c28688cb5468d5d3c0efccdc2e67d36f828c020",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "0d89bf856f46b04a4411052f61de8dcba60cbce8adac254dd561b1bb191ffda7",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B1_RL2_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "c43e9402888faad0e7736758bedec44777db8359fd526ec667df607abc133c96",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "c040f76466bc1748eca4149246f604e85f3cf3703a36c53df12c6ade3de31fbd",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "c46e46b92aa3f1f86d4cc9644c28688cb5468d5d3c0efccdc2e67d36f828c020",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "0d89bf856f46b04a4411052f61de8dcba60cbce8adac254dd561b1bb191ffda7",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "c43e9402888faad0e7736758bedec44777db8359fd526ec667df607abc133c96",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_MODERATE.json",
+    "schedule_sha256": "c040f76466bc1748eca4149246f604e85f3cf3703a36c53df12c6ade3de31fbd",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/BENIGN_DIVERSE_HIGH.json",
+    "schedule_sha256": "c46e46b92aa3f1f86d4cc9644c28688cb5468d5d3c0efccdc2e67d36f828c020",
+    "stage": "pilot",
+    "workload": "BENIGN_DIVERSE_HIGH"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_MODERATE.json",
+    "schedule_sha256": "0d89bf856f46b04a4411052f61de8dcba60cbce8adac254dd561b1bb191ffda7",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_MODERATE"
+  },
+  {
+    "policy": "RFC_DROP_NATIVE",
+    "rep": 0,
+    "schedule_path": "schedules/pilot/rep_00/ATTACK_DIVERSE_HIGH.json",
+    "schedule_sha256": "c43e9402888faad0e7736758bedec44777db8359fd526ec667df607abc133c96",
+    "stage": "pilot",
+    "workload": "ATTACK_DIVERSE_HIGH"
+  }
+]

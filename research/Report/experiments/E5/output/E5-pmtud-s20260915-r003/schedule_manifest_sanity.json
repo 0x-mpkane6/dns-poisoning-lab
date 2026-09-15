@@ -1,0 +1,34 @@
+[
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "8912ab80abe9ac6bbb86dd49d543ffa9894178fafaa21e5e6d2d7c15974755a2",
+    "stage": "sanity",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_SWEEP_FLOOD.json",
+    "schedule_sha256": "8912ab80abe9ac6bbb86dd49d543ffa9894178fafaa21e5e6d2d7c15974755a2",
+    "stage": "sanity",
+    "workload": "ATTACK_SWEEP_FLOOD"
+  },
+  {
+    "policy": "B5_LOCKED_TC",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "6d69156f79423e1dafac207ee0f490717fd416107f8af2638066b82bfe3477d1",
+    "stage": "sanity",
+    "workload": "ATTACK_FIXED_MATCHED"
+  },
+  {
+    "policy": "B0_OFF",
+    "rep": 0,
+    "schedule_path": "schedules/sanity/rep_00/ATTACK_FIXED_MATCHED.json",
+    "schedule_sha256": "6d69156f79423e1dafac207ee0f490717fd416107f8af2638066b82bfe3477d1",
+    "stage": "sanity",
+    "workload": "ATTACK_FIXED_MATCHED"
+  }
+]

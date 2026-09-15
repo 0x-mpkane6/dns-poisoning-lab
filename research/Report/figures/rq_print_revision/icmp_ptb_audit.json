@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "scope": "confirmatory B0 IPS captures, original and factorial campaigns",
+  "interpretation": "Application-crafted fragments; ICMP PTB is not part of the main lab path.",
+  "campaigns": [
+    {
+      "campaign": "E5-routed-s20260902-r001",
+      "b0_pcaps_scanned": 160,
+      "packets": 437909,
+      "ipv4_dest_unreach_frag_needed": 0,
+      "ipv6_packet_too_big": 0
+    },
+    {
+      "campaign": "E5-factorial-s20260911-r003",
+      "b0_pcaps_scanned": 160,
+      "packets": 859709,
+      "ipv4_dest_unreach_frag_needed": 0,
+      "ipv6_packet_too_big": 0
+    }
+  ],
+  "pcaps_scanned": 320,
+  "ipv4_dest_unreach_frag_needed": 0,
+  "ipv6_packet_too_big": 0
+}

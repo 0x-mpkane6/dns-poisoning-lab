@@ -1,0 +1,12 @@
+% Post-hoc additions; do not replace the frozen held-out results.
+Table~\ref{tab:ipid-space} and Figure~\ref{fig:ipid-space-discrimination} examine IPID-space sensitivity on validation traces only. Expanding the IPID space from 2,048 to 65,536 reduces macro unique-ratio AP from 0.7512 to 0.5196, while locked-B5 separation falls from $J=0.00972$ to $J=0.00056$. This post-hoc replay preserves fragment/query timing and occupancy and retains the locked thresholds; it is not a new held-out evaluation. The results show that the observed discrimination is sensitive to the assumed IPID space.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure/controlled_ipid_discrimination.pdf}
+\caption{Post-hoc validation-only IPID-space sensitivity under volume matching. Panels A and B show continuous and bursty profiles. Bands are descriptive 95\% confidence intervals from 5,000 paired-trace bootstrap samples; six pairs per cell, 150 decisions per condition and trace. The same arrival/query schedules and origin masks are replayed in both spaces.}
+\label{fig:ipid-space-discrimination}
+\end{figure}
+
+Table~\ref{tab:orphan-baseline} reports an offline orphan-fragment-ratio baseline on the runtime captures. A matched first fragment establishes a header-level association but does not authenticate the tail payload. All 7,996 distinct logged forged-tail packet signatures observed in the captures had a matching first fragment at each observed ingress. The baseline is evaluated as a detector only; its poisoning-prevention performance is not measured.
+ No run contained a baseline alert (0/20 per cell); the exact 95\% interval for the any-alert-run proportion is [0, 0.1684].

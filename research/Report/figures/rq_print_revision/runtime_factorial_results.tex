@@ -1,0 +1,30 @@
+\begin{table}[t]
+\centering
+\caption{Diverse-IPID factorial follow-up: forged-tail injection on/off crossed with background load (12 or 200 non-initial fragments/s). B5 state is the reconstructed locked-B5 state at query time, including passive state under other policies. All outcome columns are trial percentages; 20 runs and 1,000 trials per cell. Cache denotes a malicious A record present at the immediate post-query probe, not long-term persistence. This campaign is analyzed separately from the original runtime experiment.}
+\label{tab:runtime-factorial}
+\begingroup\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\hline
+Policy & Traffic /s & B5 state \% & Mal. \% & Cache \% & None \% \\
+\hline
+B0 & Benign 12 & 0.0 & 0.0 & 0.0 & 0.2 \\
+B0 & Benign 200 & 100.0 & 0.0 & 0.0 & 0.1 \\
+B0 & Attack 12 & 0.0 & 100.0 & 100.0 & 0.0 \\
+B0 & Attack 200 & 100.0 & 99.6 & 99.8 & 0.2 \\
+B1+TC & Benign 12 & 0.0 & 0.0 & 0.0 & 0.4 \\
+B1+TC & Benign 200 & 100.0 & 0.0 & 0.0 & 0.5 \\
+B1+TC & Attack 12 & 0.0 & 0.0 & 0.0 & 0.2 \\
+B1+TC & Attack 200 & 100.0 & 0.0 & 0.0 & 0.5 \\
+B5+TC & Benign 12 & 0.0 & 0.0 & 0.0 & 0.3 \\
+B5+TC & Benign 200 & 100.0 & 0.0 & 0.0 & 0.7 \\
+B5+TC & Attack 12 & 0.0 & 99.8 & 100.0 & 0.2 \\
+B5+TC & Attack 200 & 100.0 & 0.0 & 0.0 & 0.2 \\
+Native drop & Benign 12 & 0.0 & 0.0 & 0.0 & 100.0 \\
+Native drop & Benign 200 & 100.0 & 0.0 & 0.0 & 100.0 \\
+Native drop & Attack 12 & 0.0 & 0.0 & 0.0 & 100.0 \\
+Native drop & Attack 200 & 100.0 & 0.0 & 0.0 & 100.0 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

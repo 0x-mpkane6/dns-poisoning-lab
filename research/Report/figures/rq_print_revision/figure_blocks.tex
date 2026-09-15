@@ -1,0 +1,27 @@
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure/RQ1_benign_boundary.pdf}
+\caption{Benign trigger rates of initial and locked B5 on the same recorded traces. Colors denote IPID behavior; dotted and solid lines denote initial and locked configurations. Bands are percentile 95\% intervals from 5,000 run-level bootstrap samples, with 20 runs and 300 decisions per run in each cell. Locked-B5 curves are post-hoc rescoring without retuning; target load differs from realized window occupancy.}
+\label{fig:rq1-benign-boundary}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure/RQ1_volume_matched_discrimination.pdf}
+\caption{Score-level discrimination under volume matching. PR-AUC for entropy and unique-IPID ratio under continuous and bursty traffic; bands denote paired-trace 95\% confidence intervals, with 20 pairs per cell.}
+\label{fig:rq1-volume-matched}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure/RQ2_threshold_calibration.pdf}
+\caption{Validation selection and held-out performance. Panel A consolidates all 60 candidates into one heatmap; column groups denote N and the outlined cell marks the locked choice. Color represents validation $\Delta J$ in percentage points. Panel B shows held-out macro rates with stratified paired-trace 95\% bootstrap confidence intervals (six pairs per primary cell).}
+\label{fig:rq2-calibration}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure/RQ3_failure_modes.pdf}
+\caption{Failure probes and negative control for locked B5. Panel A shows paired $\Delta J$ relative to B2; Panel B shows attack-alert and matched benign-trigger rates. Traffic colors are shared; solid circles and dashed squares in B denote attack alert and benign trigger. Error bars are paired-trace 95\% confidence intervals, with six pairs per cell. Fixed-IPID and duplicate-sweep estimates overlap; none was used for threshold selection.}
+\label{fig:rq3-failure-modes}
+\end{figure}

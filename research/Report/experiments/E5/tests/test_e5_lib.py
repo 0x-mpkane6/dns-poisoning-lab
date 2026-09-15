@@ -73,6 +73,13 @@ def test_policy_decisions_isolate_detector_and_enforcement() -> None:
     assert policy_decision(Policy.RFC_DROP_NATIVE, is_dns_fragment=True, offset=40, b5_active=False).verdict == "drop_fragment"
     assert policy_decision(Policy.PREARM_TAIL_DROP, is_dns_fragment=True, offset=0, b5_active=False).verdict == "forward"
     assert policy_decision(Policy.PREARM_TAIL_DROP, is_dns_fragment=True, offset=40, b5_active=False).verdict == "drop_tail"
+    assert policy_decision(Policy.B2_VOLUME_TC, is_dns_fragment=True, offset=0, b5_active=True, b2_active=False).verdict == "forward"
+    assert policy_decision(Policy.B2_VOLUME_TC, is_dns_fragment=True, offset=0, b5_active=False, b2_active=True).verdict == "inject_tc_drop"
+    assert policy_decision(Policy.B2_VOLUME_TC, is_dns_fragment=True, offset=40, b5_active=False, b2_active=True).verdict == "drop_tail"
+
+
+def test_complete_block_defaults_exclude_b2_addon() -> None:
+    assert Policy.B2_VOLUME_TC.value not in {item.value for item in CONFIRMATORY_POLICIES}
 
 
 def test_non_dns_occupancy_is_observed_but_not_mitigated_by_dns_policy() -> None:

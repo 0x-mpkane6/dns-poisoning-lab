@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{Original runtime outcomes. Activation is locked-B5 state at query start for B0/B5; B1 and native-drop report 100\% because those policies are always on, not because B5 triggered. Malicious-answer and no-answer rates are trial percentages (1,000 trials per cell); affected runs contain at least one malicious answer. Intervals are exact 95\% Clopper--Pearson intervals for the affected-run percentage; 20 recreated-stack runs per cell.}
+\label{tab:rq4-runtime}
+\begingroup
+\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrrrr}
+\hline
+Policy & Attack & Act. \% & Mal. \% & None \% & Runs & 95\% CI \\
+\hline
+B0 & Fixed & 0.0 & 97.5 & 0.9 & 20/20 & 83.2--100.0 \\
+B0 & Flood & 100.0 & 99.5 & 0.5 & 20/20 & 83.2--100.0 \\
+B1+TC & Fixed & 100.0 & 0.0 & 0.2 & 0/20 & 0.0--16.8 \\
+B1+TC & Flood & 100.0 & 0.0 & 0.8 & 0/20 & 0.0--16.8 \\
+Locked B5+TC & Fixed & 0.0 & 98.0 & 0.4 & 20/20 & 83.2--100.0 \\
+Locked B5+TC & Flood & 100.0 & 0.0 & 0.6 & 0/20 & 0.0--16.8 \\
+Native drop & Fixed & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+Native drop & Flood & 100.0 & 0.0 & 100.0 & 0/20 & 0.0--16.8 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

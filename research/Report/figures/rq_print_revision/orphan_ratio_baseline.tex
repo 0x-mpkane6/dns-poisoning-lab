@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{Offline orphan-fragment baselines on the no-enforcement runtime traces. Load denotes background non-initial fragments/s. Both criteria also require $n\geq8$ in a two-second window. Alert rates count any activation from query start to completion; each traffic--rate cell has 20 recreated-stack runs and 1,000 trials. The orphan ratio O uses causal first-fragment matching by source, destination, IP protocol and IPID. No orphan policy was enforced, so these are detection rates, not poisoning-prevention rates.}
+\label{tab:orphan-baseline}
+\begingroup\fontsize{9}{10.8}\selectfont
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lrrrr}
+\hline
+Load (/s) & Criterion & Benign alert (\%) & Attack alert (\%) & J \\
+\hline
+12 & $O>0$ & 0.00 & 0.00 & 0.0000 \\
+12 & $O\geq0.5$ & 0.00 & 0.00 & 0.0000 \\
+200 & $O>0$ & 0.00 & 0.00 & 0.0000 \\
+200 & $O\geq0.5$ & 0.00 & 0.00 & 0.0000 \\
+\hline
+\end{tabular}
+\endgroup
+\end{table}

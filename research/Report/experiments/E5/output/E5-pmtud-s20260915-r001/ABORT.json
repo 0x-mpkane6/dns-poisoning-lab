@@ -1,0 +1,5 @@
+{
+  "error": "RuntimeError(\"pilot engineering gate failed for {'stage': 'pilot', 'rep': 0, 'policy': 'B0_OFF', 'workload': 'ATTACK_FIXED_MATCHED'}: ['B0 positive-control attack did not poison']\")",
+  "stage": "pilot",
+  "utc": "2026-09-15T11:58:16Z"
+}

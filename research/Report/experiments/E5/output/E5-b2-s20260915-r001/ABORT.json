@@ -1,0 +1,5 @@
+{
+  "error": "RuntimeError(\"pilot engineering gate failed for {'stage': 'pilot', 'rep': 0, 'policy': 'B2_VOLUME_TC', 'workload': 'ATTACK_FIXED_MATCHED'}: ['B2 fixed-IPID pilot produced no volume activation', 'B2 fixed-IPID pilot produced no enforced drop']\")",
+  "stage": "pilot",
+  "utc": "2026-09-15T11:07:45Z"
+}
